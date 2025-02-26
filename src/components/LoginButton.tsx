@@ -5,7 +5,7 @@ import React from "react";
 const LoginButton: React.FC = () => {
   const clientId = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID;
   const redirectUri = process.env.NEXT_PUBLIC_SPOTIFY_REDIRECT_URI;
-  const scope = "user-read-private user-read-email playlist-read-private playlist-read-collaborative user-modify-playback-state streaming";
+  const scope = "user-read-private user-read-email playlist-read-private playlist-read-collaborative user-modify-playback-state streaming app-remote-control";
 
   if (!clientId || !redirectUri) {
     console.error("🔴 ERREUR: CLIENT_ID ou REDIRECT_URI manquant !");
