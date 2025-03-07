@@ -1,22 +1,25 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 const CallbackPage = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const code = searchParams.get("code");
+  const [code, setCode] = useState<string | null>(null); // Empêche le SSR d'évaluer `useSearchParams()`
 
   useEffect(() => {
-    if (!code) return;
+    const urlCode = searchParams.get("code");
+    if (!urlCode) return;
+
+    setCode(urlCode); // Définit le code après le premier rendu client
 
     const fetchAccessToken = async () => {
       try {
         const response = await fetch("/api/auth", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ code }),
+          body: JSON.stringify({ code: urlCode }),
         });
 
         if (!response.ok) {
@@ -35,7 +38,7 @@ const CallbackPage = () => {
     };
 
     fetchAccessToken();
-  }, [code, router]);
+  }, [searchParams, router]);
 
   return <p>Connexion en cours...</p>;
 };
