@@ -1,0 +1,14 @@
+.container {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: 1fr 20px 1fr;
+    justify-items: center;
+    text-align: center;
+    justify-content: center;
+}
+
+.separator {
+    height: 100%;
+    background-color: #ccc; /* couleur de la barre */
+    width: 3px;
+}

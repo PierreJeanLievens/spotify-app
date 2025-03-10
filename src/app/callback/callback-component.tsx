@@ -1,18 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 const CallbackComponent = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [code, setCode] = useState<string | null>(null);
 
   useEffect(() => {
     const urlCode = searchParams.get("code");
     if (!urlCode) return;
-
-    setCode(urlCode);
 
     const fetchAccessToken = async () => {
       try {
@@ -30,7 +27,7 @@ const CallbackComponent = () => {
         console.log("🔑 Token récupéré :", data.access_token);
 
         localStorage.setItem("spotify_access_token", data.access_token);
-        router.push("/profile");
+        router.push("/playlist");
       } catch (error) {
         console.error(error);
       }
