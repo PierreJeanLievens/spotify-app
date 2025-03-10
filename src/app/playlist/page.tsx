@@ -59,7 +59,7 @@ const PlaylistPage = () => {
          <PlaylistList playlists={playlists} />
         </div>
           <div>
-            <div className={styles.separator}>
+            <div className="separator">
           </div>
         </div>
         <div>

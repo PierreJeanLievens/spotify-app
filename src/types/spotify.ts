@@ -33,12 +33,21 @@ export type Playlist = {
     uri: string;
   };
   
+export type Player = {
+  name: string,
+  score: number
+}
+
 export interface PlaylistCardProps {
     playlist: Playlist;
     isSelected: boolean;
     onSelect: () => void;
   }
 
-  export interface LoadingProps {
-    text: string
-  }
+// export interface GameSetupPlaylistProps {
+//   playlist: Playlist;
+// }
+
+export interface LoadingProps {
+  text: string
+}

@@ -62,9 +62,16 @@ const GameSetupPage = () => {
         Déconnexion
       </button>
       <div>
-          <h1>Ma playlist</h1>
-          <GameSetupPlaylist />
-          <GameSetupPlayers />
+          <h1></h1>
+          <div className={`${styles.container}`}>
+            <GameSetupPlaylist playlist={playlist} />
+            <div className="separator"></div>
+            <GameSetupPlayers />
+          </div>
+
+          <button 
+            className={`${styles.play__button} button`}
+          >Jouer</button>
           
       </div>
     </div>

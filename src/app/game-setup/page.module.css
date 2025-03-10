@@ -1,0 +1,13 @@
+.container {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: 1fr 20px 1fr;
+    justify-items: center;
+    text-align: center;
+    justify-content: center;
+}
+
+.play__button {
+    background-color: var(--first-color);
+    width: 100%;
+}
