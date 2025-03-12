@@ -38,6 +38,17 @@ export type Player = {
   score: number
 }
 
+export type Track = {
+  id: string;
+  href: string;
+  uri: string;
+  name: string,
+  score: number
+  artist: {
+    name: string;
+  }[];
+}
+
 export interface PlaylistCardProps {
     playlist: Playlist;
     isSelected: boolean;

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { checkToken } from "@/lib/checkToken";
 
 const ProfilePage = () => {
   const [profile, setProfile] = useState<any>(null);
@@ -9,11 +10,7 @@ const ProfilePage = () => {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const token = localStorage.getItem("spotify_access_token");
-      if (!token) {
-        router.push("/");
-        return;
-      }
+      const token = await checkToken(router);
 
       try {
         const response = await fetch("https://api.spotify.com/v1/me", {

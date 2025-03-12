@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import PlaylistList from "@/components/PlaylistList";
 import styles from "@/app/playlist/page.module.css"
+import { checkToken } from "@/lib/checkToken";
 
 const PlaylistPage = () => {
   const [playlists, setPlaylists] = useState<any[]>([]);
@@ -11,11 +12,7 @@ const PlaylistPage = () => {
 
   useEffect(() => {
     const fetchPlaylists = async () => {
-      const token = localStorage.getItem("spotify_access_token");
-      if (!token) {
-        router.push("/");
-        return;
-      }
+    const token = await checkToken(router);
 
       try {
         const response = await fetch("https://api.spotify.com/v1/me/playlists", {
@@ -37,10 +34,10 @@ const PlaylistPage = () => {
     fetchPlaylists();
   }, [router]);
 
+  console.log(playlists)
   if (!playlists.length) {
     return <p>Chargement des playlists...</p>;
   }
-  console.log(playlists);
 
   return (
     <div className="">

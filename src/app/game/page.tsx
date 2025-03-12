@@ -8,18 +8,20 @@ import styles from "@/app/game-setup/page.module.css"
 import Loading from "@/components/Loading";
 import { Player } from "@/types/spotify";
 import { fetchPlaylist } from "@/lib/fetchPlaylist";
+import { fetchTracksPlaylist } from "@/lib/fetchTracksPlaylist";
 
-const GameSetupPage = () => {
-  const [playlist, setPlaylist] = useState<any>(null);
+const GamePage = () => {
+  const [playlist, setPlaylist] = useState<any>();
+  const [players, setPlayers] = useState<Player[]>([]);
   const router = useRouter();
 
-  // Verification d'avoir des joueurs avant de lancer
   const startGame = () => {
     const storedPlayers = localStorage.getItem("players");
-    if (storedPlayers && playlist) {
+    if (storedPlayers) {
       try {
         const parsedPlayers = JSON.parse(storedPlayers); // On récupère les joueurs directement
         if (parsedPlayers.length > 0) {
+          setPlayers(parsedPlayers); // Mise à jour de l'état
           router.push("/game"); // Navigation immédiate
         } else {
           console.warn("Aucun joueur trouvé.");
@@ -34,11 +36,20 @@ const GameSetupPage = () => {
   
   // Permet de récupérer la playlist choisie et de la stocker dans playlist
   useEffect(() => {
-    const fetchData = async () => {
-      const data = await fetchPlaylist(router);
-      setPlaylist(data);
+    const fetchPlaylistData = async () => {
+      const playlist = await fetchPlaylist(router);
+      setPlaylist(playlist);
     };
-    fetchData();
+    
+    const fetchTracksPlaylistData = async () => {
+      const tracks = await fetchTracksPlaylist(router);
+      console.log(tracks)
+    };
+    
+    fetchPlaylistData();
+    fetchTracksPlaylistData();
+
+
   }, [router]);
 
   if (!playlist) {
@@ -63,15 +74,10 @@ const GameSetupPage = () => {
             <div className="separator"></div>
             <GameSetupPlayers />
           </div>
-
-          <button 
-            className={`${styles.play__button} button`}
-            onClick={() => startGame()}
-          >Jouer</button>
           
       </div>
     </div>
   );
 };
 
-export default GameSetupPage;
+export default GamePage;

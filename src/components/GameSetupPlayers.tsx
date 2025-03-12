@@ -3,26 +3,21 @@ import styles from "@/components/GameSetupPlayers.module.css"
 import { Player } from "@/types/spotify"; 
 
 export default function GameSetupPlayers() {
-  const [players, setPlayers] = useState<Player[]>([]);
+  const [players, setPlayers] = useState<Player[]>(() => {
+    const storedPlayers = localStorage.getItem("players");
+    return storedPlayers ? JSON.parse(storedPlayers) : [];
+  });
+  
   const [newPlayerName, setNewPlayerName] = useState("");
 
-  // Charger la liste des joueurs depuis le localStorage au montage
-  useEffect(() => {
-    const storedPlayers = localStorage.getItem("players");
-    if (storedPlayers) {
-      try {
-        setPlayers(JSON.parse(storedPlayers));
-      } catch (error) {
-        console.error("Erreur lors du parsing des joueurs :", error);
-      }
-    }
-  }, []);
+ 
 
   // Sauvegarder la liste dans le localStorage à chaque modification
   useEffect(() => {
     if(players.length > 0) {
-    console.log(players)
-    localStorage.setItem("players", JSON.stringify(players));
+      localStorage.setItem("players", JSON.stringify(players));
+    }else {
+      localStorage.removeItem("players");
     }
   }, [players]);
 
@@ -53,6 +48,7 @@ export default function GameSetupPlayers() {
   // Fonction pour supprimer un joueur en se basant sur le nom
   const handleRemovePlayer = (name: string) => {
     setPlayers(players.filter((player) => player.name !== name));
+    localStorage.setItem("players", JSON.stringify(players));
   };
 
   return (
