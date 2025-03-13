@@ -2,63 +2,45 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import GameSetupPlaylist from "@/components/GameSetupPlaylist"
-import GameSetupPlayers from "@/components/GameSetupPlayers"
 import styles from "@/app/game-setup/page.module.css"
 import Loading from "@/components/Loading";
 import { Player } from "@/types/spotify";
-import { fetchPlaylist } from "@/lib/fetchPlaylist";
-import { fetchTracksPlaylist } from "@/lib/fetchTracksPlaylist";
+// import { fetchPlaylist } from "@/lib/fetchPlaylist";
+import { fetchNewTrack, fetchNumberTracksPlaylist } from "@/lib/fetchData";
+import pauseTrack from "@/lib/pauseTrack";
+import resumeTrack from "@/lib/resumeTrack";
+import playTrack from "@/lib/playTrack";
 
 const GamePage = () => {
-  const [playlist, setPlaylist] = useState<any>();
-  const [players, setPlayers] = useState<Player[]>([]);
+  const [track, setTrack] = useState<any>();
   const router = useRouter();
 
-  const startGame = () => {
-    const storedPlayers = localStorage.getItem("players");
-    if (storedPlayers) {
-      try {
-        const parsedPlayers = JSON.parse(storedPlayers); // On récupère les joueurs directement
-        if (parsedPlayers.length > 0) {
-          setPlayers(parsedPlayers); // Mise à jour de l'état
-          router.push("/game"); // Navigation immédiate
-        } else {
-          console.warn("Aucun joueur trouvé.");
-        }
-      } catch (error) {
-        console.error("Erreur lors du parsing des joueurs :", error);
-      }
-    }else {
-      console.error("Il faut ajouter des joueurs");
-    }
-  };
   
   // Permet de récupérer la playlist choisie et de la stocker dans playlist
   useEffect(() => {
     const fetchPlaylistData = async () => {
-      const playlist = await fetchPlaylist(router);
-      setPlaylist(playlist);
+      const newTrack = await fetchNewTrack(router);
+      setTrack(newTrack)
+      console.log(newTrack)
     };
-    
-    const fetchTracksPlaylistData = async () => {
-      const tracks = await fetchTracksPlaylist(router);
-      console.log(tracks)
-    };
-    
+
     fetchPlaylistData();
-    fetchTracksPlaylistData();
-
-
   }, [router]);
 
-  if (!playlist) {
+
+  const nextTrack = async () => {
+    const newTrack = await fetchNewTrack(router);
+    setTrack(newTrack)
+    console.log(newTrack)
+  } 
+
+  if (!track) {
     return <Loading text="test"/>;
   }
 
   return (
     <div className="">
-      <h1>Mes Playlists Spotify</h1>
+      <h1>Ma playlist</h1>
       <button
         onClick={() => {
           localStorage.removeItem("spotify_access_token");
@@ -69,12 +51,30 @@ const GamePage = () => {
       </button>
       <div>
           <h1></h1>
-          <div className={`${styles.container}`}>
-            <GameSetupPlaylist playlist={playlist} />
-            <div className="separator"></div>
-            <GameSetupPlayers />
-          </div>
-          
+          <button 
+          className="button" 
+           onClick={() => nextTrack()}
+          >
+            Suivant
+          </button>
+          <button 
+          className="button" 
+           onClick={() => playTrack(track.uri ,router)}
+          >
+            Lancer
+          </button>
+          <button 
+          className="button" 
+           onClick={() => pauseTrack(router)}
+          >
+            Pause
+          </button>
+          <button
+          className="button" 
+           onClick={() => resumeTrack(router)}
+          >
+            Reprise
+          </button>
       </div>
     </div>
   );

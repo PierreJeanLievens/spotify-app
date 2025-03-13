@@ -1,12 +1,9 @@
 import { checkToken } from "./checkToken";
 import { fetchDeviceId } from "./fetchData";
 
-// Fonction pour lancer un morceau
-const playTrack = async (trackUri: string, router: any) => {
+// Fonction pour relancer un morceau
+const resumeTrack = async (router: any) => {
     const token = await checkToken(router);
-    console.log(JSON.stringify({ uris: [trackUri] }))
-    console.log(JSON.stringify({ uris: trackUri }))
-  
     const deviceId = await fetchDeviceId(router);
     try {
       const response = await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
@@ -15,17 +12,16 @@ const playTrack = async (trackUri: string, router: any) => {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ uris: [trackUri] }),
       });
 
       if (!response.ok) {
-        throw new Error("Impossible de lancer la lecture");
+        throw new Error("Impossible de relancer la lecture");
       }
 
-      console.log("Lecture lancée !");
+      console.log("Lecture relancée !");
     } catch (error) {
       console.error("Erreur :", error);
     }
   };
 
-export default playTrack;
+export default resumeTrack;

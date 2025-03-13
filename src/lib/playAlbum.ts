@@ -1,7 +1,7 @@
 import { checkToken } from "./checkToken";
 
 // Fonction pour lancer un morceau
-const playTracks = async (trackUri: [string], router: any) => {
+const playAlbum = async (trackUri: string, router: any) => {
     const token = await checkToken(router);
 
     try {
@@ -11,7 +11,7 @@ const playTracks = async (trackUri: [string], router: any) => {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ uris: trackUri }),
+        body: JSON.stringify({ context_uri: trackUri }),
       });
 
       if (!response.ok) {
@@ -24,4 +24,4 @@ const playTracks = async (trackUri: [string], router: any) => {
     }
   };
 
-export default playTracks;
+export default playAlbum;

@@ -7,7 +7,8 @@ import GameSetupPlayers from "@/components/GameSetupPlayers"
 import styles from "@/app/game-setup/page.module.css"
 import Loading from "@/components/Loading";
 import { Player } from "@/types/spotify";
-import { fetchPlaylist } from "@/lib/fetchPlaylist";
+// import { fetchPlaylist } from "@/lib/fetchPlaylist";
+import { fetchPlaylist } from "@/lib/fetchData";
 
 const GameSetupPage = () => {
   const [playlist, setPlaylist] = useState<any>(null);
@@ -16,11 +17,12 @@ const GameSetupPage = () => {
   // Verification d'avoir des joueurs avant de lancer
   const startGame = () => {
     const storedPlayers = localStorage.getItem("players");
+    const playlistId = localStorage.getItem("playlist_choosen_id");
     if (storedPlayers && playlist) {
       try {
         const parsedPlayers = JSON.parse(storedPlayers); // On récupère les joueurs directement
         if (parsedPlayers.length > 0) {
-          router.push("/game"); // Navigation immédiate
+          router.push(`/game`); // Navigation immédiate
         } else {
           console.warn("Aucun joueur trouvé.");
         }
