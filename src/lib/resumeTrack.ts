@@ -4,7 +4,8 @@ import { fetchFirstDeviceId } from "./fetchData";
 // Fonction pour relancer un morceau
 const resumeTrack = async (router: any) => {
     const token = await checkToken(router);
-    const deviceId = await fetchFirstDeviceId(router);
+    // const deviceId = await fetchFirstDeviceId(router);
+    const deviceId = localStorage.getItem("device_id");
     try {
       const response = await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
         method: "PUT",
