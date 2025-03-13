@@ -1,5 +1,5 @@
 import { checkToken } from "./checkToken";
-import { fetchDeviceId } from "./fetchData";
+import { fetchFirstDeviceId } from "./fetchData";
 
 // Fonction pour lancer un morceau
 const playTrack = async (trackUri: string, router: any) => {
@@ -7,7 +7,7 @@ const playTrack = async (trackUri: string, router: any) => {
     console.log(JSON.stringify({ uris: [trackUri] }))
     console.log(JSON.stringify({ uris: trackUri }))
   
-    const deviceId = await fetchDeviceId(router);
+    const deviceId = await fetchFirstDeviceId(router);
     try {
       const response = await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
         method: "PUT",

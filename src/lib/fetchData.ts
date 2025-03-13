@@ -184,14 +184,48 @@ export const fetchNewTrack = async (router: any) => {
     return null;
   }
 };
-  
+  /**
+ * Récupère un nouveau morceau de la playlist choisie.
+ * @param tracksPast Tableau des indices déjà utilisés
+ * @param router Pour la redirection en cas d'erreur
+ * @returns List des devices ou []
+ */
+export const fetchDevices = async (router: any) => {
+  const token = await checkToken(router);
+
+  try {
+    const playlistId = localStorage.getItem("playlist_choosen_id");
+    if (!playlistId) {
+      router.push("/playlist");
+      return null;
+    }
+
+    const response = await fetch(
+      `https://api.spotify.com/v1/me/player/devices`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Échec de récupération du device");
+    }
+
+    const data = await response.json();
+    return data.devices || []; // Retourne la list ou `null`
+  } catch (error) {
+    console.error("Erreur dans fetchDevices:", error);
+    router.push("/");
+    return null;
+  }
+};
 /**
  * Récupère un nouveau morceau de la playlist choisie.
  * @param tracksPast Tableau des indices déjà utilisés
  * @param router Pour la redirection en cas d'erreur
  * @returns Données du morceau ou `null`
  */
-export const fetchDeviceId = async (router: any) => {
+export const fetchFirstDeviceId = async (router: any) => {
   const token = await checkToken(router);
 
   try {

@@ -172,7 +172,8 @@ img {
   transition: all 0.25s ease-in-out;
 }
 
-.button:hover {
+.button:hover,
+.button.selected {
   color: var(--text-white);
 }
 
@@ -185,7 +186,8 @@ img {
   z-index: -1;
   transition: all 0.2s ease-in-out;
 }
-.button:hover::before{
+.button:hover::before,
+.button.selected::before{
   transform: translateX(0);
 }
 

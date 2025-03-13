@@ -4,16 +4,18 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "@/app/game-setup/page.module.css"
 import Loading from "@/components/Loading";
-import { Player } from "@/types/spotify";
+import { Track } from "@/types/spotify";
 // import { fetchPlaylist } from "@/lib/fetchPlaylist";
-import { fetchNewTrack, fetchNumberTracksPlaylist } from "@/lib/fetchData";
+import { fetchDevices, fetchNewTrack, fetchNumberTracksPlaylist } from "@/lib/fetchData";
 import pauseTrack from "@/lib/pauseTrack";
 import resumeTrack from "@/lib/resumeTrack";
 import playTrack from "@/lib/playTrack";
+import DevicesChoice from "@/components/DevicesChoice";
 
 const GamePage = () => {
-  const [track, setTrack] = useState<any>();
+  const [track, setTrack] = useState<Track>();
   const router = useRouter();
+  const [devices, setDevices] = useState<any>([]);
 
   
   // Permet de récupérer la playlist choisie et de la stocker dans playlist
@@ -25,6 +27,7 @@ const GamePage = () => {
     };
 
     fetchPlaylistData();
+    
   }, [router]);
 
 
@@ -50,6 +53,7 @@ const GamePage = () => {
         Déconnexion
       </button>
       <div>
+      <DevicesChoice/>
           <h1></h1>
           <button 
           className="button" 
