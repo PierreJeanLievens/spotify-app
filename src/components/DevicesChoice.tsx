@@ -47,7 +47,7 @@ export default function DevicesChoice() {
             
         };
 
-        const interval = setInterval(fetchDevicesList, 3000); // Rafraîchir toutes les 5 secondes
+        const interval = setInterval(fetchDevicesList, 5000); // Rafraîchir toutes les 5 secondes
         return () => clearInterval(interval); // Nettoyage de l'intervalle lors du démontage
     }, [router, deviceId]);
 

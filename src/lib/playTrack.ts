@@ -1,7 +1,11 @@
 import { checkToken } from "./checkToken";
 import { fetchFirstDeviceId } from "./fetchData";
 
-// Fonction pour lancer un morceau
+/**
+ * Fonction pour lancer un morceau, la récupération du deviceId est comprise
+ * @param trackUri le lien du titre à lancer
+ * @param router permet la navigation si besoin
+ */
 const playTrack = async (trackUri: string, router: any) => {
     const token = await checkToken(router); 
     // const deviceId = await fetchFirstDeviceId(router);
