@@ -9,6 +9,7 @@ import Loading from "@/components/Loading";
 import { Player } from "@/types/spotify";
 // import { fetchPlaylist } from "@/lib/fetchPlaylist";
 import { fetchPlaylist } from "@/lib/fetchData";
+import ButtonLink from "@/components/ButtonLink";
 
 const GameSetupPage = () => {
   const [playlist, setPlaylist] = useState<any>(null);
@@ -50,6 +51,7 @@ const GameSetupPage = () => {
   return (
     <div className="">
       <h1>Mes Playlists Spotify</h1>
+      <ButtonLink text="Retour" path="/playlist"/>
       <button
         onClick={() => {
           localStorage.removeItem("spotify_access_token");

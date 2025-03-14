@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import styles from "@/app/game-setup/page.module.css";
+import styles from "@/app/game/page.module.css";
 import Loading from "@/components/Loading";
 import { Track } from "@/types/spotify";
 import { fetchNewTrack, fetchPlayerState } from "@/lib/fetchData";
@@ -10,12 +10,12 @@ import pauseTrack from "@/lib/pauseTrack";
 import resumeTrack from "@/lib/resumeTrack";
 import playTrack from "@/lib/playTrack";
 import DevicesChoice from "@/components/DevicesChoice";
+import ButtonLink from "@/components/ButtonLink";
 
 const GamePage = () => {
   const [track, setTrack] = useState<Track | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [stateUpdated, setStateUpdated] = useState<boolean>(false);
-  const [newTrack, setNewTrack] = useState<boolean>(true);
+  const [hasStarted, setHasStarted] = useState<boolean>(false); // Ajout pour gérer "Start"
   const router = useRouter();
 
   // Récupération de la première musique et arrêt automatique
@@ -25,10 +25,9 @@ const GamePage = () => {
         const newTrack = await fetchNewTrack(router);
         setTrack(newTrack);
         const isPlayingFetched = await fetchPlayerState(router);
-        if(isPlaying){
+        if(isPlayingFetched){
           await pauseTrack(router);
         }
-        
       } catch (error) {
         console.error("Erreur lors de l'initialisation :", error);
       }
@@ -36,7 +35,7 @@ const GamePage = () => {
     initGame();
   }, []);
 
-  // Mise à jour de `isPlaying` à chaque `stateUpdated`
+  // Mise à jour de `isPlaying`
   useEffect(() => {
     const updatePlayerState = async () => {
       try {
@@ -47,61 +46,51 @@ const GamePage = () => {
       }
     };
     updatePlayerState();
-  }, [stateUpdated]);
+  }, [isPlaying]);
 
   // Passer à la chanson suivante
   const nextTrack = async () => {
     try {
       const newTrack = await fetchNewTrack(router);
       setTrack(newTrack);
+      setHasStarted(false);
+      setIsPlaying(false);
       const isPlayingFetched = await fetchPlayerState(router);
-      if(isPlayingFetched){
-        await handlePause(); // Met en pause pour éviter de jouer immédiatement
-        setIsPlaying(!isPlayingFetched)
-      }
-      setNewTrack(true);
+        if(isPlayingFetched){
+          await pauseTrack(router);
+        }
     } catch (error) {
       console.error("Erreur lors du passage au titre suivant :", error);
     }
   };
 
-  // Lancer la musique
-  const handlePlay = async () => {
+  // Gestion du bouton Start/Pause/Reprise
+  const handleStartPauseResume = async () => {
+    const isPlayingFetched = await fetchPlayerState(router);
+    if (!hasStarted && !isPlayingFetched) {
+      await playTrack(track?.uri || "", router);
+      setHasStarted(true);
+      setIsPlaying(true);
+    } else {
+      if (isPlayingFetched) {
+        await pauseTrack(router);
+      } else {
+        await resumeTrack(router);
+      }
+      setIsPlaying(!isPlayingFetched);
+    }
+  };
+
+   // Lancer la musique
+   const handlePlay = async () => {
     try {
       if (track) {
         const isPlayingFetched = await fetchPlayerState(router);
         await playTrack(track.uri, router); // Met en pause pour éviter de jouer immédiatement
         setIsPlaying(!isPlayingFetched);
-        setNewTrack(false);
       }
     } catch (error) {
       console.error("Erreur lors du lancement de la lecture :", error);
-    }
-  };
-
-  // Mettre en pause
-  const handlePause = async () => {
-    try {
-      const isPlayingFetched = await fetchPlayerState(router);
-      if(isPlayingFetched){
-        await pauseTrack(router);
-        setIsPlaying(!isPlayingFetched)
-      }
-    } catch (error) {
-      console.error("Erreur lors de la mise en pause :", error);
-    }
-  };
-
-  // Reprendre la lecture
-  const handleResume = async () => {
-    try {
-      const isPlayingFetched = await fetchPlayerState(router);
-      if(!isPlayingFetched){
-        await resumeTrack(router);
-        setIsPlaying(!isPlayingFetched)
-      }
-    } catch (error) {
-      console.error("Erreur lors de la reprise de la lecture :", error);
     }
   };
 
@@ -112,6 +101,7 @@ const GamePage = () => {
   return (
     <div className={styles.gameContainer}>
       <h1>Ma playlist</h1>
+      <ButtonLink text="Retour" path="/game-setup" />
       <button
         onClick={() => {
           localStorage.removeItem("spotify_access_token");
@@ -125,25 +115,23 @@ const GamePage = () => {
 
       <h2>{track.name}</h2>
 
+      {/* Boîte contenant le bouton Start/Pause/Reprise */}
+      <div className={`${styles.full__screen_box} test`}>
+        <button className={`${styles.button__full} button`} onClick={handleStartPauseResume}>
+          {!hasStarted ? "Start" : isPlaying ? "Pause" : "Reprise"}
+        </button>
+      </div>
+
+      {/* Bouton Suivant placé en dehors de la box */}
+      {hasStarted &&
+      <button className="button" onClick={handlePlay}>
+        Relancer
+      </button>
+      }
+      {/* Bouton Suivant placé en dehors de la box */}
       <button className="button" onClick={nextTrack}>
         Suivant
       </button>
-
-      {!isPlaying ? (
-        <button className="button" onClick={handlePlay}>
-          Lancer/Relancer
-        </button>
-      ) : (
-        <button className="button" onClick={handlePause}>
-          Pause
-        </button>
-      )}
-
-      {(!isPlaying && !newTrack) && (
-        <button className="button" onClick={handleResume}>
-          Reprise
-        </button>
-      )}
     </div>
   );
 };
