@@ -3,6 +3,7 @@
 import { fetchDevices } from "@/lib/fetchData";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import styles from "./DevicesChoice.module.css"
 
 export default function DevicesChoice() {
     const router = useRouter();
@@ -62,7 +63,14 @@ export default function DevicesChoice() {
                     </button>
                 ))
             ) : (
-                <p>Aucun appareil trouvé</p>
+                <div className={styles.modal}>
+                    <div className={styles.no_devices_box}>
+                        <p className={`${styles.title} ${styles.bold}`}>Aucun appareil trouvé</p>
+                        <p className={`${styles.content} ${styles.bold}`}>Connecte un de tes appareils à Spotify</p>
+                        <p className={styles.content}>Sur téléphone ou ordinateur : Ouvre l'application Spotify</p>
+                    </div>
+                    
+                </div>
             )}
         </>
     );
