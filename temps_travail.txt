@@ -1,0 +1,8 @@
+Préparation : 
+5h -- Figma: Création des maquetes (choix disposition, choix couleurs)
+5h -- Création du projet NextJS et premiers tests avec l'API Spotifiy (gestion callback, récupérer user, recupérer playlist, lancer un titre)
+2h -- Modification du fichier globals.css (variables css)
+6h -- Création page playlist (backend et design)
+2h -- Design général
+5h -- Création page game-setup (gestion des joueurs et design)
+7h -- Creation page game (gestion des états du player, design)
