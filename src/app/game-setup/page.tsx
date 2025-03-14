@@ -44,7 +44,7 @@ const GameSetupPage = () => {
   }, [router]);
 
   if (!playlist) {
-    return <Loading text="test"/>;
+    return <Loading title="Recherche de ta playlist" text="Attends que ta playlist charge"/>;
   }
 
   return (

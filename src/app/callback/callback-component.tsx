@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Loading from "@/components/Loading";
 
 const CallbackComponent = () => {
   const searchParams = useSearchParams();
@@ -36,7 +37,7 @@ const CallbackComponent = () => {
     fetchAccessToken();
   }, [searchParams, router]);
 
-  return <p>Connexion en cours...</p>;
+  return <Loading title="Connexion en cours "text="Attends pour être connecté"/>;
 };
 
 export default CallbackComponent;

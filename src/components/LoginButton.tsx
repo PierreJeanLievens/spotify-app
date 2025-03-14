@@ -18,7 +18,7 @@ const LoginButton: React.FC = () => {
   };
 
   return (
-    <button onClick={handleLogin} style={{ padding: "10px", fontSize: "16px" }}>
+    <button onClick={handleLogin} className="button">
       Se connecter avec Spotify
     </button>
   );

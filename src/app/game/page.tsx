@@ -38,7 +38,7 @@ const GamePage = () => {
   } 
 
   if (!track) {
-    return <Loading text="test"/>;
+    return <Loading title="Recherche du titre" text="En attente du titre"/>;
   }
 
   return (

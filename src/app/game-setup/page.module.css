@@ -8,6 +8,6 @@
 }
 
 .play__button {
-    background-color: var(--first-color);
+    background-color: var(--primary-color-major);
     width: 100%;
 }

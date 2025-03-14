@@ -184,9 +184,10 @@ export const fetchNewTrack = async (router: any) => {
     return null;
   }
 };
+
+
   /**
- * Récupère un nouveau morceau de la playlist choisie.
- * @param tracksPast Tableau des indices déjà utilisés
+ * Récupère les devices disponibles
  * @param router Pour la redirection en cas d'erreur
  * @returns List des devices ou []
  */
@@ -212,18 +213,19 @@ export const fetchDevices = async (router: any) => {
     }
 
     const data = await response.json();
-    return data.devices || []; // Retourne la list ou `null`
+    return data.devices || []; // Retourne la liste ou `null`
   } catch (error) {
     console.error("Erreur dans fetchDevices:", error);
     router.push("/");
     return null;
   }
 };
+
+
 /**
- * Récupère un nouveau morceau de la playlist choisie.
- * @param tracksPast Tableau des indices déjà utilisés
+ * Récupère l'id du premier device disponible.
  * @param router Pour la redirection en cas d'erreur
- * @returns Données du morceau ou `null`
+ * @returns Id du device ou null
  */
 export const fetchFirstDeviceId = async (router: any) => {
   const token = await checkToken(router);

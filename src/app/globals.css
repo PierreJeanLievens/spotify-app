@@ -4,15 +4,22 @@
   
    /* #########  Colors  #########*/
     /* Color mode HSL(hue, saturation, lightness) */
-    --first-color: hsl(199, 73%, 34%);
+    --primary-color-major: hsl(276 66.4% 29.2%);
+    --primary-color-minor: hsl(269 42.9% 52%);
+    --secondary-color-major: hsl(113 58.3% 14.1%);
+    --secondary-color-minor: hsl(115 64% 27.3%);
+    --tertiary-color-major: hsl(0 0% 25.9%);
+    --tertiary-color-minor: hsl(0 0% 38.8%);
+
     --title-color: hsl(0, 0%, 40%);
     --text-color: hsl(0, 0%, 50%);
     --body-color: hsl(0, 0%, 100%);
     --container-color: hsl(0, 0%, 93%);
     --border-color: hsl(0, 0%, 87%);
-    --text-white: #fff;
-    --background: #ffffff;
-    --foreground: #171717;
+    --text-white: hsl(0 0% 100%);
+    --modal-color: hsla(0 0% 29.4% / 0.63);
+    --background-color: hsl(0 0% 100%);
+    --foreground-color: hsl(0 0% 9.02%);
 
     /* #########  GOOGLE FONTS  #########*/
     --body-font: "Kanit", serif;
@@ -46,8 +53,8 @@
   --body-color: hsl(0, 0%, 7%);
   --container-color: hsl(0, 1%, 17%);
   --border-color: hsl(0, 0%, 15%);
-  --background: #0a0a0a;
-  --foreground: #ededed;
+  --background-color: #0a0a0a;
+  --foreground-color: #ededed;
   }
 }
 
@@ -94,9 +101,9 @@ textarea {
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--text-color);
+  background: var(--background-color);
+  font-family: var(--body-font);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -155,13 +162,14 @@ img {
 }
 
 .section__title span {
-  color: var(--first-color);
+  color: var(--primary-color-major);
 }
 
 .button {
+  cursor: pointer;
   display: inline-block;
   color: var(--title-color);
-  border: 1px solid var(--first-color);
+  border: 1px solid var(--primary-color-major);
   padding: 15px 70px 15px 35px;
   border-radius: 35px;
   font-family: var(--second-font);
@@ -181,7 +189,7 @@ img {
   content: '';
   position: absolute;
   inset: 0;
-  background-color: var(--first-color);
+  background-color: var(--primary-color-major);
   transform: translateX(100%);
   z-index: -1;
   transition: all 0.2s ease-in-out;
@@ -192,7 +200,7 @@ img {
 }
 
 .button__icon {
-  background-color: var(--first-color);
+  background-color: var(--primary-color-major);
   position: absolute;
   inset-block: -2px;
   right: 0;
@@ -206,7 +214,7 @@ img {
 
 .separator {
   height: 100%;
-  background-color: #ccc; /* couleur de la barre */
+  background-color: var(--text-color); /* couleur de la barre */
   width: 3px;
 }
 

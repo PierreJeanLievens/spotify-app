@@ -9,6 +9,6 @@
 
 .separator {
     height: 100%;
-    background-color: #ccc; /* couleur de la barre */
+    background-color: var(--text-color); /* couleur de la barre */
     width: 3px;
 }
