@@ -13,3 +13,12 @@
     padding: 20px;
     /* margin: 20px; */
 }
+.button__play {
+    visibility: visible;
+}
+
+.button__play.hide {
+    visibility: hidden;
+}
+
+

@@ -122,12 +122,11 @@ const GamePage = () => {
         </button>
       </div>
 
-      {/* Bouton Suivant placé en dehors de la box */}
-      {hasStarted &&
-      <button className="button" onClick={handlePlay}>
+      {/* Bouton Relancer placé en dehors de la box */}
+      <button className={`${styles.button__play} ${hasStarted ? "" : styles.hide} button`} onClick={handlePlay}>
         Relancer
       </button>
-      }
+
       {/* Bouton Suivant placé en dehors de la box */}
       <button className="button" onClick={nextTrack}>
         Suivant
