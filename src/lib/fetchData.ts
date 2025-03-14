@@ -133,10 +133,15 @@ const getNewTrackIndex = (total: number): number => {
     return Math.floor(Math.random() * total);
   }
 
+  // On récupère un nouvel index hors de la liste 
   let newIndex: number;
   do {
     newIndex = Math.floor(Math.random() * total);
   } while (tracksPast.includes(newIndex)); // On évite les doublons
+
+  // Ajoute le nouvel index et met à jour le localStorage
+  tracksPast.push(newIndex);
+  localStorage.setItem("list_track_past", JSON.stringify(tracksPast));
 
   return newIndex;
 };
@@ -153,6 +158,7 @@ export const fetchNewTrack = async (router: any) => {
   const token = await checkToken(router);
 
   try {
+    console.log("new track");
     const playlistId = localStorage.getItem("playlist_choosen_id");
     if (!playlistId) {
       router.push("/playlist");

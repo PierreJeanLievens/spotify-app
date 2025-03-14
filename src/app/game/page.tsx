@@ -54,8 +54,11 @@ const GamePage = () => {
     try {
       const newTrack = await fetchNewTrack(router);
       setTrack(newTrack);
-      setStateUpdated((prev) => !prev);
-      await handlePause(); // Met en pause pour éviter de jouer immédiatement
+      const isPlayingFetched = await fetchPlayerState(router);
+      if(isPlayingFetched){
+        await handlePause(); // Met en pause pour éviter de jouer immédiatement
+        setIsPlaying(!isPlayingFetched)
+      }
       setNewTrack(true);
     } catch (error) {
       console.error("Erreur lors du passage au titre suivant :", error);
@@ -66,9 +69,10 @@ const GamePage = () => {
   const handlePlay = async () => {
     try {
       if (track) {
-        await playTrack(track.uri, router);
-        setStateUpdated((prev) => !prev);
-        setNewTrack(false)
+        const isPlayingFetched = await fetchPlayerState(router);
+        await playTrack(track.uri, router); // Met en pause pour éviter de jouer immédiatement
+        setIsPlaying(!isPlayingFetched);
+        setNewTrack(false);
       }
     } catch (error) {
       console.error("Erreur lors du lancement de la lecture :", error);
@@ -78,8 +82,11 @@ const GamePage = () => {
   // Mettre en pause
   const handlePause = async () => {
     try {
-      await pauseTrack(router);
-      setStateUpdated((prev) => !prev);
+      const isPlayingFetched = await fetchPlayerState(router);
+      if(isPlayingFetched){
+        await pauseTrack(router);
+        setIsPlaying(!isPlayingFetched)
+      }
     } catch (error) {
       console.error("Erreur lors de la mise en pause :", error);
     }
@@ -88,8 +95,11 @@ const GamePage = () => {
   // Reprendre la lecture
   const handleResume = async () => {
     try {
-      await resumeTrack(router);
-      setStateUpdated((prev) => !prev);
+      const isPlayingFetched = await fetchPlayerState(router);
+      if(!isPlayingFetched){
+        await resumeTrack(router);
+        setIsPlaying(!isPlayingFetched)
+      }
     } catch (error) {
       console.error("Erreur lors de la reprise de la lecture :", error);
     }
