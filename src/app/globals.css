@@ -20,6 +20,7 @@
     --modal-color: hsla(0 0% 29.4% / 0.63);
     --background-color: hsl(0 0% 100%);
     --foreground-color: hsl(0 0% 9.02%);
+    --transparent-color: hsl(0, 0%, 100% / 0);
 
     /* #########  GOOGLE FONTS  #########*/
     --body-font: "Kanit", serif;

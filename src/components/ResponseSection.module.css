@@ -1,0 +1,58 @@
+
+.modal {
+    top: 0;
+    left: 0;
+    position: fixed;
+    height: 100vh;
+    width: 100vw; 
+    z-index: 100;
+    background-color: var(--transparent-color) ;
+    /* background-color: var(--modal-color) ; */
+    display: flex;
+    transform: translateY(100%);
+    /* opacity: 0.5; */
+    /* transition: 1s linear(0 0%, 0 2.27%, 0.02 4.53%, 0.04 6.8%, 0.06 9.07%, 0.1 11.33%, 0.14 13.6%, 0.25 18.15%, 0.39 22.7%, 0.56 27.25%, 0.77 31.8%, 1 36.35%, 0.89 40.9%, 0.85 43.18%, 0.81 45.45%, 0.79 47.72%, 0.77 50%, 0.75 52.27%, 0.75 54.55%, 0.75 56.82%, 0.77 59.1%, 0.79 61.38%, 0.81 63.65%, 0.85 65.93%, 0.89 68.2%, 1 72.7%, 0.97 74.98%, 0.95 77.25%, 0.94 79.53%, 0.94 81.8%, 0.94 84.08%, 0.95 86.35%, 0.97 88.63%, 1 90.9%, 0.99 93.18%, 0.98 95.45%, 0.99 97.73%, 1 100%) Bounce transition */
+    transition: 1s linear(0 0%, 0 2.27%, 0.02 4.53%, 0.04 6.8%, 0.06 9.07%, 0.1 11.33%, 0.14 13.6%, 0.25 18.15%, 0.39 22.7%, 0.56 27.25%, 0.75 31.8%, 0.9 36.35%, 0.81 40.9%, 0.78 43.18%, 0.75 45.45%, 0.73 47.72%, 0.71 50%, 0.7 52.27%, 0.7 54.55%, 0.7 56.82%, 0.71 59.1%, 0.73 61.38%, 0.75 63.65%, 0.78 65.93%, 0.81 68.2%, 0.9 72.7%, 0.83 78%, 0.81 82%, 0.80 85%, 0.82 90%, 0.86 93%, 0.91 96%, 0.96 99%, 1 100%);
+
+}
+
+.modal.display {
+    /* opacity: 1; */
+    transform: translateY(0);
+    transition: all 0.5s cubic-bezier(0, 0, 0.2, 1);;
+}
+
+.container {
+    position: relative;
+    gap: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    top: 0;
+    height: 90%;
+    max-width: 90%;
+    width: 800px;
+    margin: auto;
+    padding: 30px;
+    color: var(--text-white);
+    border: 10px solid var(--primary-color-minor);
+    border-radius: 30px;
+    background-color: var(--tertiary-color-major);
+}
+
+
+.title{
+    position: absolute;
+    top: 10px;
+}
+.closeButton {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.button__player {
+    z-index: 110;
+}

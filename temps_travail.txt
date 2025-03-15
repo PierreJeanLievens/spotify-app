@@ -6,3 +6,5 @@ Préparation :
 2h -- Design général
 5h -- Création page game-setup (gestion des joueurs et design)
 7h -- Creation page game (gestion des états du player, design)
+1h -- Ajout modal response (juste back et design du modal)
+2h -- Ajout input pour response ()

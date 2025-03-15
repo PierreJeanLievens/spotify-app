@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "@/app/game/page.module.css";
+import stylesResponse from "@/components/ResponseSection.module.css";
 import Loading from "@/components/Loading";
 import { Track } from "@/types/spotify";
 import { fetchNewTrack, fetchPlayerState } from "@/lib/fetchData";
@@ -11,11 +12,13 @@ import resumeTrack from "@/lib/resumeTrack";
 import playTrack from "@/lib/playTrack";
 import DevicesChoice from "@/components/DevicesChoice";
 import ButtonLink from "@/components/ButtonLink";
+import ResponseSection from "@/components/ResponseSection";
 
 const GamePage = () => {
   const [track, setTrack] = useState<Track | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [hasStarted, setHasStarted] = useState<boolean>(false); // Ajout pour gérer "Start"
+  const [isResponseVisible, setIsResponseVisible] = useState<boolean>(false);
   const router = useRouter();
 
   // Récupération de la première musique et arrêt automatique
@@ -74,6 +77,7 @@ const GamePage = () => {
     } else {
       if (isPlayingFetched) {
         await pauseTrack(router);
+        setIsResponseVisible(true); // Affiche le modal
       } else {
         await resumeTrack(router);
       }
@@ -92,6 +96,10 @@ const GamePage = () => {
     } catch (error) {
       console.error("Erreur lors du lancement de la lecture :", error);
     }
+  };
+
+  const closeModal = () => {
+    setIsResponseVisible(false);
   };
 
   if (!track) {
@@ -114,6 +122,7 @@ const GamePage = () => {
       <DevicesChoice />
 
       <h2>{track.name}</h2>
+      <ResponseSection track={track} isVisible={isResponseVisible} onClose={closeModal} />
 
       {/* Boîte contenant le bouton Start/Pause/Reprise */}
       <div className={`${styles.full__screen_box} test`}>
