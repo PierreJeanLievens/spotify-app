@@ -11,3 +11,20 @@
     background-color: var(--primary-color-major);
     width: 100%;
 }
+.separator {
+    height: 90%;
+    background-color: var(--text-color); /* couleur de la barre */
+    width: 3px;
+}
+
+@media screen and (max-width : 480px){
+
+    .container {
+        grid-template-columns: 1fr;
+    }
+
+    .separator {
+        height: 2px;
+        width: 80vw;
+    }
+}

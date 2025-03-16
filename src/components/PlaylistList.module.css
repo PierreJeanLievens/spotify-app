@@ -1,10 +1,28 @@
-.container {
-    
-}
 
 .body {
     display: grid;
     gap: 30px;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     justify-items: center;
+}
+
+@media screen and (max-width : 1024px){
+
+    .body {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media screen and (max-width : 768px){
+
+    .body {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media screen and (max-width : 480px){
+
+    .body {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }

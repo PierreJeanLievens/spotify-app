@@ -12,3 +12,9 @@
     background-color: var(--text-color); /* couleur de la barre */
     width: 3px;
 }
+
+@media screen and (max-width : 768px){
+    .container {
+        grid-template-columns: 1fr;
+    }
+}

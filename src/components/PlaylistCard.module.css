@@ -45,3 +45,11 @@
     justify-content: center;
     background: var(--tertiary-color-major);
   }
+
+  @media screen and (max-width : 480px){
+
+    .image, .no_image {
+      width: 90px;
+      height: 90px;
+    }
+}

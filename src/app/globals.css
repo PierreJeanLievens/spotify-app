@@ -45,6 +45,14 @@
      --weight-600: 600;
      --weight-700: 700;
      --weight-800: 800;
+
+     /* 
+     mobile <= 480px
+     tablet <= 768px
+     tablet-landscape <= 1024px
+     laptop <= 1600px
+     desktop > 1600px
+     */
 }
 
 @media (prefers-color-scheme: dark) {
@@ -66,7 +74,7 @@
 }
 
 /* Responsive */
-@media screen and (max-width:1200px) {
+@media screen and (max-width: 1024px) {
   :root {
      --big-font-size: 36px;
      --h1-font-size: 32px;
@@ -218,6 +226,14 @@ img {
   background-color: var(--text-color); /* couleur de la barre */
   width: 3px;
 }
+@media screen and (max-width : 768px){
+
+  .separator {
+    height: 2px!important;
+    width: 50vw;
+  }
+}
+
 
 .transition * {
   transition: color 0.3s ease-out, background-color 0.3s ease-out, box-shadow 0.3s ease-out;

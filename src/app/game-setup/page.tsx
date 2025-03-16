@@ -62,9 +62,9 @@ const GameSetupPage = () => {
       </button>
       <div>
           <h1></h1>
-          <div className={`${styles.container}`}>
+          <div className={styles.container}>
             <GameSetupPlaylist playlist={playlist} />
-            <div className="separator"></div>
+            <div className={styles.separator}></div>
             <GameSetupPlayers />
           </div>
 

@@ -58,6 +58,7 @@ const GamePage = () => {
       setTrack(newTrack);
       setHasStarted(false);
       setIsPlaying(false);
+      setIsResponseVisible(false);
       const isPlayingFetched = await fetchPlayerState(router);
         if(isPlayingFetched){
           await pauseTrack(router);
@@ -122,7 +123,7 @@ const GamePage = () => {
       <DevicesChoice />
 
       <h2>{track.name}</h2>
-      <ResponseSection track={track} isVisible={isResponseVisible} onClose={closeModal} />
+      <ResponseSection track={track} isVisible={isResponseVisible} onClose={closeModal} nextTrack={nextTrack}/>
 
       {/* Boîte contenant le bouton Start/Pause/Reprise */}
       <div className={`${styles.full__screen_box} test`}>
@@ -130,16 +131,20 @@ const GamePage = () => {
           {!hasStarted ? "Start" : isPlaying ? "Pause" : "Reprise"}
         </button>
       </div>
+      <div
+        className={`${styles.second__part_box}`}
+      >
+        {/* Bouton Relancer placé en dehors de la box */}
+        <button className={`${styles.button__play} ${hasStarted ? "" : styles.hide} button`} onClick={handlePlay}>
+          Relancer
+        </button>
 
-      {/* Bouton Relancer placé en dehors de la box */}
-      <button className={`${styles.button__play} ${hasStarted ? "" : styles.hide} button`} onClick={handlePlay}>
-        Relancer
-      </button>
-
-      {/* Bouton Suivant placé en dehors de la box */}
-      <button className="button" onClick={nextTrack}>
-        Suivant
-      </button>
+        {/* Bouton Suivant placé en dehors de la box */}
+        <button className="button" onClick={nextTrack}>
+          Suivant
+        </button>
+      </div>
+      
     </div>
   );
 };

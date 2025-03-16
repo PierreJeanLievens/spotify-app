@@ -26,8 +26,8 @@ export default function PlaylistList({ playlists }: { playlists: Playlist[] }) {
   }, [playlistChoosenId]);
 
   return (
-    <div className={`${styles.container}`}>
-        <ul className={`${styles.body}`}>
+    <>
+        <ul className={styles.body}>
         {playlists.map((playlist) => (
             <PlaylistCard
             key={playlist.id}
@@ -38,13 +38,12 @@ export default function PlaylistList({ playlists }: { playlists: Playlist[] }) {
                 setPlaylistChoosenId((prevId) =>
                   prevId === playlist.id ? null : playlist.id
                 );
-                // Redirige vers une autre page en passant l'ID en query
                 router.push(`/game-setup`);
               }}
 
             />
         ))}
         </ul>
-    </div>
+    </>
   );
 }

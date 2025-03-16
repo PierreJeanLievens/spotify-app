@@ -4,9 +4,11 @@ import { Playlist } from "@/types/spotify";
 
 export default function GameSetupPlaylist({ playlist }: { playlist: Playlist }) {
   return (
-    <div>
-      <h2>Ma playlist</h2>
-      <p>{playlist.name}</p>
+    <div className={styles.container}>
+      <div>
+        <h2>Ma playlist</h2>
+        <p>{playlist.name}</p>
+      </div>
       {playlist.images?.length > 0 ? (
           <img className={styles.image} src={playlist.images[0].url} alt={playlist.name} />
         ) : (

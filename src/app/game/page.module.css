@@ -21,4 +21,9 @@
     visibility: hidden;
 }
 
+.second__part_box {
+    display: flex;
+    justify-content: space-between;
+}
+
 

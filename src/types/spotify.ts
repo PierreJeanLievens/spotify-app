@@ -44,7 +44,7 @@ export type Track = {
   uri: string;
   name: string,
   score: number
-  artist: {
+  artists: {
     name: string;
   }[];
 }
