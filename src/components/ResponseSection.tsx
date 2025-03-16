@@ -119,11 +119,11 @@ export default function ResponseSection({ track, isVisible, onClose, nextTrack }
 
                 <div className={styles.container__inputs}>
                     <div className={styles.row}>
-                        <label htmlFor="track_name_input">Titre : </label>
+                        <label className={styles.label} htmlFor="track_name_input">Titre : </label>
                         <input ref={inputTrackRef} className={styles.input} id="track_name_input" value={inputTrack ?? ""} placeholder="Titre" type="text" onChange={(e) => handleInputTrackChange(e)}/>
                     </div>
                     <div className={styles.row}>
-                        <label htmlFor="artist_name_input">Artiste(s) : </label>
+                        <label className={styles.label} htmlFor="artist_name_input">Artiste(s) : </label>
                         <input ref={inputArtistRef} className={styles.input} id="artist_name_input" value={inputArtist ?? ""} placeholder="Artiste" type="text" onChange={(e) => handleInputArtistChange(e)}/>
                     </div>
                 </div>

@@ -74,9 +74,10 @@
     display: grid;
     grid-template-columns: 0.5fr 1fr;
 
-    label {
-        align-content: center;
-    }
+    
+}
+.label {
+    align-content: center;
 }
 
 .confirm__button {
