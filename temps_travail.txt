@@ -8,3 +8,5 @@ Préparation :
 7h -- Creation page game (gestion des états du player, design)
 1h -- Ajout modal response (juste back et design du modal)
 2h -- Ajout input pour response ()
+3h -- Responsive et gestion des réponses (correct, incorrect etc...
+)

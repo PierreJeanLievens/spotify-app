@@ -41,7 +41,7 @@
     border-radius: 30px;
     background-color: var(--tertiary-color-major);
 
-    button {
+    :global(button) {
         z-index: 110;
         background-color: var(--tertiary-color-minor);
     }
