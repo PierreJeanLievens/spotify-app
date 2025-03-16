@@ -40,11 +40,6 @@
     border: 10px solid var(--primary-color-minor);
     border-radius: 30px;
     background-color: var(--tertiary-color-major);
-
-    :global(button) {
-        z-index: 110;
-        background-color: var(--tertiary-color-minor);
-    }
 }
 
 
@@ -88,6 +83,11 @@
     width: 100%;
     padding: 15px!important;
     max-width: 600px;
+}
+
+.confirm__button, .button__player, .closeButton {
+    z-index: 110;
+    background-color: var(--tertiary-color-minor);
 }
 
 .input {
