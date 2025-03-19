@@ -3,21 +3,17 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import PlaylistList from "@/components/PlaylistList";
-import styles from "@/app/playlist/page.module.css"
-import { checkToken } from "@/lib/checkToken";
+import styles from "@/app/playlist/page.module.css";
 
 const PlaylistPage = () => {
   const [playlists, setPlaylists] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
     const fetchPlaylists = async () => {
-    const token = await checkToken(router);
-
       try {
-        const response = await fetch("https://api.spotify.com/v1/me/playlists", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await fetch("/api/playlists");
 
         if (!response.ok) {
           throw new Error("Échec de récupération des playlists");
@@ -28,40 +24,40 @@ const PlaylistPage = () => {
       } catch (error) {
         console.error(error);
         router.push("/");
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchPlaylists();
   }, [router]);
 
-  console.log(playlists)
-  if (!playlists.length) {
+  if (loading) {
     return <p>Chargement des playlists...</p>;
   }
 
   return (
-    <div className="">
+    <div>
       <h1>Mes Playlists Spotify</h1>
       <button
         onClick={() => {
-          localStorage.removeItem("spotify_access_token");
+          document.cookie = "spotify_access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
           router.push("/");
         }}
       >
         Déconnexion
       </button>
-      <div className={`${styles.container} playlists`} >
+      <div className={`${styles.container} playlists`}>
         <div>
           <h1>Mes playlists</h1>
-         <PlaylistList playlists={playlists} />
+          <PlaylistList playlists={playlists} />
         </div>
-          <div>
-            <div className="separator">
-          </div>
+        <div>
+          <div className="separator"></div>
         </div>
         <div>
           <h1>Playlist publiques</h1>
-         <PlaylistList playlists={playlists} />
+          <PlaylistList playlists={playlists} />
         </div>
       </div>
     </div>
