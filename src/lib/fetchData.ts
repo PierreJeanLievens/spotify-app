@@ -26,38 +26,18 @@ export const fetchPlaylist = async (playlistId: string) => {
  * @param router permet de rediriger le path si besoin
  * @returns 
  */
-export const fetchTracksPlaylist = async (router: any) => {
-    const token = await checkToken(router);
-  
-    try {
-      const playlistId = localStorage.getItem("playlist_choosen_id");
-      if (!playlistId) {
-        router.push("/playlist");
-        return;
-      }
-  
-      const response = await fetch(
-        `https://api.spotify.com/v1/playlists/${playlistId}/tracks?fields=items(track(album(name,release_date,release_date_precision,images),artists(name),name,uri,id,href,popularity))total`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-  
-      if (!response.ok) {
-        throw new Error("Échec de récupération des titres de la playlist");
-      }
-  
-      const data = await response.json();
-      if(data){
-        return data;
-      }else{
-        return null;
-      }
-    } catch (error) {
-      console.error(error);
-      router.push("/");
+export const fetchTracksPlaylist = async (playlistId: string) => {
+  try {
+    const response = await fetch(`/api/spotify-fetcher/get-tracks-playlist/${playlistId}`);
+    if (!response.ok) {
+      throw new Error("Échec de récupération des titres de la playlist");
     }
-  };
+    return await response.json();
+  } catch (error) {
+    console.error("Erreur lors de la récupération des titres de la playlist :", error);
+    return null;
+  }
+};
 
 
 /**
