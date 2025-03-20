@@ -8,24 +8,24 @@ import { cookies } from "next/headers";
  */
 export async function GET(
     req: Request,
-    context: { params: { id: string } }
+    { params} : { params: Promise<{ id : string}>}
   ) {
     try {
     //   const url = new URL(req.url);
       // Attente asynchrone de params
-      const { id: playlistId } = await context.params;
+      const { id } = await params;
   
       const token = (await cookies()).get("spotify_access_token")?.value;
       if (!token) {
         return NextResponse.json({ error: "Utilisateur non authentifié" }, { status: 401 });
       }
   
-      if (!playlistId) {
+      if (!id) {
         return NextResponse.json({ error: "ID de playlist manquant" }, { status: 400 });
       }
   
       const response = await fetch(
-        `https://api.spotify.com/v1/playlists/${playlistId}?fields=collaborative,description,external_urls,href,id,images,name,owner(display_name)`,
+        `https://api.spotify.com/v1/playlists/${id}?fields=collaborative,description,external_urls,href,id,images,name,owner(display_name)`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
