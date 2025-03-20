@@ -13,7 +13,7 @@ const PlaylistPage = () => {
   useEffect(() => {
     const fetchPlaylists = async () => {
       try {
-        const response = await fetch("/api/playlists");
+        const response = await fetch("/api/spotify-fetcher/get-playlists");
 
         if (!response.ok) {
           throw new Error("Échec de récupération des playlists");

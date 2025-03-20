@@ -10,3 +10,7 @@ Préparation :
 2h -- Ajout input pour response ()
 3h -- Responsive et gestion des réponses (correct, incorrect etc...
 )
+3h -- Documentations autour des websockets
+1h -- Changement pour la logique de callback 
+        (avant :  / -> Connection Spotify -> /callback?code=... (client) -> callback-components -> /api/auth (serveur) -> spotify.com/api/token -> stocke token (côté client) -> /playlist )
+        (maintenant :  / -> Connection Spotify -> /api/callback?code=... (serveur) -> spotify.com/api/token -> stocke token -> /playlist )

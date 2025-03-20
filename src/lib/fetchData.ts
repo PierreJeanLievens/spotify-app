@@ -3,41 +3,22 @@ import { checkToken } from "@/lib/checkToken";
 
 /**
  * Cette fonction permet de récupérer la playlist choisie,
- * @param router permet de rediriger le path si besoin
+ * @param playlistId permet de recuperer l'id
  * @returns 
  */
-export const fetchPlaylist = async (router: any) => {
-  const token = await checkToken(router);
-
+export const fetchPlaylist = async (playlistId: string) => {
   try {
-    const playlistId = localStorage.getItem("playlist_choosen_id");
-    if (!playlistId) {
-      router.push("/playlist");
-      return;
-    }
-
-    const response = await fetch(
-      `https://api.spotify.com/v1/playlists/${playlistId}?fields=collaborative%2Cdescription%2Cexternal_urls%2Chref%2Cid%2Cimages%2Cname%2Cowner%28display_name`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-
+    const response = await fetch(`/api/spotify-fetcher/get-playlist/${playlistId}`);
     if (!response.ok) {
       throw new Error("Échec de récupération de la playlist");
     }
-
-    const data = await response.json();
-    if(data){
-      return data;
-    }else{
-      return null;
-    }
+    return await response.json();
   } catch (error) {
-    console.error(error);
-    router.push("/");
+    console.error("Erreur lors de la récupération de la playlist :", error);
+    return null;
   }
 };
+
 
 
 /**

@@ -38,11 +38,17 @@ const GameSetupPage = () => {
   // Permet de récupérer la playlist choisie et de la stocker dans playlist
   useEffect(() => {
     const fetchData = async () => {
-      const data = await fetchPlaylist(router);
+      const playlistId = localStorage.getItem("playlist_choosen_id");
+      if (!playlistId) {
+        router.push("/playlist");
+        return;
+      }
+      
+      const data = await fetchPlaylist(playlistId);
       setPlaylist(data);
     };
     fetchData();
-  }, [router]);
+  }, []);
 
   if (!playlist) {
     return <Loading title="Recherche de ta playlist" text="Attends que ta playlist charge"/>;
