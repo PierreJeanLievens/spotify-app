@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { ably } from "@/lib/ably";
+import { joinRoom } from "@/lib/gameRoom";
 
 export default function RoomPage() {
   const { roomId } = useParams();
@@ -15,8 +16,13 @@ export default function RoomPage() {
 
   // Obtenir le clientId dès que Ably est connecté
   useEffect(() => {
-    console.log("Client ID reçu :", ably.auth.clientId);
-    setClientId(ably.auth.clientId);
+    const safeRoomId = Array.isArray(roomId) ? roomId[0] : roomId; // Prendre le premier élément si roomId est un tableau
+    if (safeRoomId) {
+      const newChannel = joinRoom(safeRoomId);
+      console.log("Client ID reçu :", ably.auth.clientId);
+      setClientId(ably.auth.clientId);
+      setChannel(newChannel);
+    }
   }, []);
 
   // Initialiser le channel une fois que clientId est défini
