@@ -2,56 +2,32 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { ably } from "@/lib/ably";
-import { joinRoom } from "@/lib/gameRoom";
+import { useAbly } from "@/lib/ablyContext";
+import playTrack from "@/lib/playTrack";
 
 export default function RoomPage() {
   const { roomId } = useParams();
-  const [clientId, setClientId] = useState<string | null>(null);
-  const [channel, setChannel] = useState<any>(null);
+  const ably = useAbly(); // Récupère Ably du contexte
   const [track, setTrack] = useState<any>(null);
   const [isAnswerPhase, setIsAnswerPhase] = useState(false);
   const [messages, setMessages] = useState<string[]>([]);
   const [isManager, setIsManager] = useState(false);
 
-  // Obtenir le clientId dès que Ably est connecté
+  
   useEffect(() => {
-    const safeRoomId = Array.isArray(roomId) ? roomId[0] : roomId; // Prendre le premier élément si roomId est un tableau
-    if (safeRoomId) {
-      const newChannel = joinRoom(safeRoomId);
-      console.log("Client ID reçu :", ably.auth.clientId);
-      setClientId(ably.auth.clientId);
-      setChannel(newChannel);
-    }
-  }, []);
+    if (!ably) return; // Attendre que Ably soit chargé
 
-  // Initialiser le channel une fois que clientId est défini
-  useEffect(() => {
-    if (!clientId){
-      console.log("Return car pas de clientID")
-      return;
-    } 
-
-    console.log("Initialisation du channel pour", roomId);
-    const newChannel = ably.channels.get(`blindtest:${roomId}`);
-    setChannel(newChannel);
-  }, [clientId, roomId]);
-
-  // Écouter les événements WebSocket une fois que le channel est prêt
-  useEffect(() => {
-    if (!clientId || !channel) return;
-
-    console.log("🔗 Inscription aux événements pour", roomId);
+    const channel = ably.channels.get(`blindtest:${roomId}`);
 
     // Fonction asynchrone pour récupérer l'historique des messages (notamment le room-manager)
     const fetchHistory = async () => {
       try {
         const history = await channel.history();
-        console.warn(history);
+        // console.log(history);
         history.items.forEach((message: any) => {
           if (message.name === "room-manager") {
-            console.log("📜 Message room-manager récupéré :", message.data);
-            setIsManager(message.data === clientId);
+            // console.log("📜 Message room-manager récupéré :", message.clientId);
+            setIsManager(message.clientId === ably.auth.clientId);
           }
         });
       } catch (err) {
@@ -61,34 +37,34 @@ export default function RoomPage() {
 
     fetchHistory(); // Appel de la fonction asynchrone
 
-    // Inscription aux événements en temps réel
-    channel.subscribe("new-track", (message: any) => {
+    // Écouter les nouveaux morceaux
+    channel.subscribe("new-track", (message) => {
       setTrack(message.data);
       setIsAnswerPhase(true);
     });
 
-    channel.subscribe("answer", (message: any) => {
-      console.log("📩 Réponse reçue :", message.data);
+    // Écouter les réponses des joueurs
+    channel.subscribe("answer", (message) => {
+      console.log(channel)
       setMessages((prev) => [...prev, message.data]);
     });
 
     return () => {
-      console.log("❌ Désinscription des événements pour", roomId);
       channel.unsubscribe();
     };
-  }, [clientId, channel]);
-
+  }, [ably, roomId]);
 
   const startTrack = async () => {
-    if (!isManager || !channel) return;
+    if (!isManager || !ably) return;
+
     const newTrack = { uri: "spotify:track:xxxxxx" };
     setTrack(newTrack);
-    channel.publish("new-track", newTrack);
+    ably.channels.get(`blindtest:${roomId}`).publish("new-track", newTrack);
   };
 
   const sendAnswer = (answer: string) => {
-    if (!channel) return;
-    channel.publish("answer", answer);
+    if (!ably) return;
+    ably.channels.get(`blindtest:${roomId}`).publish("answer", answer);
   };
 
   return (
