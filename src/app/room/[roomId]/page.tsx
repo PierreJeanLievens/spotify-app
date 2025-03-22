@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { useAbly } from "@/lib/ablyContext";
-import playTrack from "@/lib/playTrack";
 
 export default function RoomPage() {
   const { roomId } = useParams();

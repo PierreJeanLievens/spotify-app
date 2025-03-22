@@ -1,53 +1,125 @@
 "use client";
 
 import { useState } from "react";
+import Ably from "ably";
 import { useRouter } from "next/navigation";
 import { useAbly } from "@/lib/ablyContext"; // Importation du contexte Ably
 
 export default function GameRoom() {
   const [roomId, setRoomId] = useState("");
+  const [clientName, setClientName] = useState("");
   const router = useRouter();
   const ably = useAbly(); // Récupère Ably depuis le contexte
 
+  /**
+   * Création d'une room, on vérifie que :
+   * La connexion soit faite
+   * Le nom donné ne soit pas vide
+   * @returns 
+   */
   const handleCreateRoom = () => {
     if(!ably){
       alert("Pas de connection ably");
       return;
     }
-      const newRoomId = Math.random().toString(36).substr(2, 6); // Génère un ID unique
-    
-      const channel = ably.channels.get(`blindtest:${newRoomId}`);
-      channel.publish("room-manager", { roomId: newRoomId });
 
-      router.push(`/room/${newRoomId}`);
-    
-    
+    if (!clientName.trim()) {
+      alert("Veuillez entrer un nom");
+      return false;
+    }
+      const newRoomId = Math.random().toString(36).substr(2, 6); // Génère un ID unique
+
+      const cliendId = ably.auth.clientId;
+      const channel = ably.channels.get(`blindtest:${newRoomId}`);
+
+      // Ajout pour retrouver le gérant du salon en cas de refresh
+      channel.publish("room-manager", { roomId: newRoomId });
+      
+      // Ajout de l'user dans la liste des participant
+      channel.publish("user-list", { cliendId : cliendId, clientName : clientName });
+      sessionStorage.setItem("clientName", clientName);
+
+      router.push(`/room/${newRoomId}`);    
   };
 
-  const handleJoinRoom = () => {
+  /**
+   * Permet de vérifier si le nom donné existe déjà dans ce salon 
+   * @param ably Objet de connection Ably
+   * @param roomId Id du salon
+   * @param name Nom voulu
+   * @returns boolean (true si le nom n'existe pas, false si le nom existe déjà)
+   */
+  const checkNameClient = async (ably: Ably.Realtime, roomId: string, name: string): Promise<boolean> => {
+    if (!ably) {
+      alert("Pas de connexion à Ably");
+      return false;
+    }
+  
+    const channel = ably.channels.get(`blindtest:${roomId}`);
+  
+    try {
+      const history = await channel.history();
+      
+      // Vérifie si le nom existe déjà dans l'historique
+      const nameExists = history.items.some((message: any) => {
+        return message.name === "user-list" && message.data?.clientName?.toLowerCase() === name.toLowerCase();
+      });
+  
+      if (nameExists) {
+        alert("Nom déjà utilisé");
+        return false;
+      }
+    } catch (err) {
+      console.error("❌ Erreur lors de la récupération de l'historique :", err);
+      return false;
+    }
+  
+    return true;
+  };
+  
+  /**
+   * Lorsque l'on veut rejoindre le salon, on verifie que :
+   * La connexion ably soit faite
+   * L'id du salon choisi n'est pas vide
+   * Le nom n'est pas vide et qu'il n'existe pas déjà
+   * @returns 
+   */
+  const handleJoinRoom = async () => {
+    if (!ably) {
+      alert("Pas de connexion à Ably");
+      return;
+    }
+    if (!clientName.trim()) {
+      alert("Veuillez entrer un nom");
+      return;
+    }
     if (!roomId.trim()) {
       alert("Veuillez entrer un ID de salon valide !");
       return;
-    }
-    if(!ably){
-      alert("Pas de connection ably");
-      return;
-    }
+    }    
 
-    // const channel = ably.channels.get(`blindtest:${roomId}`);
-    // channel.publish("room-joined", { roomId });
+    const clientId = ably.auth.clientId;
+    const channel = ably.channels.get(`blindtest:${roomId}`);
 
-    router.push(`/room/${roomId}`);
+    // Attendre le résultat de checkNameClient avant de continuer
+    const isNameValid = await checkNameClient(ably, roomId, clientName);
+    
+    // Si le nom n'existe pas, on l'ajoute dans le salon et on attend
+    if (isNameValid) {
+      channel.publish("user-list", { clientId, clientName });
+      sessionStorage.setItem("clientName", clientName);
+      router.push(`/room/${roomId}`);
+    }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <h1 className="text-2xl font-bold mb-4">Blind Test</h1>
+    <div >
+      <h1>Blind Test</h1>
 
       {/* Bouton de création de salon */}
       <button
         onClick={handleCreateRoom}
-        className="bg-blue-500 text-white px-4 py-2 rounded-md mb-4 hover:bg-blue-600"
+        className="button"
       >
         Créer un salon
       </button>
@@ -58,13 +130,20 @@ export default function GameRoom() {
         placeholder="ID du salon"
         value={roomId}
         onChange={(e) => setRoomId(e.target.value)}
-        className="border border-gray-300 px-4 py-2 rounded-md mb-2"
+      />
+
+      {/* Champ pour entrer le nom de l'user */}
+      <input
+        type="text"
+        placeholder="Nom"
+        value={clientName}
+        onChange={(e) => setClientName(e.target.value)}
       />
 
       {/* Bouton pour rejoindre un salon */}
       <button
         onClick={handleJoinRoom}
-        className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
+        className="button"
       >
         Rejoindre
       </button>
