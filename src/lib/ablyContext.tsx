@@ -15,16 +15,14 @@ export const AblyProvider = ({ children }: { children: React.ReactNode }) => {
     let client
     if(clientId != null){
         // Initialisation de Ably
-        console.log("COnnection avec Id")
+        console.log("Connection Ably avec Id : ", clientId)
         client = new Ably.Realtime({ authUrl: `/api/socket/${clientId}` });
-        console.warn(client);
     }else{
         // Initialisation de Ably
-        console.log("COnnection sans Id")
+        console.log("Connection Ably sans Id")
         client = new Ably.Realtime({ authUrl: "/api/socket" });
     }
   
-    
     setAbly(client);
 
     // Écouter les événements de connexion

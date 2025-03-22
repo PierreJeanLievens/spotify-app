@@ -7,7 +7,7 @@ export default function Home() {
       <h1>Bienvenue sur Spotify App 🎵</h1>
       <LoginButton />
       <Link href="/room">
-        <button>Room</button>
+        <button className="button">Room</button>
       </Link>
     </main>
   );

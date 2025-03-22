@@ -14,44 +14,53 @@ export default function RoomPage() {
 
   
   useEffect(() => {
-    if (!ably) return; // Attendre que Ably soit chargé
-
-    const channel = ably.channels.get(`blindtest:${roomId}`);
-
-    // Fonction asynchrone pour récupérer l'historique des messages (notamment le room-manager)
-    const fetchHistory = async () => {
-      try {
-        const history = await channel.history();
-        // console.log(history);
-        history.items.forEach((message: any) => {
-          if (message.name === "room-manager") {
-            // console.log("📜 Message room-manager récupéré :", message.clientId);
-            setIsManager(message.clientId === ably.auth.clientId);
+    if (!ably) return;
+    // Execution tant que ably.auth.clientId n'est pas disponible
+    const checkClientId = setInterval(() => {
+      if (ably.auth.clientId) {
+        // console.log("📢 clientId détecté :", ably.auth.clientId);
+        clearInterval(checkClientId); // Arrêter l'intervalle une fois clientId défini
+  
+        // Exécution du code principal après récupération du clientId
+        const channel = ably.channels.get(`blindtest:${roomId}`);
+  
+        const fetchHistory = async () => {
+          try {
+            const history = await channel.history();
+            
+            history.items.forEach((message: any) => {
+              if (message.name === "room-manager") {
+                // console.log("📜 Message room-manager récupéré :", message.clientId);
+                // console.log("📜 Comparaison client :", ably.auth.clientId);
+  
+                setIsManager(message.clientId === ably.auth.clientId);
+              }
+            });
+          } catch (err) {
+            console.error("❌ Erreur lors de la récupération de l'historique :", err);
           }
+        };
+  
+        fetchHistory();
+  
+        channel.subscribe("new-track", (message) => {
+          setTrack(message.data);
+          setIsAnswerPhase(true);
         });
-      } catch (err) {
-        console.error("❌ Erreur lors de la récupération de l'historique :", err);
+  
+        channel.subscribe("answer", (message) => {
+          setMessages((prev) => [...prev, message.data]);
+        });
+  
+        return () => {
+          channel.unsubscribe();
+        };
       }
-    };
-
-    fetchHistory(); // Appel de la fonction asynchrone
-
-    // Écouter les nouveaux morceaux
-    channel.subscribe("new-track", (message) => {
-      setTrack(message.data);
-      setIsAnswerPhase(true);
-    });
-
-    // Écouter les réponses des joueurs
-    channel.subscribe("answer", (message) => {
-      console.log(channel)
-      setMessages((prev) => [...prev, message.data]);
-    });
-
-    return () => {
-      channel.unsubscribe();
-    };
+    }, 100); // Vérifie toutes les 100ms
+  
+    return () => clearInterval(checkClientId); // Nettoyer l'intervalle au démontage
   }, [ably, roomId]);
+  
 
   const startTrack = async () => {
     if (!isManager || !ably) return;
