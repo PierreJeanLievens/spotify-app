@@ -14,3 +14,4 @@ Préparation :
 1h -- Changement pour la logique de callback 
         (avant :  / -> Connection Spotify -> /callback?code=... (client) -> callback-components -> /api/auth (serveur) -> spotify.com/api/token -> stocke token (côté client) -> /playlist )
         (maintenant :  / -> Connection Spotify -> /api/callback?code=... (serveur) -> spotify.com/api/token -> stocke token -> /playlist )
+4h -- Tests sur websocket avec Ably
