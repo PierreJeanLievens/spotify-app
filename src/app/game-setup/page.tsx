@@ -5,8 +5,6 @@ import { useRouter } from "next/navigation";
 import GameSetupPlaylist from "@/components/GameSetupPlaylist"
 import styles from "@/app/game-setup/page.module.css"
 import Loading from "@/components/Loading";
-import { Player } from "@/types/spotify";
-// import { fetchPlaylist } from "@/lib/fetchPlaylist";
 import { fetchPlaylist } from "@/lib/fetchData";
 import ButtonLink from "@/components/ButtonLink";
 import { useAbly } from "@/lib/ablyContext";
