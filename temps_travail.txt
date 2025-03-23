@@ -19,6 +19,6 @@ Préparation :
 1h -- Ajout page join-room/[roomId] pour rejoindre une room (avec lien)
 2h -- Debug pour que lors d'un refresh le gerant reste gérant
 2h -- Ajout affichage des joueurs dans le salon en preparation, redirection lors du demarrage 
-
+3h -- Debug et changement de la fonction fetchNewTrack -> vers api/get-new-track/[id]/[index]
  A FAIRE : 
  Faire en sorte que lors de la récupération des joueurs, on check l'id pour evite 2 joueurs avec 1 seul client
