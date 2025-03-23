@@ -20,11 +20,10 @@ export const fetchPlaylist = async (playlistId: string) => {
 };
 
 
-
 /**
  * Cette fonction permet de récupérer les titres de la playlist choisie,
- * @param router permet de rediriger le path si besoin
- * @returns 
+ * @param playlistId l'id de la playlist
+ * @returns une liste de tracks
  */
 export const fetchTracksPlaylist = async (playlistId: string) => {
   try {
@@ -42,115 +41,87 @@ export const fetchTracksPlaylist = async (playlistId: string) => {
 
 /**
  * Cette fonction permet de récupérer le nombre de titres de la playlist choisie,
- * @param router permet de rediriger le path si besoin
+ * @param playlistId l'id de la playlist
  * @returns le nombre de tracks dans la playlist choisie
  */
-export const fetchNumberTracksPlaylist = async (router: any) => {
-    const token = await checkToken(router);
-  
-    try {
-      const playlistId = localStorage.getItem("playlist_choosen_id");
-      if (!playlistId) {
-        router.push("/playlist");
-        return;
-      }
-  
-      const response = await fetch(
-        `https://api.spotify.com/v1/playlists/${playlistId}?fields=tracks%28total%29`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-  
-      if (!response.ok) {
-        throw new Error("Échec de récupération du nombre de titre dans la playlist");
-      }
-  
-      const data = await response.json();
-      if(data.tracks.total){
-        return data.tracks.total;
-      }else{
-        return null;
-      }
-    } catch (error) {
-      console.error(error);
-      router.push("/");
+export const fetchNumberTracksPlaylist = async (playlistId: string): Promise<number | null> => {
+  try {
+    const response = await fetch(`/api/spotify-fetcher/get-number-tracks-playlist/${playlistId}`);
+    if (!response.ok) {
+      throw new Error("Échec de récupération des titres de la playlist");
     }
-  };
+    return await response.json();
+  } catch (error) {
+    console.error("Erreur lors de la récupération des titres de la playlist :", error);
+    return null;
+  }
+};
 
 
 /**
  * Récupère un nouvel index de track qui n'est pas dans `tracksPast`
- * @param total Nombre total de tracks dans la playlist
- * @param tracksPast Liste des indices déjà utilisés
- * @returns Un index de track non utilisé
+ * et met à jour `localStorage`.
+ * @param playlistId ID de la playlist pour récupérer le nombre total de tracks
+ * @returns Un index de track non utilisé, ou `null` en cas d'erreur
  */
-const getNewTrackIndex = (total: number): number => {
-  const tracksPast: number[] = JSON.parse(localStorage.getItem("list_track_past") || "[]");
+const getNewTrackIndex = async (playlistId: string): Promise<number | null> => {
+  try {
+    const total: number | null = await fetchNumberTracksPlaylist(playlistId);
 
-  // Si tous les indices ont été utilisés, on réinitialise la liste
-  if (tracksPast.length >= total) {
-    localStorage.setItem("list_track_past", JSON.stringify([]));
-    return Math.floor(Math.random() * total);
+    if (!total) return null;
+    let tracksPast: number[] = JSON.parse(localStorage.getItem("list_track_past") || "[]");
+
+    // Si `tracksPast` n'existe pas ou est un tableau vide, ou s'il a déjà utilisé tous les titres
+    if (!Array.isArray(tracksPast) || tracksPast.length >= total) {
+      tracksPast = []; // Réinitialisation
+    }
+
+    // Obtenir un nouvel index unique
+    let newIndex: number;
+    do {
+      newIndex = Math.floor(Math.random() * total);
+    } while (tracksPast.includes(newIndex));
+
+    // Mettre à jour `localStorage`
+    tracksPast.push(newIndex);
+    localStorage.setItem("list_track_past", JSON.stringify(tracksPast));
+
+    return newIndex;
+  } catch (error) {
+    console.error("Erreur dans getNewTrackIndex :", error);
+    return null;
   }
-
-  // On récupère un nouvel index hors de la liste 
-  let newIndex: number;
-  do {
-    newIndex = Math.floor(Math.random() * total);
-  } while (tracksPast.includes(newIndex)); // On évite les doublons
-
-  // Ajoute le nouvel index et met à jour le localStorage
-  tracksPast.push(newIndex);
-  localStorage.setItem("list_track_past", JSON.stringify(tracksPast));
-
-  return newIndex;
 };
 
 
 
 /**
  * Récupère un nouveau morceau de la playlist choisie.
- * @param tracksPast Tableau des indices déjà utilisés
- * @param router Pour la redirection en cas d'erreur
- * @returns Données du morceau ou `null`
+ * @param playlistId L'ID de la playlist
+ * @param tracksPast Liste des indices déjà utilisés
+ * @returns Données du morceau avec l'index utilisé ou `null`
  */
-export const fetchNewTrack = async (router: any) => {
-  const token = await checkToken(router);
-
+export const fetchNewTrack = async (playlistId: string) => {
   try {
-    console.log("new track");
-    const playlistId = localStorage.getItem("playlist_choosen_id");
-    if (!playlistId) {
-      router.push("/playlist");
+    // ⚠️ Correction : Ajout de `await` pour attendre l'index
+    const offset : number | null = await getNewTrackIndex(playlistId);
+    if (offset === null) {
       return null;
     }
 
-    const total = await fetchNumberTracksPlaylist(router);
-    if (!total) return null;
-
-    // Obtenir un nouvel index qui n'est pas dans `tracksPast`
-    const offset = getNewTrackIndex(total);
-
-    const response = await fetch(
-      `https://api.spotify.com/v1/playlists/${playlistId}/tracks?fields=items(track(album(name,release_date,release_date_precision,images),artists(name),name,uri,id,href,popularity))&limit=1&offset=${offset}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
+    const response = await fetch(`/api/spotify-fetcher/get-new-track/${playlistId}/${offset}`);
 
     if (!response.ok) {
       throw new Error("Échec de récupération du morceau de la playlist");
     }
 
-    const data = await response.json();
-    return data.items?.[0]?.track || null; // Retourne le morceau ou `null`
+    return await response.json();
   } catch (error) {
     console.error("Erreur dans fetchNewTrack:", error);
-    router.push("/");
     return null;
   }
 };
+
 
 
   /**

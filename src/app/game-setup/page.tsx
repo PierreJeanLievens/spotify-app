@@ -42,9 +42,8 @@ const GameSetupPage = () => {
       // Ajout de l'user dans la liste des participant
       channel.publish("user-list", { cliendId : cliendId, clientName : clientName });
       sessionStorage.setItem("clientName", clientName);
-      console.log("redirection")
+      localStorage.removeItem("list_track_past");
       router.push(`/game-setup/${newRoomId}`);  
-      console.log("redirection")  
   };
   
   
