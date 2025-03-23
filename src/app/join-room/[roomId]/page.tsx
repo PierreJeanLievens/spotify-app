@@ -77,7 +77,7 @@ export default function GameRoom() {
     if (isNameValid) {
       channel.publish("user-list", { clientId, clientName });
       sessionStorage.setItem("clientName", clientName);
-      router.push(`/room/${roomId}`);
+      router.push(`/waiting-room/${roomId}`);
     }
   };
 

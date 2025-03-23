@@ -47,7 +47,7 @@ const ProfilePage = () => {
       <p>ID: {profile.id}</p>
       <p>Spotify: <a href={profile.external_urls.spotify} target="_blank">Voir sur Spotify</a></p>
       <button onClick={() => {
-        localStorage.removeItem("spotify_access_token");
+        document.cookie = "spotify_access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         router.push("/");
       }}>Déconnexion</button>
     </div>

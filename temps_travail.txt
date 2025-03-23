@@ -8,10 +8,17 @@ Préparation :
 7h -- Creation page game (gestion des états du player, design)
 1h -- Ajout modal response (juste back et design du modal)
 2h -- Ajout input pour response ()
-3h -- Responsive et gestion des réponses (correct, incorrect etc...
-)
+3h -- Responsive et gestion des réponses (correct, incorrect etc...)
 3h -- Documentations autour des websockets
 1h -- Changement pour la logique de callback 
         (avant :  / -> Connection Spotify -> /callback?code=... (client) -> callback-components -> /api/auth (serveur) -> spotify.com/api/token -> stocke token (côté client) -> /playlist )
         (maintenant :  / -> Connection Spotify -> /api/callback?code=... (serveur) -> spotify.com/api/token -> stocke token -> /playlist )
 4h -- Tests sur websocket avec Ably
+2h -- Correction de certaines pages pour la gestion des messages Ably
+1h -- Modification dans la manière de créer une connexion Ably, à l'aide de ablyContext.tsx, désormais la connexion se fait dans chaque page (layout.tsx) et cela permet de récupérer l'id dans sessionStorage pour garder le même id lors d'un refresh
+1h -- Ajout page join-room/[roomId] pour rejoindre une room (avec lien)
+2h -- Debug pour que lors d'un refresh le gerant reste gérant
+2h -- Ajout affichage des joueurs dans le salon en preparation, redirection lors du demarrage 
+
+ A FAIRE : 
+ Faire en sorte que lors de la récupération des joueurs, on check l'id pour evite 2 joueurs avec 1 seul client

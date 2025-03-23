@@ -3,15 +3,17 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import Ably from "ably";
 
-// 1️⃣ Création du contexte
+// Création du contexte
 const AblyContext = createContext<Ably.Realtime | null>(null);
 
-// 2️⃣ Provider qui va gérer la connexion Ably
+// Provider qui va gérer la connexion Ably
 export const AblyProvider = ({ children }: { children: React.ReactNode }) => {
   const [ably, setAbly] = useState<Ably.Realtime | null>(null);
 
   useEffect(() => {
+    // sessionStorage plutot que localStorage pour différencier 2 client sur meme pc avec 2 navigateurs différents
     const clientId = sessionStorage.getItem("clientId");
+    // Futur client Ably
     let client
     if(clientId != null){
         // Initialisation de Ably
@@ -43,7 +45,7 @@ export const AblyProvider = ({ children }: { children: React.ReactNode }) => {
   return <AblyContext.Provider value={ably}>{children}</AblyContext.Provider>;
 };
 
-// 3️⃣ Hook personnalisé pour accéder au client Ably
+// Hook personnalisé pour accéder au client Ably depuis n'importe quelle page
 export const useAbly = () => {
   return useContext(AblyContext);
 };

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Ably from "ably";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { useAbly } from "@/lib/ablyContext"; // Importation du contexte Ably
 
 export default function GameRoom() {
@@ -10,37 +10,6 @@ export default function GameRoom() {
   const [clientName, setClientName] = useState("");
   const router = useRouter();
   const ably = useAbly(); // Récupère Ably depuis le contexte
-
-  /**
-   * Création d'une room, on vérifie que :
-   * La connexion soit faite
-   * Le nom donné ne soit pas vide
-   * @returns 
-   */
-  const handleCreateRoom = () => {
-    if(!ably){
-      alert("Pas de connection ably");
-      return;
-    }
-
-    if (!clientName.trim()) {
-      alert("Veuillez entrer un nom");
-      return false;
-    }
-      const newRoomId = Math.random().toString(36).substr(2, 6); // Génère un ID unique
-
-      const cliendId = ably.auth.clientId;
-      const channel = ably.channels.get(`blindtest:${newRoomId}`);
-
-      // Ajout pour retrouver le gérant du salon en cas de refresh
-      channel.publish("room-manager", { roomId: newRoomId });
-      
-      // Ajout de l'user dans la liste des participant
-      channel.publish("user-list", { cliendId : cliendId, clientName : clientName });
-      sessionStorage.setItem("clientName", clientName);
-
-      router.push(`/room/${newRoomId}`);    
-  };
 
   /**
    * Permet de vérifier si le nom donné existe déjà dans ce salon 
@@ -94,9 +63,9 @@ export default function GameRoom() {
       return;
     }
     if (!roomId.trim()) {
-      alert("Veuillez entrer un ID de salon valide !");
-      return;
-    }    
+        alert("Veuillez entrer un ID de salon valide !");
+        return;
+    }
 
     const clientId = ably.auth.clientId;
     const channel = ably.channels.get(`blindtest:${roomId}`);
@@ -108,21 +77,13 @@ export default function GameRoom() {
     if (isNameValid) {
       channel.publish("user-list", { clientId, clientName });
       sessionStorage.setItem("clientName", clientName);
-      router.push(`/game-setup/${roomId}`);
+      router.push(`/waiting-room/${roomId}`);
     }
   };
 
   return (
     <div >
       <h1>Blind Test</h1>
-
-      {/* Bouton de création de salon */}
-      <button
-        onClick={handleCreateRoom}
-        className="button"
-      >
-        Créer un salon
-      </button>
 
       {/* Champ pour entrer l'ID du salon */}
       <input

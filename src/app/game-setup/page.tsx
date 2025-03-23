@@ -3,37 +3,52 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import GameSetupPlaylist from "@/components/GameSetupPlaylist"
-import GameSetupPlayers from "@/components/GameSetupPlayers"
 import styles from "@/app/game-setup/page.module.css"
 import Loading from "@/components/Loading";
 import { Player } from "@/types/spotify";
 // import { fetchPlaylist } from "@/lib/fetchPlaylist";
 import { fetchPlaylist } from "@/lib/fetchData";
 import ButtonLink from "@/components/ButtonLink";
+import { useAbly } from "@/lib/ablyContext";
 
 const GameSetupPage = () => {
   const [playlist, setPlaylist] = useState<any>(null);
+  const [clientName, setClientName] = useState("");
   const router = useRouter();
-
-  // Verification d'avoir des joueurs avant de lancer
-  const startGame = () => {
-    const storedPlayers = localStorage.getItem("players");
-    const playlistId = localStorage.getItem("playlist_choosen_id");
-    if (storedPlayers && playlist) {
-      try {
-        const parsedPlayers = JSON.parse(storedPlayers); // On récupère les joueurs directement
-        if (parsedPlayers.length > 0) {
-          router.push(`/game`); // Navigation immédiate
-        } else {
-          console.warn("Aucun joueur trouvé.");
-        }
-      } catch (error) {
-        console.error("Erreur lors du parsing des joueurs :", error);
-      }
-    }else {
-      console.error("Il faut ajouter des joueurs");
+  const ably = useAbly(); // Récupère Ably depuis le contexte
+  
+  /**
+   * Création d'une room, on vérifie que :
+   * La connexion soit faite
+   * Le nom donné ne soit pas vide
+   * @returns 
+   */
+  const handleCreateRoom = () => {
+    if(!ably){
+      alert("Pas de connection ably");
+      return;
     }
+
+    if (!clientName.trim()) {
+      alert("Veuillez entrer un nom");
+      return false;
+    }
+      const newRoomId = Math.random().toString(36).substr(2, 6); // Génère un ID unique
+
+      const cliendId = ably.auth.clientId;
+      const channel = ably.channels.get(`blindtest:${newRoomId}`);
+
+      // Ajout pour retrouver le gérant du salon en cas de refresh
+      channel.publish("room-manager", { roomId: newRoomId });
+      
+      // Ajout de l'user dans la liste des participant
+      channel.publish("user-list", { cliendId : cliendId, clientName : clientName });
+      sessionStorage.setItem("clientName", clientName);
+      console.log("redirection")
+      router.push(`/game-setup/${newRoomId}`);  
+      console.log("redirection")  
   };
+  
   
   // Permet de récupérer la playlist choisie et de la stocker dans playlist
   useEffect(() => {
@@ -57,10 +72,10 @@ const GameSetupPage = () => {
   return (
     <div className="">
       <h1>Mes Playlists Spotify</h1>
-      <ButtonLink text="Retour" path="/playlist"/>
+      <ButtonLink text="Retour" path="/playlists"/>
       <button
         onClick={() => {
-          localStorage.removeItem("spotify_access_token");
+          document.cookie = "spotify_access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
           router.push("/");
         }}
       >
@@ -71,14 +86,20 @@ const GameSetupPage = () => {
           <div className={styles.container}>
             <GameSetupPlaylist playlist={playlist} />
             <div className={styles.separator}></div>
-            <GameSetupPlayers />
+            <div>
+                {/* Champ pour entrer le nom de l'user */}
+                <input
+                  type="text"
+                  placeholder="Nom"
+                  value={clientName}
+                  onChange={(e) => setClientName(e.target.value)}
+                />
+                <button 
+                  className={`${styles.play__button} button`}
+                  onClick={() => handleCreateRoom()}
+                >Créer un salon</button>
+            </div>  
           </div>
-
-          <button 
-            className={`${styles.play__button} button`}
-            onClick={() => startGame()}
-          >Jouer</button>
-          
       </div>
     </div>
   );

@@ -113,7 +113,7 @@ const GamePage = () => {
       <ButtonLink text="Retour" path="/game-setup" />
       <button
         onClick={() => {
-          localStorage.removeItem("spotify_access_token");
+          document.cookie = "spotify_access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
           router.push("/");
         }}
       >

@@ -43,5 +43,5 @@ export async function GET(req: Request) {
   });
 
   // Redirige l'utilisateur vers la page des playlists
-  return NextResponse.redirect(new URL("/room", req.url));
+  return NextResponse.redirect(new URL("/playlists", req.url));
 }
