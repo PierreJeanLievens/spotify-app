@@ -1,34 +1,23 @@
-import { checkToken } from "./checkToken";
-import { fetchFirstDeviceId } from "./fetchData";
-
 /**
- * Fonction pour lancer un morceau, la récupération du deviceId est comprise
- * @param trackUri le lien du titre à lancer
- * @param router permet la navigation si besoin
+ * Fonction pour lancer un morceau sur le lecteur Spotify.
+ * @param trackUri Le lien du titre Spotify à jouer (ex: "spotify:track:4iV5W9uYEdYUVa79Axb7Rh").
+ * @param deviceId L'identifiant du device Spotify où lire le morceau.
  */
-const playTrack = async (trackUri: string, router: any) => {
-    const token = await checkToken(router); 
-    // const deviceId = await fetchFirstDeviceId(router);
-    
-    try {
-      const deviceId = localStorage.getItem("device_id");
-      const response = await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ uris: [trackUri] }),
-      });
+export const playTrack = async (trackUri: string, deviceId: string) => {
+  try {
+    const response = await fetch("/api/spotify-fetcher/play-track", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ trackUri, deviceId }),
+    });
 
-      if (!response.ok) {
-        throw new Error("Impossible de lancer la lecture");
-      }
-
-      console.log("Lecture lancée !");
-    } catch (error) {
-      console.error("Erreur :", error);
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      throw new Error(`Erreur Spotify: ${errorMessage}`);
     }
-  };
 
-export default playTrack;
+    console.log("Lecture lancée !");
+  } catch (error) {
+    console.error("Erreur dans playTrack:", error);
+  }
+};

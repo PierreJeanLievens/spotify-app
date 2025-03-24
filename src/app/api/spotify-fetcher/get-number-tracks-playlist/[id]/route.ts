@@ -5,9 +5,11 @@ import { cookies } from "next/headers";
  * API Route pour récupérer le nombre de titres d'une playlist Spotify
  * @param req Requête HTTP
  * @param context Contient les paramètres de la requête (id de la playlist)
- * @returns Le nombre de titres de la playlist
+ * @returns Le nombre de titres de la playlist 
  */
-export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(
+    req: Request,
+   { params }: { params: Promise<{ id: string }>}) {
   try {
     const { id } = await params;
 

@@ -161,41 +161,18 @@ export const fetchFirstDeviceId = async () => {
 
   /**
  * Récupère l'état du player
- * @param router Pour la redirection en cas d'erreur
  * @return true ou false
  */
-  export const fetchPlayerState = async (router: any) => {
-    const token = await checkToken(router);
-  
-    try {
-      const playlistId = localStorage.getItem("playlist_choosen_id");
-      if (!playlistId) {
-        router.push("/playlist");
-        return null;
-      }
-  
-      const response = await fetch(`https://api.spotify.com/v1/me/player`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-  
-      // Vérifie si la réponse est vide
+  export const fetchPlayerState = async () => { 
+    try{
+      const response = await fetch(`/api/spotify-fetcher/get-player-state`);
       if (!response.ok) {
         console.error("Échec de récupération du device - Code:", response.status);
         return false;
       }
-  
-      // Si le body est vide, éviter l'erreur JSON
-      const text = await response.text();
-      if (!text) {
-        console.warn("Réponse vide reçue pour fetchPlayerState");
-        return false; // Suppose que la lecture n'est pas active
-      }
-  
-      const data = JSON.parse(text);
-      return data.is_playing || false; // Retourne true ou false
+      return await response.json();
     } catch (error) {
       console.error("Erreur dans fetchPlayerState:", error);
-      router.push("/");
       return null;
     }
   };
