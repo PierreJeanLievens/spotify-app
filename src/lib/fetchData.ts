@@ -123,41 +123,41 @@ export const fetchNewTrack = async (playlistId: string) => {
 };
 
 
-
   /**
  * Récupère les devices disponibles
- * @param router Pour la redirection en cas d'erreur
  * @returns List des devices ou []
  */
-export const fetchDevices = async (router: any) => {
-  const token = await checkToken(router);
-
+export const fetchDevices = async () => {
   try {
-    const playlistId = localStorage.getItem("playlist_choosen_id");
-    if (!playlistId) {
-      router.push("/playlist");
-      return null;
-    }
-
-    const response = await fetch(
-      `https://api.spotify.com/v1/me/player/devices`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-
+    const response = await fetch(`/api/spotify-fetcher/get-devices`);
     if (!response.ok) {
       throw new Error("Échec de récupération du device");
     }
-
-    const data = await response.json();
-    return data.devices || []; // Retourne la liste ou `null`
+    return await response.json();
   } catch (error) {
     console.error("Erreur dans fetchDevices:", error);
-    router.push("/");
     return null;
   }
 };
+
+
+/**
+ * Récupère l'id du premier device disponible.
+ * @returns Id du device ou null
+ */
+export const fetchFirstDeviceId = async () => {
+  try {
+    const response = await fetch(`/api/spotify-fetcher/get-first-device-id`);
+    if (!response.ok) {
+      throw new Error("Échec de récupération du device");
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Erreur dans fetchFirstDeviceId:", error);
+    return null;
+  }
+};
+
 
   /**
  * Récupère l'état du player
@@ -199,39 +199,4 @@ export const fetchDevices = async (router: any) => {
       return null;
     }
   };
-  
 
-/**
- * Récupère l'id du premier device disponible.
- * @param router Pour la redirection en cas d'erreur
- * @returns Id du device ou null
- */
-export const fetchFirstDeviceId = async (router: any) => {
-  const token = await checkToken(router);
-
-  try {
-    const playlistId = localStorage.getItem("playlist_choosen_id");
-    if (!playlistId) {
-      router.push("/playlist");
-      return null;
-    }
-
-    const response = await fetch(
-      `https://api.spotify.com/v1/me/player/devices`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Échec de récupération du device");
-    }
-
-    const data = await response.json();
-    return data.devices?.[0]?.id || null; // Retourne l'id ou `null`
-  } catch (error) {
-    console.error("Erreur dans fetchDeviceId:", error);
-    router.push("/");
-    return null;
-  }
-};

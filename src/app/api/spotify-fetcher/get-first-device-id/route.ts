@@ -10,8 +10,8 @@ export async function GET() {
       return NextResponse.json({ error: "Utilisateur non authentifié" }, { status: 401 });
     }
 
-    // Requête vers l’API Spotify pour récupérer les playlists
-    const response = await fetch("https://api.spotify.com/v1/me/playlists", {
+    // Requête vers l’API Spotify l'id du premier device
+    const response = await fetch("https://api.spotify.com/v1/me/player/devices", {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -20,7 +20,8 @@ export async function GET() {
     }
 
     const data = await response.json();
-    return NextResponse.json(data);
+    const id: string = data.devices?.[0]?.id || null; // Retourne l'id ou `null`
+    return NextResponse.json(id);
   } catch (error) {
     console.error("Erreur API Playlists :", error);
     return NextResponse.json({ error: "Erreur interne du serveur" }, { status: 500 });
