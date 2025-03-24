@@ -14,7 +14,7 @@ export default function DevicesChoice() {
     // Charger le device sauvegardé au montage
     useEffect(() => {
         const fetchDevicesList = async () => {
-            const devicesFetched = await fetchDevices(router);
+            const devicesFetched = await fetchDevices();
             setDevices(devicesFetched);
             const storedDeviceId = localStorage.getItem("device_id");
             setDeviceId(storedDeviceId);
@@ -30,7 +30,7 @@ export default function DevicesChoice() {
             const storedDeviceId = localStorage.getItem("device_id");
             setDeviceId(storedDeviceId);
             // On récupère la liste des devices disponibles
-            const fetchedDevices = await fetchDevices(router);
+            const fetchedDevices = await fetchDevices();
             setDevices(fetchedDevices);
             // Si la liste existe (n'est pas vide)
             if(fetchedDevices){
