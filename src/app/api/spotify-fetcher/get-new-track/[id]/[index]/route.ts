@@ -7,9 +7,9 @@ import { cookies } from "next/headers";
  * @param context Contient les paramètres de la requête (id de la playlist et index du morceau)
  * @returns Le morceau correspondant au format JSON
  */
-export async function GET(req: Request, { params }: { params: { id: string, index: string } }) {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string, index: string }> }) {
   try {
-    const { id, index } = params;
+    const { id, index } = await params;
     const offset = parseInt(index, 10);
 
     if (!id || isNaN(offset)) {
