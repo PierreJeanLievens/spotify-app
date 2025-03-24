@@ -7,9 +7,9 @@ import { cookies } from "next/headers";
  * @param context Contient les paramètres de la requête (id de la playlist)
  * @returns Le nombre de titres de la playlist
  */
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     const token = (await cookies()).get("spotify_access_token")?.value;
     if (!token) {
