@@ -1,26 +1,20 @@
-import { checkToken } from "./checkToken";
+/**
+ * Fonction pour mettre sur pause un morceau sur le lecteur Spotify.
+ */
+export const pauseTrack = async () => {
+  try {
+    const response = await fetch("/api/spotify-fetcher/pause-track", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+    });
 
-// Fonction pour stop un morceau
-const pauseTrack = async (router: any) => {
-    const token = await checkToken(router);
-
-    try {
-      const response = await fetch("https://api.spotify.com/v1/me/player/pause", {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Impossible de mettre en pause la lecture");
-      }
-
-      console.log("Pause effectuée !");
-    } catch (error) {
-      console.error("Erreur :", error);
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      throw new Error(`Erreur Spotify: ${errorMessage}`);
     }
-  };
 
-export default pauseTrack;
+    console.log("Lecture lancée !");
+  } catch (error) {
+    console.error("Erreur dans pauseTrack:", error);
+  }
+};

@@ -2,6 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { fetchDevices } from "@/lib/fetchData"; // Assure-toi que le chemin est correct
+import { playTrack } from "@/lib/playTrack";
+import { pauseTrack } from "@/lib/pauseTrack";
+import { resumeTrack } from "@/lib/resumeTrack";
 
 export default function RoomPage() {
   const [devices, setDevices] = useState<any[]>([]); // Pour stocker les appareils
@@ -31,6 +34,21 @@ export default function RoomPage() {
   const handleDeviceSelect = (deviceId: string) => {
     setSelectedDeviceId(deviceId); // Stocke l'ID du device sélectionné
   };
+  const handleStart = async () => {
+    if(selectedDeviceId){
+      await playTrack("spotify:track:11dFghVXANMlKmJXsNCbNl", selectedDeviceId)
+    }
+  }
+
+  const handlePause = async () => {
+      await pauseTrack();
+  }
+
+  const handleResume = async () => {
+    if(selectedDeviceId){
+      await resumeTrack(selectedDeviceId)
+    }
+  }
 
   return (
     <div>
@@ -50,6 +68,15 @@ export default function RoomPage() {
               </button>
             </div>
           ))}
+          <div>
+            <button className="button" onClick={() => handleStart()}>Start</button>
+          </div>
+          <div>
+            <button className="button" onClick={() => handlePause()}>Pause</button>
+          </div>
+          <div>
+            <button className="button" onClick={() => handleResume()}>Resume</button>
+          </div>
         </div>
       )}
       {selectedDeviceId && <p>Appareil sélectionné : {selectedDeviceId}</p>}

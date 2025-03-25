@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { playTrack } from "@/lib/playTrack"; // Assure-toi que le chemin est correct
+import { playAlbum } from "@/lib/playAlbum"; 
 
 export default function RoomPage() {
-  const [trackUri, setTrackUri] = useState(""); // spotify:track:11dFghVXANMlKmJXsNCbNl
-  const [deviceId, setDeviceId] = useState(""); // b927002cbad2ecf934547a5c27fdeffa0ba9c90c
+  const [trackUri, setTrackUri] = useState(""); // spotify:track:11dFghVXANMlKmJXsNCbNl //spotify:album:2up3OPMp9Tb4dAKM2erWXQ
+  const [deviceId, setDeviceId] = useState(""); // b927002cbad2ecf934547a5c27fdeffa0ba9c90c PC 9becdddadeae1ee3f57f82a8637b80016a1f5384 Tel
 
   const handlePlay = async () => {
     if (!trackUri || !deviceId) {
@@ -13,7 +14,8 @@ export default function RoomPage() {
       return;
     }
 
-    await playTrack(trackUri, deviceId);
+    // await playTrack(trackUri, deviceId);
+    await playAlbum(trackUri, deviceId);
   };
 
   return (

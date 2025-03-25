@@ -1,6 +1,3 @@
-import { checkToken } from "@/lib/checkToken";
-
-
 /**
  * Cette fonction permet d'appeler la requete API pour récupérer la playlist choisie,
  * @param playlistId permet de recuperer l'id

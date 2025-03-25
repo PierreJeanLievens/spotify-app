@@ -1,27 +1,23 @@
-import { checkToken } from "./checkToken";
+/**
+ * Fonction pour lancer un album ou une playlist sur le lecteur Spotify.
+ * @param contextUri URI de l'album ou de la playlist (ex: "spotify:album:6JWc4iAiJ9FjyK0B59ABb4").
+ * @param deviceId L'identifiant du device Spotify où lire l'album.
+ */
+export const playAlbum = async (contextUri: string, deviceId: string) => {
+  try {
+    const response = await fetch("/api/spotify-fetcher/play-album", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ contextUri, deviceId }),
+    });
 
-// Fonction pour lancer un morceau
-const playAlbum = async (trackUri: string, router: any) => {
-    const token = await checkToken(router);
-
-    try {
-      const response = await fetch("https://api.spotify.com/v1/me/player/play", {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ context_uri: trackUri }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Impossible de lancer la lecture");
-      }
-
-      console.log("Lecture lancée !");
-    } catch (error) {
-      console.error("Erreur :", error);
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      throw new Error(`Erreur Spotify: ${errorMessage}`);
     }
-  };
 
-export default playAlbum;
+    console.log("Lecture de l'album/playlist lancée !");
+  } catch (error) {
+    console.error("Erreur dans playAlbum:", error);
+  }
+};

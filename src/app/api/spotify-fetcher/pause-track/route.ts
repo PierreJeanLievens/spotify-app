@@ -1,28 +1,35 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-// TEST 
-export async function GET() {
-  try {
-    // Récupération du token depuis les cookies sécurisés
-    const token = (await cookies()).get("spotify_access_token")?.value;
 
+/**
+ * API Route pour mettre en pause la lecture sur Spotify.
+ * @returns {object} Résultat de la requête
+ */
+export async function PUT() {
+  try {
+    const token = (await cookies()).get("spotify_access_token")?.value;
     if (!token) {
       return NextResponse.json({ error: "Utilisateur non authentifié" }, { status: 401 });
     }
 
-    // Requête vers l’API Spotify pour récupérer les playlists
-    const response = await fetch("https://api.spotify.com/v1/me/playlists", {
-      headers: { Authorization: `Bearer ${token}` },
+    // Envoi de la requête PUT à l'API Spotify pour mettre en pause
+    const response = await fetch("https://api.spotify.com/v1/me/player/pause", {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
     });
 
     if (!response.ok) {
-      throw new Error("Échec de récupération des playlists");
+      const errorText = await response.text();
+      console.error("Erreur Spotify:", errorText);
+      return NextResponse.json({ error: "Impossible de mettre en pause la lecture" }, { status: response.status });
     }
 
-    const data = await response.json();
-    return NextResponse.json(data);
+    return NextResponse.json({ message: "Pause effectuée !" }, { status: 200 });
   } catch (error) {
-    console.error("Erreur API Playlists :", error);
+    console.error("Erreur API pause-track:", error);
     return NextResponse.json({ error: "Erreur interne du serveur" }, { status: 500 });
   }
 }

@@ -1,29 +1,22 @@
-import { checkToken } from "./checkToken";
-import { fetchFirstDeviceId } from "./fetchData";
+/**
+ * Fonction pour relancer la lecture d'un morceau sur le lecteur Spotify.
+ * @param deviceId L'identifiant du device Spotify où reprendre la lecture.
+ */
+export const resumeTrack = async (deviceId: string) => {
+  try {
+    const response = await fetch("/api/spotify-fetcher/resume-track", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ deviceId }),
+    });
 
-// Fonction pour relancer un morceau
-const resumeTrack = async (router: any) => {
-    const token = await checkToken(router);
-    // const deviceId = await fetchFirstDeviceId(router);
-    
-    try {
-      const deviceId = localStorage.getItem("device_id");
-      const response = await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Impossible de relancer la lecture");
-      }
-
-      console.log("Lecture relancée !");
-    } catch (error) {
-      console.error("Erreur :", error);
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      throw new Error(`Erreur Spotify: ${errorMessage}`);
     }
-  };
 
-export default resumeTrack;
+    console.log("Lecture relancée !");
+  } catch (error) {
+    console.error("Erreur dans resumeTrack:", error);
+  }
+};
