@@ -1,68 +1,13 @@
 "use client" 
+import { playTrack } from '@/lib/playTrack';
+import { setVolume, setVolumeWithDevice } from '@/lib/setVolume';
 import React, { useEffect, useState } from 'react';
-
-// const WebPlayback = () => {
-//   const [token, setToken] = useState<string | null>(null);
-
-//   useEffect(() => {
-//     // Récupérer le token depuis l'API
-//     const fetchToken = async () => {
-//       const response = await fetch('/api/spotify-fetcher/get-spotify-token');
-//       if (response.ok) {
-//         const data = await response.json();
-//         setToken(data.token);
-//       } else {
-//         console.error("Erreur lors de la récupération du token");
-//       }
-//     };
-
-//     fetchToken();
-//   }, []);
-
-//   useEffect(() => {
-//     if (token) {
-//       // Initialiser le Web Playback SDK avec le token
-//       const script = document.createElement('script');
-//       script.src = 'https://sdk.scdn.co/spotify-player.js';
-//       script.async = true;
-//       document.body.appendChild(script);
-
-//       window.onSpotifyWebPlaybackSDKReady = () => {
-//         const player = new window.Spotify.Player({
-//           name: 'Web Playback SDK',
-//           getOAuthToken: (cb: (token: string) => void) => { cb(token); },
-//           volume: 0.5,
-//         });
-
-//         player.addListener('ready', ({ device_id }: { device_id: string }) => {
-//           console.log('Ready with Device ID', device_id);
-//         });
-
-//         player.addListener('not_ready', ({ device_id }: { device_id: string }) => {
-//           console.log('Device ID has gone offline', device_id);
-//         });
-
-//         player.connect();
-//       };
-//     }
-//   }, [token]);
-
-//   return (
-//     <div>
-//       {/* Ton UI ici */}
-//       <h1>Web Playback</h1>
-//     </div>
-//   );
-// };
-
-// export default WebPlayback;
-
-
 
 const WebPlayback = () => {
   const [token, setToken] = useState<string | null>(null);
   const [player, setPlayer] = useState<any | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [deviceId, setDeviceId] = useState<string>("");
   const [currentTrack, setCurrentTrack] = useState<string | null>(null);
 
   useEffect(() => {
@@ -98,18 +43,27 @@ const WebPlayback = () => {
 
         player.addListener("ready", ({ device_id }: { device_id: string }) => {
           console.log("Ready with Device ID", device_id);
+          setDeviceId(device_id)
         });
 
         player.addListener("player_state_changed", (state: any) => {
           if (!state) return;
           setIsPlaying(!state.paused);
           setCurrentTrack(state.track_window.current_track.name);
+          console.log(state)
         });
 
         player.connect();
       };
     }
   }, [token]);
+
+  const play = () => {
+    if(deviceId){
+
+      playTrack("spotify:track:11dFghVXANMlKmJXsNCbNl", deviceId)
+    }
+  }
 
   const togglePlay = async () => {
     if (player) {
@@ -119,6 +73,15 @@ const WebPlayback = () => {
       }
     }
   };
+
+  const changeVolume20 = () => {
+    // setVolumeWithDevice(20, deviceId);
+    setVolume(1);
+  }
+  const changeVolume80 = () => {
+    // setVolumeWithDevice(80, deviceId);
+    setVolume(80);
+  }
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white p-4">
@@ -135,6 +98,9 @@ const WebPlayback = () => {
         >
           {isPlaying ? "Pause" : "Play"}
         </button>
+        <button className="button" onClick={changeVolume20}>20</button>
+        <button className="button" onClick={changeVolume80}>80</button>
+        <button className="button" onClick={play}>Play</button>
       </div>
     </div>
   );
