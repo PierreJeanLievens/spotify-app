@@ -3,15 +3,17 @@
 import { useState, useEffect } from "react";
 import { useAbly } from "@/lib/ablyContext";
 import { useParams } from "next/navigation";
+import { useWebPlayer } from "@/hooks/useWebPlayer";
 
 /**
- * Ce hook permet de vérifier le room-manager du salon actuel et de comparer son id avec le client actuel
- * @returns 
+ * Ce hook gère le rôle de manager du salon et intègre également la gestion du lecteur Spotify.
+ * @returns { isManager, filteredPlayerData }
  */
 export const useRoomManager = () => {
   const ably = useAbly();
   const { roomId } = useParams();
   const [isManager, setIsManager] = useState(false);
+  const playerData = useWebPlayer(); // Utilisation du lecteur Spotify
 
   useEffect(() => {
     if (!ably || !roomId) return;
@@ -42,5 +44,10 @@ export const useRoomManager = () => {
     return () => clearInterval(checkClientId);
   }, [ably, roomId]);
 
-  return { isManager };
+  // Filtrage des données du lecteur selon le rôle du joueur
+  const webPlayer = isManager
+    ? playerData
+    : { player: null, deviceId: "", isReady: false };
+
+  return { isManager, webPlayer };
 };

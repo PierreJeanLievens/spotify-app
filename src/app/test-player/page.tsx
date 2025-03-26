@@ -1,10 +1,10 @@
 "use client";
-import { usePlayer } from "@/hooks/useWebPlayer";
+import { useWebPlayer } from "@/hooks/useWebPlayer";
 import { playTrack } from "@/lib/playTrack";
 import { useEffect } from "react";
 
 export default function RoomPage() {
-  const { player, deviceId } = usePlayer();
+  const { player, deviceId } = useWebPlayer();
     
   useEffect(() => {
     if(deviceId && player){

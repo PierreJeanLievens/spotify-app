@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 
-export function usePlayer() {
+export function useWebPlayer() {
   const [token, setToken] = useState<string | null>(null);
   const [player, setPlayer] = useState<any | null>(null);
   const [deviceId, setDeviceId] = useState<string>("");

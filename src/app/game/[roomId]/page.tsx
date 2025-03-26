@@ -4,18 +4,14 @@ import { fetchNewTrack, fetchNumberTracksPlaylist } from "@/lib/fetchData";
 import { Track } from "@/types/spotify";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { usePlayer } from "@/hooks/useWebPlayer";
-import { playTrack } from "@/lib/playTrack";
 import { setVolume, setVolumeWithDevice } from "@/lib/setVolume";
+import { playTrack } from "@/lib/playTrack";
 
 export default function GameSetupPage() {
-  const { isManager } = useRoomManager();
+  const { isManager,  webPlayer} = useRoomManager();
   const [track, setTrack] = useState<Track | null>(null);
   const [playlistId, setPlaylistId] = useState<string>('');
   const router = useRouter();
-  const playerData = usePlayer(); // Toujours appeler le hook
-  console.log(playerData)
-  const filteredPlayerData = isManager ? playerData : { player: null, deviceId: "", isReady: false };
 
   useEffect(() => {
     console.log("1")
@@ -49,7 +45,7 @@ export default function GameSetupPage() {
   }, [isManager]);
 
   const handlePlayTrack = async () => {
-    filteredPlayerData.player.togglePlay().then(() => {
+    webPlayer.player.togglePlay().then(() => {
       console.log('Toggled playback!');
     });
   };
@@ -61,17 +57,17 @@ export default function GameSetupPage() {
     }
   
     const newTrack: Track = await fetchNewTrack(playlistId);
-    if (newTrack && filteredPlayerData.deviceId) {
+    if (newTrack && webPlayer.deviceId) {
       setTrack(newTrack);
-      await playTrack(newTrack.uri, filteredPlayerData.deviceId);
+      await playTrack(newTrack.uri, webPlayer.deviceId);
     } else {
       console.error("❌ Impossible de jouer la nouvelle piste");
     }
   };
   const handleVolume = async () => {
   
-    if (filteredPlayerData.deviceId) {
-      await setVolumeWithDevice(10, filteredPlayerData.deviceId);
+    if (webPlayer.deviceId) {
+      await setVolumeWithDevice(10, webPlayer.deviceId);
     } else {
       console.error("❌ Impossible de jouer la nouvelle piste");
     }
@@ -86,7 +82,7 @@ export default function GameSetupPage() {
           <button onClick={handlePlayTrack}>Lancer le jeu</button>
           <button onClick={handleNextTrack}>NextTrack</button>
           <button onClick={handleVolume}>Volume</button>
-          {filteredPlayerData.deviceId && <p>Device ID: {filteredPlayerData.deviceId}</p>}
+          {webPlayer.deviceId && <p>Device ID: {webPlayer.deviceId}</p>}
         </>
        ) : (
         <>
