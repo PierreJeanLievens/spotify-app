@@ -4,25 +4,37 @@ import { fetchNewTrack, fetchNumberTracksPlaylist } from "@/lib/fetchData";
 import { Track } from "@/types/spotify";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { usePlayer } from "@/hooks/useWebPlayer";
+import { playTrack } from "@/lib/playTrack";
+import { setVolume, setVolumeWithDevice } from "@/lib/setVolume";
 
 export default function GameSetupPage() {
   const { isManager } = useRoomManager();
   const [track, setTrack] = useState<Track | null>(null);
+  const [playlistId, setPlaylistId] = useState<string>('');
   const router = useRouter();
+  const playerData = usePlayer(); // Toujours appeler le hook
+  console.log(playerData)
+  const filteredPlayerData = isManager ? playerData : { player: null, deviceId: "", isReady: false };
 
   useEffect(() => {
+    console.log("1")
     if (isManager === undefined) return; // Attendre que isManager soit évalué
 
     const initGame = async () => {
       try {
-        const playlistId = localStorage.getItem("playlist_choosen_id");
-        if (!playlistId) {
-          router.push("/playlist");
+        const playlistIdStored: string | null = localStorage.getItem("playlist_choosen_id");
+        if (!playlistIdStored) {
+          router.push("/playlists");
           return;
+        }else{
+          
         }
+        setPlaylistId(playlistIdStored);
+        console.log(playlistId)
         // Récupération d'un nouveau morceau
-        const newTrack = await fetchNewTrack(playlistId);
-        console.log(newTrack)
+        const newTrack: Track = await fetchNewTrack(playlistId);
+        // console.log(newTrack)
         if (newTrack) {
           setTrack(newTrack);
         }
@@ -36,10 +48,51 @@ export default function GameSetupPage() {
     }
   }, [isManager]);
 
+  const handlePlayTrack = async () => {
+    filteredPlayerData.player.togglePlay().then(() => {
+      console.log('Toggled playback!');
+    });
+  };
+  
+  const handleNextTrack = async () => {
+    if (!playlistId) {
+      console.error("❌ Aucune playlist sélectionnée");
+      return;
+    }
+  
+    const newTrack: Track = await fetchNewTrack(playlistId);
+    if (newTrack && filteredPlayerData.deviceId) {
+      setTrack(newTrack);
+      await playTrack(newTrack.uri, filteredPlayerData.deviceId);
+    } else {
+      console.error("❌ Impossible de jouer la nouvelle piste");
+    }
+  };
+  const handleVolume = async () => {
+  
+    if (filteredPlayerData.deviceId) {
+      await setVolumeWithDevice(10, filteredPlayerData.deviceId);
+    } else {
+      console.error("❌ Impossible de jouer la nouvelle piste");
+    }
+  };
+  
+
   return (
     <div>
       <h1>Configuration du jeu</h1>
-      {isManager ? <button>Lancer le jeu</button> : <p>En attente que l'hôte lance la partie...</p>}
+      {isManager ? (
+        <>
+          <button onClick={handlePlayTrack}>Lancer le jeu</button>
+          <button onClick={handleNextTrack}>NextTrack</button>
+          <button onClick={handleVolume}>Volume</button>
+          {filteredPlayerData.deviceId && <p>Device ID: {filteredPlayerData.deviceId}</p>}
+        </>
+       ) : (
+        <>
+          <p>En attente que l'hôte lance la partie...</p>
+        </>
+       )}
     </div>
   );
 }
