@@ -1,4 +1,5 @@
 "use client";
+
 import { useState, useEffect } from "react";
 
 export function useWebPlayer() {
@@ -45,6 +46,22 @@ export function useWebPlayer() {
       };
     }
   }, [token]);
+
+  // Déconnexion du lecteur lors de la fermeture de l'onglet
+  useEffect(() => {
+    const handleUnload = () => {
+      if (player) {
+        console.log("Déconnexion du Spotify Player...");
+        player.disconnect();
+      }
+    };
+
+    window.addEventListener("beforeunload", handleUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleUnload);
+    };
+  }, [player]);
 
   return { player, deviceId };
 }

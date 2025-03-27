@@ -11,6 +11,7 @@ export default function GameSetupPage() {
   const { isManager,  webPlayer} = useRoomManager();
   const [track, setTrack] = useState<Track | null>(null);
   const [playlistId, setPlaylistId] = useState<string>('');
+  const [is_paused, setPaused] = useState<boolean>(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -27,13 +28,21 @@ export default function GameSetupPage() {
           
         }
         setPlaylistId(playlistIdStored);
-        console.log(playlistId)
+        console.log(playlistIdStored)
         // Récupération d'un nouveau morceau
-        const newTrack: Track = await fetchNewTrack(playlistId);
+        const newTrack: Track = await fetchNewTrack(playlistIdStored);
         // console.log(newTrack)
         if (newTrack) {
           setTrack(newTrack);
         }
+
+        webPlayer.player.addListener('player_state_changed', ( (state: { paused: any; }) => {
+          if (!state) {
+              return;
+          }
+          setPaused(state.paused);
+      }));
+
       } catch (error) {
         console.error("Erreur lors de l'initialisation :", error);
       }
@@ -47,6 +56,8 @@ export default function GameSetupPage() {
   const handlePlayTrack = async () => {
     webPlayer.player.togglePlay().then(() => {
       console.log('Toggled playback!');
+      console.log()
+      // setPaused(!is_paused)
     });
   };
   
@@ -79,10 +90,11 @@ export default function GameSetupPage() {
       <h1>Configuration du jeu</h1>
       {isManager ? (
         <>
-          <button onClick={handlePlayTrack}>Lancer le jeu</button>
+          <button onClick={handlePlayTrack}>Lancer le jeu{is_paused ? "PLAY" : "PAUSE"}</button>
           <button onClick={handleNextTrack}>NextTrack</button>
           <button onClick={handleVolume}>Volume</button>
           {webPlayer.deviceId && <p>Device ID: {webPlayer.deviceId}</p>}
+          
         </>
        ) : (
         <>
