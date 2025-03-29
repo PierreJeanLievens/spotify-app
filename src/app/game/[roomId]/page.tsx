@@ -3,20 +3,118 @@ import { useRoomManager } from "@/hooks/useRoomManager";
 import { fetchNewTrack, fetchNumberTracksPlaylist } from "@/lib/fetchData";
 import { Track } from "@/types/spotify";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { setVolume, setVolumeWithDevice } from "@/lib/setVolume";
 import { playTrack } from "@/lib/playTrack";
 
+
 export default function GameSetupPage() {
-  const { isManager,  webPlayer} = useRoomManager();
-  const [track, setTrack] = useState<Track | null>(null);
-  const [playlistId, setPlaylistId] = useState<string>('');
-  const [is_paused, setPaused] = useState<boolean>(false);
+  const { roomId } = useParams();
+  const [playlistId, setPlaylistId] = useState<string>(''); // Id de la playlist selectionnée
+  const { isManager,  webPlayer, ably} = useRoomManager(); // Pemret de savoir si le client est manager de la room, de recuperer le webPlayer (vide si non manager), et le client alby
+  const [channel, setChannel] = useState<any | null >(null); // Stocke le channel de la room 
+  const [track, setTrack] = useState<Track | null>(null); // Stocke le track en cours
+  const [is_paused, setPaused] = useState<boolean>(true); // Stocke l'etat du player (si true, le morceau est sur pause)
+  const [firstStart, setFirstStart] = useState<boolean>(true);// Si premier start alors on lance avec API, sinon on effectue le toogle avec la fonction du WebPlayer
+  const [acceptResponse, setAcceptResponse] = useState<boolean>(false); // Permet de savoir s'il faut afficher les inputs pour répondre
+  const [round, setRound] = useState<number>(0); // Permet de savoir le round en cours
+  const [secondsLeft, setSecondsLeft] = useState<number>(15); // Stocke les secondes restantes
+  const [inputTrack, setInputTrack] = useState<string>(''); // Stocke l'input du titre
+  const [inputArtist, setInputArtist] = useState<string>(''); // Stocke l'input de l'artiste
   const router = useRouter();
 
+  // Permet d'arreter les reponses si le timer est a 0
+  // useEffect(() => {
+  //   if(!channel) return;
+  //   // Atendre une seconde puis mettre secondsLeft - 1
+  //   if(secondsLeft === 0 && isManager) {
+  //     channel.publish("accept-response", {acceptResponse : false});
+  //   }
+  // }, [secondsLeft])
+
+
+  const startTimer = () => {
+    setSecondsLeft(15); // Réinitialise à 15 secondes
+    channel.publish("seconds-left", { secondsLeft: 15 }); // Envoie la valeur initiale immédiatement
+    channel.publish("accept-response", { acceptResponse: true }); // Réactive les réponses
+  
+    const timer = setInterval(() => {
+      setSecondsLeft((prev) => {
+        const newSecondsLeft = prev - 1;
+        channel.publish("seconds-left", { secondsLeft: newSecondsLeft }); // Publie chaque mise à jour
+  
+        if (newSecondsLeft <= 0) {
+          clearInterval(timer); // Arrête le timer
+          channel.publish("accept-response", { acceptResponse: false }); // Bloque les réponses
+          return 0;
+        }
+  
+        return newSecondsLeft;
+      });
+    }, 1000);
+  };
+  
+  
+
+
+
+
   useEffect(() => {
-    console.log("1")
-    if (isManager === undefined) return; // Attendre que isManager soit évalué
+
+   //  Function qui ecoute le channel 'accept-response'
+    const handleStateResponses = (message: any) => {
+      // Si on accepte les réponses (cela veut dire nouveau round)
+      if (message.data.acceptResponse) {
+        setAcceptResponse(true);
+        setPaused(false);
+        // Reset timer
+      }else {
+        setAcceptResponse(false);
+        setPaused(true);
+        // Fonction qui récupère les inputs et qui comapre avec track
+        // Calculate point function
+      }
+    };
+
+    // Fonction qui ecoute le channel 'seconds-left'
+    const handleSecondsLeft = (message: any) => {
+      if(!isManager){
+        console.log(message.data.secondsLeft)
+        setSecondsLeft(message.data.secondsLeft);
+      }
+    }
+
+    // Fonction qui gère la gestion d'un nouveau round, recupère le nouveau track et le numéro de round
+    const receiptNewRound = (message: any) => {
+      console.log("Reception new track : " , message.data)
+      const data = message.data;
+      // On stocke le nouveau track et le nouveau round
+      setTrack(data.currentTrack);
+      setRound(data.currentRound);
+
+      // On reset les inputs
+      setInputArtist("");
+      setInputTrack("");
+    }
+
+    if(!ably || !roomId) return;
+    try {
+        const roomChannel = ably.channels.get(`blindtest:${roomId}`);
+        setChannel(roomChannel);
+        roomChannel.subscribe("accept-response", handleStateResponses);
+        console.log("TEST")
+        roomChannel.subscribe("seconds-left", handleSecondsLeft);
+        roomChannel.subscribe("new-round", receiptNewRound);
+
+    } catch (error) {
+      console.error("Erreur lors de l'initialisation de ably :", error);
+    }
+  }, [ably])
+
+  // Cela permet de récupérer le webPlayer
+  useEffect(() => {
+    console.log("isManager:", isManager, "webPlayer:", webPlayer);
+    if (!isManager || !webPlayer.player) return;// Attendre que isManager et le webPlayer soientt bien récupérés
 
     const initGame = async () => {
       try {
@@ -24,11 +122,9 @@ export default function GameSetupPage() {
         if (!playlistIdStored) {
           router.push("/playlists");
           return;
-        }else{
-          
         }
+        // On récupère la playlistChoisie
         setPlaylistId(playlistIdStored);
-        console.log(playlistIdStored)
         // Récupération d'un nouveau morceau
         const newTrack: Track = await fetchNewTrack(playlistIdStored);
         // console.log(newTrack)
@@ -36,11 +132,19 @@ export default function GameSetupPage() {
           setTrack(newTrack);
         }
 
+        // On se met en ecoute sur le webPlayer (lorsque son état change (play/pause))
         webPlayer.player.addListener('player_state_changed', ( (state: { paused: any; }) => {
           if (!state) {
               return;
           }
+          // On récupère l'état actuel du player
           setPaused(state.paused);
+          // Si le player est pause, on envoie cela a tous les clients, cela permet d'actualiser cet état a tous les clients
+          if(state.paused){
+            channel.publish("accept-response", {acceptResponse : false});
+          }else{
+            channel.publish("accept-response", {acceptResponse : true});
+          }
       }));
 
       } catch (error) {
@@ -51,30 +155,50 @@ export default function GameSetupPage() {
     if (isManager) {
       initGame();
     }
-  }, [isManager]);
+  }, [isManager, webPlayer.player]);  
 
+
+  // Fonction pour lancer ou mettre en pause le player
   const handlePlayTrack = async () => {
-    webPlayer.player.togglePlay().then(() => {
-      console.log('Toggled playback!');
-      console.log()
-      // setPaused(!is_paused)
-    });
+    
+    if(webPlayer.player && track){
+      if(firstStart){
+        playTrack(track.uri, webPlayer.deviceId);
+        console.log('First Start!');
+        setFirstStart(false);
+        // Reset le timer
+        startTimer();
+      }else{
+        webPlayer.player.togglePlay().then(() => {
+        console.log('Toggled playback!');
+        // setPaused(!is_paused)
+        });
+      }
+    }
   };
   
+  // Fonction pour gérer le changement de track
   const handleNextTrack = async () => {
     if (!playlistId) {
       console.error("❌ Aucune playlist sélectionnée");
       return;
     }
+    if(!isManager) return;
   
     const newTrack: Track = await fetchNewTrack(playlistId);
     if (newTrack && webPlayer.deviceId) {
       setTrack(newTrack);
       await playTrack(newTrack.uri, webPlayer.deviceId);
+      const newRound: number = round + 1;
+      channel.publish("new-round", {currentRound: newRound, currentTrack : track})
+      // Reset le timer
+      startTimer();
     } else {
       console.error("❌ Impossible de jouer la nouvelle piste");
     }
   };
+
+  // Fonction pour géger le volume du device
   const handleVolume = async () => {
   
     if (webPlayer.deviceId) {
@@ -88,19 +212,39 @@ export default function GameSetupPage() {
   return (
     <div>
       <h1>Configuration du jeu</h1>
-      {isManager ? (
+      <div> Secondes restantes : {secondsLeft}</div>
+      {(isManager) ? (
+        <><button className="button" onClick={()=> {router.push("/game-setup");}}>Retour</button></>
+      ) : (
+        <><button className="button" onClick={()=> {router.push("/join-room");}}>Retour</button></>
+      )}
+      
+      {(webPlayer.player && isManager) ? (
         <>
-          <button onClick={handlePlayTrack}>Lancer le jeu{is_paused ? "PLAY" : "PAUSE"}</button>
-          <button onClick={handleNextTrack}>NextTrack</button>
-          <button onClick={handleVolume}>Volume</button>
+          <button className='button' onClick={handlePlayTrack}>Lancer le jeu{is_paused || firstStart ? "PLAY" : "PAUSE"}</button>
+          <button className='button' onClick={handleNextTrack}>NextTrack</button>
+          <button className='button' onClick={handleVolume}>Volume</button>
+          <button className='button' onClick={() => {channel.publish("accept-response", {acceptResponse : true});}}>Test publish</button>
           {webPlayer.deviceId && <p>Device ID: {webPlayer.deviceId}</p>}
           
         </>
        ) : (
         <>
           <p>En attente que l'hôte lance la partie...</p>
+          <button disabled={true}>{is_paused ? "Titre en pause" : "Titre en cours"}</button>
         </>
        )}
+
+       <div>
+          {(acceptResponse) ? (
+            <>Entrez les reponses
+              <input id="track" type="text" placeholder="Titre" onChange={(e) => {setInputTrack(e.target.value)}}/>
+              <input id="artist" type="text" placeholder="Artiste" onChange={(e) => {setInputArtist(e.target.value)}}/>
+            </>
+          ) : (
+            <>Reponses terminées</>
+          )}
+       </div>
     </div>
   );
 }

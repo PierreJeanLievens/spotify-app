@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useAbly } from "@/lib/ablyContext";
 
 export default function RoomPage() {
   const { roomId } = useParams();
+  const router = useRouter();
   const ably = useAbly(); // Récupère Ably du contexte
   const [track, setTrack] = useState<any>(null);
   const [isAnswerPhase, setIsAnswerPhase] = useState(false);
@@ -38,6 +39,7 @@ export default function RoomPage() {
             });
           } catch (err) {
             console.error("❌ Erreur lors de la récupération de l'historique :", err);
+            router.push("/login");
           }
         };
   

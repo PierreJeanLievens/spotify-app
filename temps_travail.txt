@@ -22,5 +22,6 @@ Préparation :
 3h -- Debug et changement de la fonction fetchNewTrack -> vers api/get-new-track/[id]/[index]
 4h -- Transfert de toutes les fonction api spotify vers le dossier api de l'app
 4h -- Ajout d'un WebPlayer
+8h -- Gestion de la page game, gestion des états en fonction du rôle, etc... 
  A FAIRE : 
  Faire en sorte que lors de la récupération des joueurs, on check l'id pour evite 2 joueurs avec 1 seul client

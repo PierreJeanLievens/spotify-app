@@ -39,14 +39,24 @@ export type Player = {
 }
 
 export type Track = {
-  id: string;
-  href: string;
-  uri: string;
-  name: string,
-  score: number
+  album: {
+    name: string,
+    release_date: string,
+    release_date_precision: string,
+    images: {
+      url: string,
+      height: number
+      width: number
+    }[],
+  },
   artists: {
     name: string;
-  }[];
+  }[],
+  id: string;
+  name: string,
+  href: string;
+  uri: string;
+  popularity: number
 }
 
 export interface PlaylistCardProps {

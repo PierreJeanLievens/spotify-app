@@ -37,6 +37,24 @@ export const fetchTracksPlaylist = async (playlistId: string) => {
 
 
 /**
+ * Cette fonction permet de récupérer le nombre de titres sauvegardés,
+ * @returns le nombre de tracks sauvegardés
+ */
+export const fetchNumberSavedTracks = async (): Promise<number | null> => {
+  try {
+    const response = await fetch(`/api/spotify-fetcher/get-number-saved-tracks`);
+    if (!response.ok) {
+      throw new Error("Échec de récupération du nombres de titres");
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Erreur lors de la récupération du nombre de titres :", error);
+    return null;
+  }
+};
+
+
+/**
  * Cette fonction permet de récupérer le nombre de titres de la playlist choisie,
  * @param playlistId l'id de la playlist
  * @returns le nombre de tracks dans la playlist choisie

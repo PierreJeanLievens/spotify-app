@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAbly } from "@/lib/ablyContext";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useWebPlayer } from "@/hooks/useWebPlayer";
 
 /**
@@ -10,6 +10,7 @@ import { useWebPlayer } from "@/hooks/useWebPlayer";
  * @returns { isManager, filteredPlayerData }
  */
 export const useRoomManager = () => {
+  const router = useRouter();
   const ably = useAbly();
   const { roomId } = useParams();
   const [isManager, setIsManager] = useState(false);
@@ -34,6 +35,7 @@ export const useRoomManager = () => {
             });
           } catch (err) {
             console.error("❌ Erreur lors de la récupération de l'historique :", err);
+            router.push("/login");
           }
         };
 
@@ -49,5 +51,5 @@ export const useRoomManager = () => {
     ? playerData
     : { player: null, deviceId: "", isReady: false };
 
-  return { isManager, webPlayer };
+  return { isManager, webPlayer, ably };
 };

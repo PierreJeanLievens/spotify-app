@@ -71,6 +71,7 @@ export default function GameRoom() {
       }
     } catch (err) {
       console.error("❌ Erreur lors de la récupération de l'historique :", err);
+      router.push("/login");
       return false;
     }
   

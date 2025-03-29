@@ -1,8 +1,10 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
 export function useWebPlayer() {
+  const router = useRouter();
   const [token, setToken] = useState<string | null>(null);
   const [player, setPlayer] = useState<any | null>(null);
   const [deviceId, setDeviceId] = useState<string>("");
@@ -16,6 +18,7 @@ export function useWebPlayer() {
         setToken(data.token.value);
       } else {
         console.error("Erreur lors de la récupération du token");
+        router.push("/login");
       }
     };
 
