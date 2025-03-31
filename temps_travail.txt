@@ -25,5 +25,8 @@ Préparation :
 8h -- Gestion de la page game, gestion des états en fonction du rôle, etc... 
 1h -- Ajout fonction pour calculer les points avec les inputs
 3h -- Ajout de callback pour les fonctions d'écoute ably (channel.subscribe) pour que les données des fonctions ne soient pas figées
+
+2h -- Mise à jour des joueurs avec l'historique (pour éviter 2 joueurs sur le meme id) (probleme sauvegarde tous les noms donc meme un ancien nom de joueur inactif n'est plus valide )
+2h -- Gestion du webPlayer pour deconnexion
  A FAIRE : 
  Faire en sorte que lors de la récupération des joueurs, on check l'id pour evite 2 joueurs avec 1 seul client
