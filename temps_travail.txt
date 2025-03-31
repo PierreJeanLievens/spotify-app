@@ -23,5 +23,7 @@ Préparation :
 4h -- Transfert de toutes les fonction api spotify vers le dossier api de l'app
 4h -- Ajout d'un WebPlayer
 8h -- Gestion de la page game, gestion des états en fonction du rôle, etc... 
+1h -- Ajout fonction pour calculer les points avec les inputs
+3h -- Ajout de callback pour les fonctions d'écoute ably (channel.subscribe) pour que les données des fonctions ne soient pas figées
  A FAIRE : 
  Faire en sorte que lors de la récupération des joueurs, on check l'id pour evite 2 joueurs avec 1 seul client

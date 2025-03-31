@@ -2,10 +2,11 @@
 import { useRoomManager } from "@/hooks/useRoomManager";
 import { fetchNewTrack, fetchNumberTracksPlaylist } from "@/lib/fetchData";
 import { Track } from "@/types/spotify";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { setVolume, setVolumeWithDevice } from "@/lib/setVolume";
 import { playTrack } from "@/lib/playTrack";
+import { verifiyInputs } from "@/lib/verifiyResponses/verifyInputs";
 
 
 export default function GameSetupPage() {
@@ -45,7 +46,7 @@ export default function GameSetupPage() {
   
         if (newSecondsLeft <= 0) {
           clearInterval(timer); // Arrête le timer
-          channel.publish("accept-response", { acceptResponse: false }); // Bloque les réponses
+          channel.publish("accept-response", { acceptResponse: false, endRound : true}); // Bloque les réponses et termine le round (endRound sert a enclenché la foncton de calcul de points)
           return 0;
         }
   
@@ -54,67 +55,93 @@ export default function GameSetupPage() {
     }, 1000);
   };
   
+
+/**
+ * Function qui ecoute le channel 'accept-response'
+ * Utilisation du callback pour réactualiser la fonction lorsque les données change
+ * Sans callback, lorsque la fonction est utlisée dans channel.subscribe, les données utilisées sont figées, lors de la première execution track est null
+ * Avec le callback, on met à jour la fonction avec les nouvelles données lorsque (track et les inputs changent) 
+ */
+const handleStateResponses = useCallback((message: any) => {
+  // Si on accepte les réponses (cela veut dire nouveau round)
+  console.log("HANDLE RESPONSE")
+  if (message.data.acceptResponse) {
+    setAcceptResponse(true);
+    setPaused(false);
+    // Reset timer
+  }else {
+    console.log("FALSE AFFICHAGE")
+    setAcceptResponse(false);
+    setPaused(true);
+    if(message.data.endRound && track){
+      console.log("TRACK", track)  
+      const points = verifiyInputs(track?.artists, inputArtist, track?.name, inputTrack);
+      console.log("SCORE", points)
+    }
+  }
+}, [track, inputArtist, inputTrack]);
+
+
+/**
+ * Fonction qui ecoute le channel 'seconds-left'
+ * Utilisation du callback pour réactualiser la fonction lorsque les données change
+ * Sans callback, lorsque la fonction est utlisée dans channel.subscribe, les données utilisées sont figées, lors de la première execution track est null
+ * Avec le callback, on met à jour la fonction avec les nouvelles données lorsque (track et les inputs changent) 
+ */
+const handleSecondsLeft = useCallback((message: any) => {
+  if(!isManager){
+    setSecondsLeft(message.data.secondsLeft);
+  }
+}, [isManager]);
+
+
+/**
+ * Fonction qui gère la gestion d'un nouveau round, recupère le nouveau track et le numéro de round
+ * Utilisation du callback pour réactualiser la fonction lorsque les données change
+ * Sans callback, lorsque la fonction est utlisée dans channel.subscribe, les données utilisées sont figées,
+ * Avec le callback, on met à jour la fonction avec les nouvelles données
+ */
+const receiptNewRound = useCallback((message: any) => {
+  console.log("Reception new track : " , message.data)
+  const data = message.data;
+  // On stocke le nouveau track et le nouveau round
+  console.log(data.currentTrack)
+  setTrack(data.currentTrack);
+  setRound(data.currentRound);
+
+  // On reset les inputs
+  setInputArtist("");
+  setInputTrack("");
+}, []);
+
+
+useEffect(() => {
+  if(!ably || !roomId) return;
   
-
-
-
-
-  useEffect(() => {
-
-   //  Function qui ecoute le channel 'accept-response'
-    const handleStateResponses = (message: any) => {
-      // Si on accepte les réponses (cela veut dire nouveau round)
-      if (message.data.acceptResponse) {
-        setAcceptResponse(true);
-        setPaused(false);
-        // Reset timer
-      }else {
-        setAcceptResponse(false);
-        setPaused(true);
-        // Fonction qui récupère les inputs et qui comapre avec track
-        // Calculate point function
-      }
+  try {
+    const roomChannel = ably.channels.get(`blindtest:${roomId}`);
+    setChannel(roomChannel);
+    
+    // Subscribe to channels
+    roomChannel.subscribe("accept-response", handleStateResponses);
+    roomChannel.subscribe("seconds-left", handleSecondsLeft);
+    roomChannel.subscribe("new-round", receiptNewRound);
+    
+    // Clean up subscriptions
+    return () => {
+      roomChannel.unsubscribe("accept-response", handleStateResponses);
+      roomChannel.unsubscribe("seconds-left", handleSecondsLeft);
+      roomChannel.unsubscribe("new-round", receiptNewRound);
     };
-
-    // Fonction qui ecoute le channel 'seconds-left'
-    const handleSecondsLeft = (message: any) => {
-      if(!isManager){
-        console.log(message.data.secondsLeft)
-        setSecondsLeft(message.data.secondsLeft);
-      }
-    }
-
-    // Fonction qui gère la gestion d'un nouveau round, recupère le nouveau track et le numéro de round
-    const receiptNewRound = (message: any) => {
-      console.log("Reception new track : " , message.data)
-      const data = message.data;
-      // On stocke le nouveau track et le nouveau round
-      setTrack(data.currentTrack);
-      setRound(data.currentRound);
-
-      // On reset les inputs
-      setInputArtist("");
-      setInputTrack("");
-    }
-
-    if(!ably || !roomId) return;
-    try {
-        const roomChannel = ably.channels.get(`blindtest:${roomId}`);
-        setChannel(roomChannel);
-        roomChannel.subscribe("accept-response", handleStateResponses);
-        console.log("TEST")
-        roomChannel.subscribe("seconds-left", handleSecondsLeft);
-        roomChannel.subscribe("new-round", receiptNewRound);
-
-    } catch (error) {
-      console.error("Erreur lors de l'initialisation de ably :", error);
-    }
-  }, [ably])
+  } catch (error) {
+    console.error("Erreur lors de l'initialisation de ably :", error);
+  }
+  }, [ably, roomId, handleStateResponses, handleSecondsLeft, receiptNewRound])
 
   // Cela permet de récupérer le webPlayer
   useEffect(() => {
     console.log("isManager:", isManager, "webPlayer:", webPlayer);
-    if (!isManager || !webPlayer.player) return;// Attendre que isManager et le webPlayer soientt bien récupérés
+    if (!isManager || !webPlayer.player || !channel) return;// Attendre que isManager et le webPlayer soientt bien récupérés
 
     const initGame = async () => {
       try {
@@ -155,7 +182,7 @@ export default function GameSetupPage() {
     if (isManager) {
       initGame();
     }
-  }, [isManager, webPlayer.player]);  
+  }, [isManager, webPlayer.player, channel]);  
 
 
   // Fonction pour lancer ou mettre en pause le player
@@ -167,6 +194,7 @@ export default function GameSetupPage() {
         console.log('First Start!');
         setFirstStart(false);
         // Reset le timer
+        console.log("TIMER START PLAY", track)
         startTimer();
       }else{
         webPlayer.player.togglePlay().then(() => {
@@ -190,7 +218,7 @@ export default function GameSetupPage() {
       setTrack(newTrack);
       await playTrack(newTrack.uri, webPlayer.deviceId);
       const newRound: number = round + 1;
-      channel.publish("new-round", {currentRound: newRound, currentTrack : track})
+      channel.publish("new-round", {currentRound: newRound, currentTrack : newTrack})
       // Reset le timer
       startTimer();
     } else {
