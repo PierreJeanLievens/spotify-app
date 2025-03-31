@@ -218,6 +218,7 @@ useEffect(() => {
       setTrack(newTrack);
       await playTrack(newTrack.uri, webPlayer.deviceId);
       const newRound: number = round + 1;
+      channel.publish("game-start", {gameStart : true});
       channel.publish("new-round", {currentRound: newRound, currentTrack : newTrack})
       // Reset le timer
       startTimer();
@@ -270,7 +271,7 @@ useEffect(() => {
               <input id="artist" type="text" placeholder="Artiste" onChange={(e) => {setInputArtist(e.target.value)}}/>
             </>
           ) : (
-            <>Reponses terminées</>
+            <>Attends le prochain morceau</>
           )}
        </div>
     </div>

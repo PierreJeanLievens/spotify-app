@@ -20,7 +20,7 @@ export default function WaitingRoomPage() {
     // Fonction gestion lors de réception de message dans 'game-start'
     const handleGameStart = (message: any) => {
       console.log(message)
-      if (message.data === 'true') {
+      if (message.data.gameStart === true) {
         router.push(`/game/${roomId}`);
       }
     };

@@ -36,7 +36,7 @@ const GameSetupPage = () => {
       return;
     }
     try {
-      channel.publish("game-start", 'true');
+      channel.publish("game-start", {gameStart : true});
       router.push(`/game/${roomId}`); // Navigation immédiate
     } catch (error) {
       console.error("❌ Erreur lors du lancement du jeu :", error);

@@ -19,29 +19,40 @@ export default function GamePlayers() {
         const fetchHistory = async () => {
             try {
                 const history = await channel.history();
-
-                const newPlayers = history.items
-                    .filter((message: any) => message.name === "user-list")
-                    .map((message: any) => message.data);
-
-                setPlayers(newPlayers);
+        
+                const latestPlayersMap = new Map<string, any>();
+        
+                history.items
+                    .filter((message: any) => message.name === "user-list") // Filtrer les messages pertinents
+                    .sort((a, b) => b.timestamp - a.timestamp) // Tri décroissant par timestamp
+                    .forEach((message: any) => {
+                        if (!latestPlayersMap.has(message.clientId)) {
+                            latestPlayersMap.set(message.clientId, message.data);
+                        }
+                    });
+        
+                const updatedPlayers = Array.from(latestPlayersMap.values());
+                setPlayers(updatedPlayers);
             } catch (err) {
-                console.error("Erreur lors de la récupération de l'historique :", err);
+                console.error("Erreur lors de la récupération de l'historique :", err);
             }
         };
+        
 
         fetchHistory();
 
-        // Écoute les nouveaux joueurs
-        const listener = (message: any) => {
-            setPlayers((prev) => [...prev, message.data]);
+        // 📌 À chaque nouvel arrivant, on refait toute la liste des joueurs
+        const onJoin = async () => {
+            await fetchHistory();
         };
-        channel.subscribe("user-list", listener);
+
+        channel.subscribe("user-list", onJoin);
 
         return () => {
-            channel.unsubscribe("user-list", listener);
+            channel.unsubscribe("user-list", onJoin);
         };
     }, [ably, roomId]);
+
 
     return (
         <div>
