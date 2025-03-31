@@ -1,31 +1,62 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 
 export function useWebPlayer() {
   const router = useRouter();
+  const pathname = usePathname(); // Récupère la page actuelle
   const [token, setToken] = useState<string | null>(null);
   const [player, setPlayer] = useState<any | null>(null);
   const [deviceId, setDeviceId] = useState<string>("");
+  const [isTokenValid, setIsTokenValid] = useState<boolean>(true);
 
-  // Récupérer le token Spotify
+  // Vérification du token toutes les X minutes
   useEffect(() => {
-    const fetchToken = async () => {
+    const checkTokenValidity = async () => {
       const response = await fetch("/api/spotify-fetcher/get-spotify-token");
-      if (response.ok) {
-        const data = await response.json();
-        setToken(data.token.value);
-      } else {
-        console.error("Erreur lors de la récupération du token");
-        router.push("/login");
+
+      if (!response.ok) {
+        console.warn("Token Spotify expiré, déconnexion...");
+        setIsTokenValid(false);
+        return;
+      }
+
+      const data = await response.json();
+      setToken(data.token.value);
+    };
+
+    checkTokenValidity();
+
+    // Vérification toutes les 10 minutes
+    const interval = setInterval(checkTokenValidity, 10 * 60 * 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // Déconnexion automatique si le token expire ou si l'utilisateur change de page
+  useEffect(() => {
+    const disconnectPlayer = () => {
+      if (player) {
+        console.log("Déconnexion du lecteur Spotify...");
+        player.disconnect();
+        setPlayer(null);
       }
     };
 
-    fetchToken();
-  }, []);
+    if (!isTokenValid) {
+      disconnectPlayer();
+      router.push("/login"); // Redirection vers login si token expiré
+    }
 
-  // Initialiser le lecteur Spotify
+    // Déconnexion si la page change
+    return () => {
+      console.log("Changement de page détecté, déconnexion du lecteur...");
+      disconnectPlayer();
+    };
+  }, [isTokenValid, pathname]); // 📌 `pathname` détecte le changement de page
+
+  // Initialisation du lecteur Spotify
   useEffect(() => {
     if (token) {
       const script = document.createElement("script");
@@ -60,10 +91,7 @@ export function useWebPlayer() {
     };
 
     window.addEventListener("beforeunload", handleUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleUnload);
-    };
+    return () => window.removeEventListener("beforeunload", handleUnload);
   }, [player]);
 
   return { player, deviceId };
