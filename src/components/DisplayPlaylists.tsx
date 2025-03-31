@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import PlaylistList from "@/components/PlaylistList";
 import styles from "@/app/playlist/page.module.css";
 import Loading from "@/components/Loading";
+import LogoutButton from "./LogoutButton";
 
 export default function PlaylistPage(){
 
