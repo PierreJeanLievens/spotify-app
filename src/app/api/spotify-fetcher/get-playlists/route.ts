@@ -20,7 +20,7 @@ export async function GET() {
     }
 
     const data = await response.json();
-    return NextResponse.json(data);
+    return NextResponse.json(data.items);
   } catch (error) {
     console.error("Erreur API Playlists :", error);
     return NextResponse.json({ error: "Erreur interne du serveur" }, { status: 500 });

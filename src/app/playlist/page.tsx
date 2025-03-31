@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import PlaylistList from "@/components/PlaylistList";
 import styles from "@/app/playlist/page.module.css";
+import LogoutButton from "@/components/LogoutButton";
 
 const PlaylistPage = () => {
   const [playlists, setPlaylists] = useState<any[]>([]);
@@ -39,14 +40,7 @@ const PlaylistPage = () => {
   return (
     <div>
       <h1>Mes Playlists Spotify</h1>
-      <button
-        onClick={() => {
-          document.cookie = "spotify_access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-          router.push("/");
-        }}
-      >
-        Déconnexion
-      </button>
+      <LogoutButton />
       <div className={`${styles.container} playlists`}>
         <div>
           <h1>Mes playlists</h1>

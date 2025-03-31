@@ -3,6 +3,24 @@
  * @param playlistId permet de recuperer l'id
  * @returns 
  */
+export const fetchPlaylists = async () => {
+  try {
+    const response = await fetch(`/api/spotify-fetcher/get-playlists`);
+    if (!response.ok) {
+      throw new Error("Échec de récupération de la playlist");
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Erreur lors de la récupération des playlists :", error);
+    return null;
+  }
+};
+
+/**
+ * Cette fonction permet d'appeler la requete API pour récupérer la playlist choisie,
+ * @param playlistId permet de recuperer l'id
+ * @returns 
+ */
 export const fetchPlaylist = async (playlistId: string) => {
   try {
     const response = await fetch(`/api/spotify-fetcher/get-playlist/${playlistId}`);

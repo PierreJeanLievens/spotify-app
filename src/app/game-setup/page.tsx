@@ -8,6 +8,7 @@ import Loading from "@/components/Loading";
 import { fetchPlaylist } from "@/lib/fetchData";
 import ButtonLink from "@/components/ButtonLink";
 import { useAbly } from "@/lib/ablyContext";
+import LogoutButton from "@/components/LogoutButton";
 
 const GameSetupPage = () => {
   const [playlist, setPlaylist] = useState<any>(null);
@@ -70,14 +71,7 @@ const GameSetupPage = () => {
     <div className="">
       <h1>Mes Playlists Spotify</h1>
       <ButtonLink text="Retour" path="/playlists"/>
-      <button
-        onClick={() => {
-          document.cookie = "spotify_access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-          router.push("/");
-        }}
-      >
-        Déconnexion
-      </button>
+      <LogoutButton />
       <div>
           <h1></h1>
           <div className={styles.container}>

@@ -41,14 +41,7 @@ export default function PlaylistPage(){
   return (
     <div>
       <h1>Mes Playlists Spotify</h1>
-      <button
-        onClick={() => {
-          document.cookie = "spotify_access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-          router.push("/");
-        }}
-      >
-        Déconnexion
-      </button>
+      <LogoutButton />
       <div className={`${styles.container} playlists`}>
         <div>
           <h1>Mes playlists</h1>
