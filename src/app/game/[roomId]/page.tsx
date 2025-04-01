@@ -1,12 +1,13 @@
 "use client";
 import { useRoomManager } from "@/hooks/useRoomManager";
 import { fetchNewTrack, fetchNumberTracksPlaylist } from "@/lib/fetchData";
-import { Track } from "@/types/spotify";
+import { Player, Track } from "@/types/spotify";
 import { useCallback, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { setVolume, setVolumeWithDevice } from "@/lib/setVolume";
 import { playTrack } from "@/lib/playTrack";
 import { verifiyInputs } from "@/lib/verifiyResponses/verifyInputs";
+import DisplayScore from "@/components/DisplayScore";
 
 
 export default function GameSetupPage() {
@@ -22,6 +23,9 @@ export default function GameSetupPage() {
   const [secondsLeft, setSecondsLeft] = useState<number>(15); // Stocke les secondes restantes
   const [inputTrack, setInputTrack] = useState<string>(''); // Stocke l'input du titre
   const [inputArtist, setInputArtist] = useState<string>(''); // Stocke l'input de l'artiste
+  const [clientId, setClientId] = useState<string>(''); // Stocke l'id du client
+  const [clientName, setClientName] = useState<string>(''); // Stocke le nom du client
+  const [displayScore, setDisplayScore] = useState<boolean>(false); // Stocke l'etat de l'affichage des points
   const router = useRouter();
 
   // Permet d'arreter les reponses si le timer est a 0
@@ -56,30 +60,67 @@ export default function GameSetupPage() {
   };
   
 
+  const manageScorePlayer = useCallback(async () => {
+    if (!track) return null;
+    const resultsRound = verifiyInputs(track?.artists, inputArtist, track?.name, inputTrack);
+    console.log("SCORE", resultsRound);
+
+    let playerScore: Player | null = JSON.parse(sessionStorage.getItem("playerScore") || "null");
+
+    if (!playerScore) {
+      playerScore = {
+        clientId,
+        name: clientName,
+        rounds: [],
+      };
+    }
+    // Vérification si le round existe déjà
+    const roundExists = playerScore.rounds.some((r) => r.number === round); // Comparer r.number à round
+    if (roundExists) {
+        console.log(`Round ${round} existe déjà. Pas d'ajout.`);
+        return; // Si le round existe déjà, on ne l'ajoute pas
+    }
+
+    const newRound = {
+      number: round,
+      artistPoints: resultsRound.artistPoints,
+      trackPoints: resultsRound.trackPoints,
+      bonus: resultsRound.bonus,
+    };
+
+    playerScore.rounds.push(newRound);
+
+    sessionStorage.setItem("playerScore", JSON.stringify(playerScore));
+
+    return playerScore; // 🔥 On retourne l'objet mis à jour
+}, [track, inputArtist, inputTrack, clientId, clientName, round]);
+
 /**
  * Function qui ecoute le channel 'accept-response'
  * Utilisation du callback pour réactualiser la fonction lorsque les données change
  * Sans callback, lorsque la fonction est utlisée dans channel.subscribe, les données utilisées sont figées, lors de la première execution track est null
  * Avec le callback, on met à jour la fonction avec les nouvelles données lorsque (track et les inputs changent) 
  */
-const handleStateResponses = useCallback((message: any) => {
-  // Si on accepte les réponses (cela veut dire nouveau round)
-  console.log("HANDLE RESPONSE")
+const handleStateResponses = useCallback(async (message: any) => {
+
   if (message.data.acceptResponse) {
     setAcceptResponse(true);
     setPaused(false);
-    // Reset timer
-  }else {
-    console.log("FALSE AFFICHAGE")
+  } else {
     setAcceptResponse(false);
     setPaused(true);
-    if(message.data.endRound && track){
-      console.log("TRACK", track)  
-      const points = verifiyInputs(track?.artists, inputArtist, track?.name, inputTrack);
-      console.log("SCORE", points)
+
+    if (message.data.endRound) {
+      const updatedPlayerScore = await manageScorePlayer(); // 🔥 Récupère la version mise à jour
+
+      if (updatedPlayerScore) {
+        await channel.publish("player-score", { playerScore: updatedPlayerScore });
+        console.log("SCORE ENVOYE")
+      }
     }
   }
-}, [track, inputArtist, inputTrack]);
+}, [manageScorePlayer, channel]);
+
 
 
 /**
@@ -115,28 +156,43 @@ const receiptNewRound = useCallback((message: any) => {
 }, []);
 
 
-useEffect(() => {
-  if(!ably || !roomId) return;
-  
-  try {
+  useEffect(() => {
+    if (!ably || !roomId) return;
+
     const roomChannel = ably.channels.get(`blindtest:${roomId}`);
     setChannel(roomChannel);
-    
-    // Subscribe to channels
-    roomChannel.subscribe("accept-response", handleStateResponses);
-    roomChannel.subscribe("seconds-left", handleSecondsLeft);
-    roomChannel.subscribe("new-round", receiptNewRound);
-    
+
+    const checkChannelValidity = async () => {
+      try {
+        const history = await roomChannel.history();
+
+        if (history.items.length === 0) {
+          // Si l'historique est vide, cela signifie probablement que le channel est invalide
+          console.log("Le channel est invalide ou vide, redirection vers le menu...");
+          router.push("/login");
+          return;
+        }
+
+        // Subscribe to channels if history is valid
+        roomChannel.subscribe("accept-response", handleStateResponses);
+        roomChannel.subscribe("seconds-left", handleSecondsLeft);
+        roomChannel.subscribe("new-round", receiptNewRound);
+
+      } catch (error) {
+        console.error("Erreur lors de la récupération de l'historique :", error);
+        router.push("/login"); // Redirige vers le menu en cas d'erreur avec Ably
+      }
+    };
+
+    checkChannelValidity();
+
     // Clean up subscriptions
     return () => {
       roomChannel.unsubscribe("accept-response", handleStateResponses);
       roomChannel.unsubscribe("seconds-left", handleSecondsLeft);
       roomChannel.unsubscribe("new-round", receiptNewRound);
     };
-  } catch (error) {
-    console.error("Erreur lors de l'initialisation de ably :", error);
-  }
-  }, [ably, roomId, handleStateResponses, handleSecondsLeft, receiptNewRound])
+  }, [ably, roomId, handleStateResponses, handleSecondsLeft, receiptNewRound, router]);
 
   // Cela permet de récupérer le webPlayer
   useEffect(() => {
@@ -150,6 +206,7 @@ useEffect(() => {
           router.push("/playlists");
           return;
         }
+        
         // On récupère la playlistChoisie
         setPlaylistId(playlistIdStored);
         // Récupération d'un nouveau morceau
@@ -185,6 +242,19 @@ useEffect(() => {
   }, [isManager, webPlayer.player, channel]);  
 
 
+  // Permet de retourner à l'accueil si le client n'a ni nom ni id
+  useEffect(() => {
+    const newClientId = sessionStorage.getItem("clientId");
+    const newClientName = sessionStorage.getItem("clientName");
+    if (!newClientId || !newClientName) {
+      router.push("/login"); // Redirection vers la page d'accueil
+      return;
+    }
+    // Ne met à jour le state que si la valeur change réellement
+    setClientId(prev => (prev !== newClientId ? newClientId : prev));
+    setClientName(prev => (prev !== newClientName ? newClientName : prev));
+  }, [router]);
+
   // Fonction pour lancer ou mettre en pause le player
   const handlePlayTrack = async () => {
     
@@ -194,7 +264,6 @@ useEffect(() => {
         console.log('First Start!');
         setFirstStart(false);
         // Reset le timer
-        console.log("TIMER START PLAY", track)
         startTimer();
       }else{
         webPlayer.player.togglePlay().then(() => {
@@ -273,6 +342,11 @@ useEffect(() => {
           ) : (
             <>Attends le prochain morceau</>
           )}
+       </div>
+
+       <div>
+        <button className='button' onClick={()=> {setDisplayScore(!displayScore)}}>{displayScore ? "Cacher les scores" : "Afficher les scores"}</button>
+        {(displayScore) ? (<DisplayScore/>) : (<></>)}
        </div>
     </div>
   );

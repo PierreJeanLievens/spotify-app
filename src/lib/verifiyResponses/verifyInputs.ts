@@ -47,16 +47,25 @@ function verifyTrackNameInput( trackName: string , input: string): number {
  * @param inputArtist input du client pour artiste
  * @param trackName nom du morceau
  * @param inputTrack input du client pour nom du morceau
- * @returns 
+ * @returns un objet {artistPoints, trackPoints, bonus}
  */
 export function verifiyInputs(list: { name: string }[], inputArtist: string, trackName: string , inputTrack: string){
-    let result = 0;
-    result += verifyArtistInput(list, inputArtist);
-    result += verifyTrackNameInput(trackName, inputTrack);
+    // let result = 0;
+    // result += verifyArtistInput(list, inputArtist);
+    // result += verifyTrackNameInput(trackName, inputTrack);
+    // if(result >= 1400) {
+    //     result += 200;
+    // }
+    // return result;
+    
+    const artistPoints: number = verifyArtistInput(list, inputArtist);
+    const trackPoints: number =  verifyTrackNameInput(trackName, inputTrack);
 
-    if(result >= 1400) {
-        result += 200;
+    let bonus :number = 0;
+    if(artistPoints!= 0 && trackPoints!= 0){
+        bonus = 200;
     }
+    const result2 = {artistPoints : artistPoints, trackPoints : trackPoints, bonus : bonus}
 
-    return result;
+    return result2;
 }

@@ -34,8 +34,15 @@ export type Playlist = {
   };
   
 export type Player = {
+  clientId: string,
   name: string,
-  score: number
+  rounds:  {
+    number: number,
+    artistPoints : number,
+    trackPoints : number,
+    bonus: number,
+  }[],
+  totalPoints?: number
 }
 
 export type Track = {
