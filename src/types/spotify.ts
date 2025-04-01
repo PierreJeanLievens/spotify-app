@@ -44,6 +44,10 @@ export type Player = {
   }[],
   totalPoints?: number
 }
+export type PlayerOld = {
+  name: string,
+  score: number
+}
 
 export type Track = {
   album: {

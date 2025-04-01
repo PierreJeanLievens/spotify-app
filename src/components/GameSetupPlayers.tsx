@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import styles from "@/components/GameSetupPlayers.module.css"
-import { Player } from "@/types/spotify"; 
+import { PlayerOld } from "@/types/spotify"; 
 
 export default function GameSetupPlayers() {
-  const [players, setPlayers] = useState<Player[]>(() => {
+  const [players, setPlayers] = useState<PlayerOld[]>(() => {
     const storedPlayers = localStorage.getItem("players");
     return storedPlayers ? JSON.parse(storedPlayers) : [];
   });
@@ -33,7 +33,7 @@ export default function GameSetupPlayers() {
         alert("Ce joueur existe déjà.");
         return;
       }
-      const newPlayer: Player = { name: trimmedName, score: 0 };
+      const newPlayer: PlayerOld = { name: trimmedName, score: 0 };
       setPlayers([...players, newPlayer]);
       setNewPlayerName(""); // Réinitialiser l'input
     }

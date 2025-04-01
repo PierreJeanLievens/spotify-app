@@ -1,13 +1,13 @@
 import styles from "@/components/ResponseSection.module.css";
-import { Player, Track } from "@/types/spotify";
+import { PlayerOld, Track } from "@/types/spotify";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 export default function ResponseSection({ track, isVisible, onClose, nextTrack }: { track: Track, isVisible: boolean, onClose: () => void, nextTrack: () => void }) {
     const [inputTrack, setInputTrack] = useState<string | null>(null);
     const [inputArtist, setInputArtist] = useState<string | null>(null);
-    const [playerChoose, setPlayerChoose] = useState<Player | null>(null);
-    const [parsedPlayers, setParsedPlayers] = useState<Player[]>([]);
+    const [playerChoose, setPlayerChoose] = useState<PlayerOld | null>(null);
+    const [parsedPlayers, setParsedPlayers] = useState<PlayerOld[]>([]);
     const router = useRouter();
     const inputTrackRef = useRef<HTMLInputElement | null>(null);
     const inputArtistRef = useRef<HTMLInputElement | null>(null);
@@ -45,7 +45,7 @@ export default function ResponseSection({ track, isVisible, onClose, nextTrack }
         }
     }, [track]);
 
-    const handlePlayer = (player: Player) => {
+    const handlePlayer = (player: PlayerOld) => {
         setPlayerChoose(player);
     };
 
