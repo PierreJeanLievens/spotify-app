@@ -29,4 +29,5 @@ Préparation :
 2h -- Mise à jour des joueurs avec l'historique (pour éviter 2 joueurs sur le meme id) (probleme sauvegarde tous les noms donc meme un ancien nom de joueur inactif n'est plus valide )
 2h -- Gestion du webPlayer pour deconnexion
  A FAIRE : 
+3h -- Ajout de l'affichage et du calcul du score pour chaque joueur
  Faire en sorte que lors de la récupération des joueurs, on check l'id pour evite 2 joueurs avec 1 seul client

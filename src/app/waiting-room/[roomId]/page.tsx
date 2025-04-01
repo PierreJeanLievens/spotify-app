@@ -21,6 +21,7 @@ export default function WaitingRoomPage() {
     const handleGameStart = (message: any) => {
       console.log(message)
       if (message.data.gameStart === true) {
+        sessionStorage.removeItem("playerScore");
         router.push(`/game/${roomId}`);
       }
     };

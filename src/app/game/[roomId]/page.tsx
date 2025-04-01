@@ -209,12 +209,12 @@ const receiptNewRound = useCallback((message: any) => {
         
         // On récupère la playlistChoisie
         setPlaylistId(playlistIdStored);
-        // Récupération d'un nouveau morceau
-        const newTrack: Track = await fetchNewTrack(playlistIdStored);
-        // console.log(newTrack)
-        if (newTrack) {
-          setTrack(newTrack);
-        }
+        // // Récupération d'un nouveau morceau
+        // const newTrack: Track = await fetchNewTrack(playlistIdStored);
+        // // console.log(newTrack)
+        // if (newTrack) {
+        //   setTrack(newTrack);
+        // }
 
         // On se met en ecoute sur le webPlayer (lorsque son état change (play/pause))
         webPlayer.player.addListener('player_state_changed', ( (state: { paused: any; }) => {
@@ -260,11 +260,11 @@ const receiptNewRound = useCallback((message: any) => {
     
     if(webPlayer.player && track){
       if(firstStart){
-        playTrack(track.uri, webPlayer.deviceId);
-        console.log('First Start!');
-        setFirstStart(false);
-        // Reset le timer
-        startTimer();
+        // playTrack(track.uri, webPlayer.deviceId);
+        // console.log('First Start!');
+        // setFirstStart(false);
+        // // Reset le timer
+        // startTimer();
       }else{
         webPlayer.player.togglePlay().then(() => {
         console.log('Toggled playback!');
@@ -286,6 +286,7 @@ const receiptNewRound = useCallback((message: any) => {
     if (newTrack && webPlayer.deviceId) {
       setTrack(newTrack);
       await playTrack(newTrack.uri, webPlayer.deviceId);
+      setFirstStart(false);
       const newRound: number = round + 1;
       channel.publish("game-start", {gameStart : true});
       channel.publish("new-round", {currentRound: newRound, currentTrack : newTrack})
@@ -314,12 +315,15 @@ const receiptNewRound = useCallback((message: any) => {
       {(isManager) ? (
         <><button className="button" onClick={()=> {router.push("/game-setup");}}>Retour</button></>
       ) : (
-        <><button className="button" onClick={()=> {router.push("/join-room");}}>Retour</button></>
+        <><button className="button" onClick={()=> {router.push("/login");}}>Retour</button></>
       )}
       
       {(webPlayer.player && isManager) ? (
         <>
-          <button className='button' onClick={handlePlayTrack}>Lancer le jeu{is_paused || firstStart ? "PLAY" : "PAUSE"}</button>
+          {(firstStart) ? (
+            <></>) : (
+            <button className='button' onClick={handlePlayTrack}>Lancer le jeu{is_paused || firstStart ? "PLAY" : "PAUSE"}</button>
+          )}
           <button className='button' onClick={handleNextTrack}>NextTrack</button>
           <button className='button' onClick={handleVolume}>Volume</button>
           <button className='button' onClick={() => {channel.publish("accept-response", {acceptResponse : true});}}>Test publish</button>
