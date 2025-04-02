@@ -7,14 +7,17 @@ import { useWebPlayer } from "@/hooks/useWebPlayer";
 
 /**
  * Ce hook gère le rôle de manager du salon et intègre également la gestion du lecteur Spotify.
- * @returns { isManager, filteredPlayerData }
+ * @returns { isManager, webPlayer, ably }
  */
 export const useRoomManager = () => {
   const router = useRouter();
   const ably = useAbly();
   const { roomId } = useParams();
   const [isManager, setIsManager] = useState(false);
-  const playerData = useWebPlayer(); // Utilisation du lecteur Spotify
+  const [isManagerDetermined, setIsManagerDetermined] = useState(false);
+  
+  // Initialize player data with checkToken=false until we know if user is manager
+  const playerData = useWebPlayer(isManagerDetermined && isManager);
 
   useEffect(() => {
     if (!ably || !roomId) return;
@@ -30,9 +33,19 @@ export const useRoomManager = () => {
             const history = await channel.history();
             history.items.forEach((message: any) => {
               if (message.name === "room-manager") {
-                setIsManager(message.clientId === ably.auth.clientId);
+                const userIsManager = message.clientId === ably.auth.clientId;
+                setIsManager(userIsManager);
+                setIsManagerDetermined(true);
+                console.log(`User role determined: ${userIsManager ? 'Manager' : 'Player'}`);
               }
             });
+            
+            // If we couldn't determine the role from history, default to non-manager
+            if (!isManagerDetermined) {
+              setIsManagerDetermined(true);
+              setIsManager(false);
+              console.log("No manager info found, defaulting to player role");
+            }
           } catch (err) {
             console.error("❌ Erreur lors de la récupération de l'historique :", err);
             router.push("/login");
@@ -44,12 +57,12 @@ export const useRoomManager = () => {
     }, 100);
 
     return () => clearInterval(checkClientId);
-  }, [ably, roomId]);
+  }, [ably, roomId, router, isManagerDetermined]);
 
   // Filtrage des données du lecteur selon le rôle du joueur
   const webPlayer = isManager
     ? playerData
-    : { player: null, deviceId: "", isReady: false };
+    : { player: null, deviceId: "" };
 
   return { isManager, webPlayer, ably };
 };

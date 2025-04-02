@@ -2,7 +2,7 @@
 import { useRoomManager } from "@/hooks/useRoomManager";
 import { fetchNewTrack, fetchNumberTracksPlaylist } from "@/lib/fetchData";
 import { Player, Track } from "@/types/spotify";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { setVolume, setVolumeWithDevice } from "@/lib/setVolume";
 import { playTrack } from "@/lib/playTrack";
@@ -27,6 +27,25 @@ export default function GameSetupPage() {
   const [clientName, setClientName] = useState<string>(''); // Stocke le nom du client
   const [displayScore, setDisplayScore] = useState<boolean>(false); // Stocke l'etat de l'affichage des points
   const router = useRouter();
+
+
+  const trackRef = useRef(track);
+  const inputArtistRef = useRef(inputArtist);
+  const inputTrackRef = useRef(inputTrack);
+  const roundRef = useRef(round);
+  const channelRef = useRef(channel);
+  const clientIdRef = useRef(clientId);
+  const clientNameRef = useRef(clientName);
+
+  // Maintenir les références à jour
+  useEffect(() => { trackRef.current = track; }, [track]);
+  useEffect(() => { inputArtistRef.current = inputArtist; }, [inputArtist]);
+  useEffect(() => { inputTrackRef.current = inputTrack; }, [inputTrack]);
+  useEffect(() => { roundRef.current = round; }, [round]);
+  useEffect(() => { channelRef.current = channel; }, [channel]);
+  useEffect(() => { clientIdRef.current = clientId; }, [clientId]);
+  useEffect(() => { clientNameRef.current = clientName; }, [clientName]);
+
 
   // Permet d'arreter les reponses si le timer est a 0
   // useEffect(() => {
@@ -60,41 +79,6 @@ export default function GameSetupPage() {
   };
   
 
-  const manageScorePlayer = useCallback(async () => {
-    if (!track) return null;
-    const resultsRound = verifiyInputs(track?.artists, inputArtist, track?.name, inputTrack);
-    console.log("SCORE", resultsRound);
-
-    let playerScore: Player | null = JSON.parse(sessionStorage.getItem("playerScore") || "null");
-
-    if (!playerScore) {
-      playerScore = {
-        clientId,
-        name: clientName,
-        rounds: [],
-      };
-    }
-    // Vérification si le round existe déjà
-    const roundExists = playerScore.rounds.some((r) => r.number === round); // Comparer r.number à round
-    if (roundExists) {
-        console.log(`Round ${round} existe déjà. Pas d'ajout.`);
-        return; // Si le round existe déjà, on ne l'ajoute pas
-    }
-
-    const newRound = {
-      number: round,
-      artistPoints: resultsRound.artistPoints,
-      trackPoints: resultsRound.trackPoints,
-      bonus: resultsRound.bonus,
-    };
-
-    playerScore.rounds.push(newRound);
-
-    sessionStorage.setItem("playerScore", JSON.stringify(playerScore));
-
-    return playerScore; // 🔥 On retourne l'objet mis à jour
-}, [track, inputArtist, inputTrack, clientId, clientName, round]);
-
 /**
  * Function qui ecoute le channel 'accept-response'
  * Utilisation du callback pour réactualiser la fonction lorsque les données change
@@ -102,7 +86,6 @@ export default function GameSetupPage() {
  * Avec le callback, on met à jour la fonction avec les nouvelles données lorsque (track et les inputs changent) 
  */
 const handleStateResponses = useCallback(async (message: any) => {
-
   if (message.data.acceptResponse) {
     setAcceptResponse(true);
     setPaused(false);
@@ -111,15 +94,69 @@ const handleStateResponses = useCallback(async (message: any) => {
     setPaused(true);
 
     if (message.data.endRound) {
-      const updatedPlayerScore = await manageScorePlayer(); // 🔥 Récupère la version mise à jour
+      // Use a ref to track if we've already processed this round
+      const currentRound = roundRef.current;
+      
+      // Check if we've already processed this round in this session
+      const processedRoundsKey = `processed_round_${currentRound}`;
+      if (sessionStorage.getItem(processedRoundsKey)) {
+        console.log(`Round ${currentRound} already processed in this session. Skipping.`);
+        return;
+      }
+      
+      // Mark this round as processed to prevent duplicate executions
+      sessionStorage.setItem(processedRoundsKey, 'true');
+      
+      // Get current track using ref for up-to-date value
+      const currentTrack = trackRef.current;
+      if (!currentTrack) return null;
 
-      if (updatedPlayerScore) {
-        await channel.publish("player-score", { playerScore: updatedPlayerScore });
-        console.log("SCORE ENVOYE")
+      const resultsRound = verifiyInputs(
+        currentTrack.artists,
+        inputArtistRef.current,
+        currentTrack.name, 
+        inputTrackRef.current
+      );
+      console.log("SCORE", resultsRound);
+
+      let playerScore: Player | null = JSON.parse(sessionStorage.getItem("playerScore") || "null");
+
+      if (!playerScore) {
+        playerScore = {
+          clientId : clientIdRef.current,
+          name: clientNameRef.current,
+          rounds: [],
+        };
+      }
+      
+      // Check if this round already exists in player score
+      const roundExists = playerScore.rounds.some((r) => r.number === currentRound);
+      if (roundExists) {
+        console.log(`Round ${currentRound} already exists in player score. No addition.`);
+        return;
+      }
+
+      const newRound = {
+        number: currentRound,
+        artistPoints: resultsRound.artistPoints,
+        trackPoints: resultsRound.trackPoints,
+        bonus: resultsRound.bonus,
+      };
+
+      playerScore.rounds.push(newRound);
+
+      sessionStorage.setItem("playerScore", JSON.stringify(playerScore));
+      
+      // Check if channel exists before publishing
+      if (channelRef.current) {
+        await channelRef.current.publish("player-score", { playerScore: playerScore });
+        console.log("SCORE SENT");
+      } else {
+        console.error("Cannot publish score: channel is null");
       }
     }
   }
-}, [manageScorePlayer, channel]);
+}, []);
 
 
 
@@ -167,32 +204,30 @@ const receiptNewRound = useCallback((message: any) => {
         const history = await roomChannel.history();
 
         if (history.items.length === 0) {
-          // Si l'historique est vide, cela signifie probablement que le channel est invalide
           console.log("Le channel est invalide ou vide, redirection vers le menu...");
           router.push("/login");
           return;
         }
-
-        // Subscribe to channels if history is valid
+        // Puis on s'abonne une seule fois
         roomChannel.subscribe("accept-response", handleStateResponses);
         roomChannel.subscribe("seconds-left", handleSecondsLeft);
         roomChannel.subscribe("new-round", receiptNewRound);
 
       } catch (error) {
         console.error("Erreur lors de la récupération de l'historique :", error);
-        router.push("/login"); // Redirige vers le menu en cas d'erreur avec Ably
+        router.push("/login");
       }
     };
 
     checkChannelValidity();
 
-    // Clean up subscriptions
+    // Cleanup pour éviter les abonnements en double
     return () => {
       roomChannel.unsubscribe("accept-response", handleStateResponses);
       roomChannel.unsubscribe("seconds-left", handleSecondsLeft);
       roomChannel.unsubscribe("new-round", receiptNewRound);
     };
-  }, [ably, roomId, handleStateResponses, handleSecondsLeft, receiptNewRound, router]);
+  }, [ably, roomId, router, handleStateResponses, handleSecondsLeft, receiptNewRound]);
 
   // Cela permet de récupérer le webPlayer
   useEffect(() => {

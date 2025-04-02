@@ -3,16 +3,18 @@
 import { useRouter, usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 
-export function useWebPlayer() {
+export function useWebPlayer(checkToken = true) { // Add parameter to control token checking
   const router = useRouter();
-  const pathname = usePathname(); // Récupère la page actuelle
+  const pathname = usePathname();
   const [token, setToken] = useState<string | null>(null);
   const [player, setPlayer] = useState<any | null>(null);
   const [deviceId, setDeviceId] = useState<string>("");
   const [isTokenValid, setIsTokenValid] = useState<boolean>(true);
 
-  // Vérification du token toutes les X minutes
+  // Vérification du token toutes les X minutes - only if checkToken is true
   useEffect(() => {
+    if (!checkToken) return; // Skip token check if not required
+    
     const checkTokenValidity = async () => {
       const response = await fetch("/api/spotify-fetcher/get-spotify-token");
 
@@ -32,7 +34,7 @@ export function useWebPlayer() {
     const interval = setInterval(checkTokenValidity, 10 * 60 * 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [checkToken]);
 
   // Déconnexion automatique si le token expire ou si l'utilisateur change de page
   useEffect(() => {
@@ -44,7 +46,7 @@ export function useWebPlayer() {
       }
     };
 
-    if (!isTokenValid) {
+    if (!isTokenValid && checkToken) {
       disconnectPlayer();
       router.push("/login"); // Redirection vers login si token expiré
     }
@@ -54,7 +56,7 @@ export function useWebPlayer() {
       console.log("Changement de page détecté, déconnexion du lecteur...");
       disconnectPlayer();
     };
-  }, [isTokenValid, pathname]); // 📌 `pathname` détecte le changement de page
+  }, [isTokenValid, pathname, player, router, checkToken]);
 
   // Initialisation du lecteur Spotify
   useEffect(() => {
