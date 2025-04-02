@@ -97,15 +97,19 @@ const handleStateResponses = useCallback(async (message: any) => {
       // Use a ref to track if we've already processed this round
       const currentRound = roundRef.current;
       
-      // Check if we've already processed this round in this session
-      const processedRoundsKey = `processed_round_${currentRound}`;
-      if (sessionStorage.getItem(processedRoundsKey)) {
-        console.log(`Round ${currentRound} already processed in this session. Skipping.`);
+      let processedRounds = JSON.parse(sessionStorage.getItem("processedRounds") || "[]") || [];
+
+      // Vérifier si le round actuel a déjà été traité
+      if (processedRounds.includes(currentRound)) {
+        console.log(`Round ${currentRound} déjà traité dans cette session. Ignorer.`);
         return;
       }
-      
-      // Mark this round as processed to prevent duplicate executions
-      sessionStorage.setItem(processedRoundsKey, 'true');
+
+      // Ajouter le round actuel au tableau des rounds traités
+      processedRounds.push(currentRound);
+
+      // Enregistrer le tableau mis à jour dans sessionStorage
+      sessionStorage.setItem("processedRounds", JSON.stringify(processedRounds));
       
       // Get current track using ref for up-to-date value
       const currentTrack = trackRef.current;

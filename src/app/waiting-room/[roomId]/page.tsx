@@ -22,6 +22,7 @@ export default function WaitingRoomPage() {
       console.log(message)
       if (message.data.gameStart === true) {
         sessionStorage.removeItem("playerScore");
+        sessionStorage.removeItem("processedRounds");
         router.push(`/game/${roomId}`);
       }
     };

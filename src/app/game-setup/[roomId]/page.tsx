@@ -39,6 +39,7 @@ const GameSetupPage = () => {
     try {
       channel.publish("game-start", {gameStart : true});
       sessionStorage.removeItem("playerScore");
+      sessionStorage.removeItem("processedRounds");
       router.push(`/game/${roomId}`); // Navigation immédiate
     } catch (error) {
       console.error("❌ Erreur lors du lancement du jeu :", error);
