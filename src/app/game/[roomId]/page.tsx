@@ -342,24 +342,7 @@ const receiptNewRound = useCallback((message: any) => {
       console.error("❌ Impossible de jouer la nouvelle piste");
     }
   };
-
-  // Fonction pour géger le volume du device
-  const handleVolume = async () => {
   
-    if(webPlayer.player) { 
-      webPlayer.player.setVolume().then(() => {
-        console.log("Volume modifié")
-      })
-    }
-
-    // if (webPlayer.deviceId) {
-    //   await setVolumeWithDevice(10, webPlayer.deviceId);
-    // } else {
-    //   console.error("❌ Impossible de modifier le volume");
-    // }
-  };
-  
-
   return (
     <div>
       <h1>Configuration du jeu</h1>

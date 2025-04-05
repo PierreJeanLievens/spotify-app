@@ -4,12 +4,11 @@ import { useState, useEffect } from 'react';
 import styles from "@/components/VolumeControl.module.css"
 
 const VolumeControl = ({ player }: { player: any }) => {
-  const [volume, setVolume] = useState(50); // Valeur entre 0 et 100
-  const [showSlider, setShowSlider] = useState(false);
+  const [volume, setVolume] = useState(30); // Valeur entre 0 et 100 (initialement 30)
 
   useEffect(() => {
-    player.getVolume().then((v: number) => {
-      setVolume(Math.round(v * 100)); // Convertir en 0–100
+    player.getVolume().then((volumeFetched: number) => {
+      setVolume(Math.round(volumeFetched * 100)); // Convertir en 0–100
     });
   }, [player]);
 
@@ -19,16 +18,8 @@ const VolumeControl = ({ player }: { player: any }) => {
     player.setVolume(newVolume / 100); // Convertir en 0–1
   };
 
-  const handleVolumeButton = () => {
-    setShowSlider(!showSlider);
-  };
-
   return (
     <div className={styles.volume__control}>
-      <button className="button" onClick={handleVolumeButton}>
-        Volume
-      </button>
-      {showSlider && (
         <input
           type="range"
           min={0}
@@ -37,7 +28,6 @@ const VolumeControl = ({ player }: { player: any }) => {
           onChange={handleVolumeChange}
           className={styles.volume__slider}
         />
-      )}
     </div>
   );
 };

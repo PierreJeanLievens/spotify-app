@@ -1,10 +1,17 @@
 .volume__control {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    accent-color: var(--primary-color-major);
+    position: fixed;
+    left: 50%;
+    bottom: 0;
+    padding: 10px;
+    transform: translateX(-50%);
+    width: 90%;
+    text-align: center;
   }
   
   .volume__slider {
-    width: 100px;
+    width: 100%;
+    max-width: 200px;
+    background-color: aqua;
   }
   
