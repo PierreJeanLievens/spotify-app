@@ -1,0 +1,10 @@
+.volume__control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .volume__slider {
+    width: 100px;
+  }
+  

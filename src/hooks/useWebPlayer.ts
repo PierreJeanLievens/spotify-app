@@ -70,6 +70,7 @@ export function useWebPlayer(checkToken = true) { // Add parameter to control to
         const newPlayer = new window.Spotify.Player({
           name: "Web Playback SDK",
           getOAuthToken: (cb: (token: string) => void) => cb(token),
+          volume: 0.3
         });
 
         newPlayer.addListener("ready", ({ device_id }: { device_id: string }) => {

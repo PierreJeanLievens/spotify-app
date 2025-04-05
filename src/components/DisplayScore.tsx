@@ -73,7 +73,8 @@ export default function DisplayScore() {
         <div>
             <h2>Classement des joueurs</h2>
             {players.length === 0 ? (
-                <Loading title="Pas de joueurs dans ce salon" text="Attends que les joueurs chargent... ou retourne au menu"/>
+                // <Loading title="Pas de joueurs dans ce salon" text="Attends que les joueurs chargent... ou retourne au menu"/>
+                <p>Pas de joueurs dans ce salon</p>
             ) : (
                 <ul>
                     {players.map((player, index) => (

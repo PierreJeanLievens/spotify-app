@@ -8,6 +8,7 @@ import { setVolume, setVolumeWithDevice } from "@/lib/setVolume";
 import { playTrack } from "@/lib/playTrack";
 import { verifiyInputs } from "@/lib/verifiyResponses/verifyInputs";
 import DisplayScore from "@/components/DisplayScore";
+import VolumeControl from "@/components/VolumeControl";
 
 
 export default function GameSetupPage() {
@@ -20,6 +21,7 @@ export default function GameSetupPage() {
   const [firstStart, setFirstStart] = useState<boolean>(true);// Si premier start alors on lance avec API, sinon on effectue le toogle avec la fonction du WebPlayer
   const [acceptResponse, setAcceptResponse] = useState<boolean>(false); // Permet de savoir s'il faut afficher les inputs pour répondre
   const [round, setRound] = useState<number>(0); // Permet de savoir le round en cours
+  const [volume, setVolume] = useState<number>(0); // Permet de savoir le round en cours
   const [secondsLeft, setSecondsLeft] = useState<number>(15); // Stocke les secondes restantes
   const [inputTrack, setInputTrack] = useState<string>(''); // Stocke l'input du titre
   const [inputArtist, setInputArtist] = useState<string>(''); // Stocke l'input de l'artiste
@@ -255,6 +257,11 @@ const receiptNewRound = useCallback((message: any) => {
         //   setTrack(newTrack);
         // }
 
+        webPlayer.player.getVolume().then((volume: number)  => {
+          let volume_percentage = volume * 100;
+          setVolume(volume_percentage);
+          console.log(`The volume of the player is ${volume_percentage}%`);
+        });
         // On se met en ecoute sur le webPlayer (lorsque son état change (play/pause))
         webPlayer.player.addListener('player_state_changed', ( (state: { paused: any; }) => {
           if (!state) {
@@ -339,11 +346,17 @@ const receiptNewRound = useCallback((message: any) => {
   // Fonction pour géger le volume du device
   const handleVolume = async () => {
   
-    if (webPlayer.deviceId) {
-      await setVolumeWithDevice(10, webPlayer.deviceId);
-    } else {
-      console.error("❌ Impossible de jouer la nouvelle piste");
+    if(webPlayer.player) { 
+      webPlayer.player.setVolume().then(() => {
+        console.log("Volume modifié")
+      })
     }
+
+    // if (webPlayer.deviceId) {
+    //   await setVolumeWithDevice(10, webPlayer.deviceId);
+    // } else {
+    //   console.error("❌ Impossible de modifier le volume");
+    // }
   };
   
 
@@ -361,10 +374,11 @@ const receiptNewRound = useCallback((message: any) => {
         <>
           {(firstStart) ? (
             <></>) : (
-            <button className='button' onClick={handlePlayTrack}>Lancer le jeu{is_paused || firstStart ? "PLAY" : "PAUSE"}</button>
+            <button className='button' onClick={handlePlayTrack}>{is_paused || firstStart ? "PLAY" : "PAUSE"}</button>
           )}
-          <button className='button' onClick={handleNextTrack}>NextTrack</button>
-          <button className='button' onClick={handleVolume}>Volume</button>
+          <button className='button' onClick={handleNextTrack}>{firstStart ? "Play" : "NextTrack"}</button>
+          {/* <button className='button' onClick={handleVolume}>Volume</button> */}
+          <VolumeControl player={webPlayer.player} />
           <button className='button' onClick={() => {channel.publish("accept-response", {acceptResponse : true});}}>Test publish</button>
           {webPlayer.deviceId && <p>Device ID: {webPlayer.deviceId}</p>}
           
