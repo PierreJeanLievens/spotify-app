@@ -2,38 +2,47 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { generateAccessCode } from "@/lib/generateAccessCode";
+import styles from "./page.module.css"
 
 export default function HomePage() {
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
+  const [displayError, setDisplayError] = useState(false);
   const [attempts, setAttempts] = useState(0);
   const [canSubmit, setCanSubmit] = useState(true);
   const router = useRouter();
 
-  // Fonction pour générer un code basé sur l'année actuelle - 1
-  const generateCode = () => {
-    const today = new Date();
-    const year = today.getFullYear() - 1; // Année actuelle moins 1
-    return `${year}`; // Code dynamique : année - 1
-  };
-
-  const correctCode = generateCode(); // Génère le code basé sur l'année
+  const correctCode = generateAccessCode(); // Récupère le code d'accès
 
   useEffect(() => {
     if (attempts >= 3) {
       setCanSubmit(false);
+      setError("Trop de tentatives, réessayez dans 10 secondes.");
+      setDisplayError(true);
       setTimeout(() => {
         setAttempts(0);
-        setCanSubmit(true); // Réactive après 30 secondes
-      }, 30000); // Temps de blocage de 30 secondes
+        setCanSubmit(true); // Réactive après 10 secondes
+        
+      }, 10 * 1000); // Temps de blocage de 10 secondes
     }
   }, [attempts]);
+
+  useEffect(() => {
+    if(displayError){
+      setTimeout(() => {
+      setDisplayError(false);
+      }, 3 * 1000);
+    }
+  }, [displayError])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!canSubmit) {
       setError("Trop de tentatives, réessayez plus tard.");
+      console.log("Trop de réponse")
+      setDisplayError(true);
       return;
     }
 
@@ -43,32 +52,38 @@ export default function HomePage() {
     } else {
       setAttempts(attempts + 1); // Incrémente le compteur de tentatives
       setError("Code incorrect, essaye encore !");
+      setDisplayError(true);
     }
   };
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white">
-      <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-80 text-center">
-        <h1 className="text-2xl font-bold mb-4">🔑 Accès au Blind Test</h1>
-        <form onSubmit={handleSubmit} className="flex flex-col items-center">
+    <main className={`${styles.access__main}`}>
+      <div className={`${styles.access__container}`}>
+        <h1 className={`${styles.access__title}`}>🔑 Accès au Blind Test</h1>
+        <form onSubmit={handleSubmit} className={`${styles.access__form}`}>
           <input
             type="text"
             value={code}
             onChange={(e) => setCode(e.target.value)}
-            className="px-4 py-2 border border-gray-600 rounded-md text-black w-full"
+            className={`${styles.access__input}`}
             placeholder="Entrez le code"
-            disabled={!canSubmit} // Désactive le champ si trop de tentatives
+            disabled={!canSubmit}
           />
           <button
             type="submit"
-            className="mt-4 px-6 py-2 bg-green-500 rounded-md hover:bg-green-700 transition"
-            disabled={!canSubmit} // Désactive le bouton si trop de tentatives
+            className={`${styles.access__button} button`}
+            disabled={!canSubmit}
           >
             Valider
           </button>
         </form>
-        {error && <p className="text-red-500 mt-3">{error}</p>}
+        <p
+          className={`${styles.access__error} ${displayError || !canSubmit ? styles.visible : styles.hidden}`}
+        >
+          {error}
+        </p>
       </div>
     </main>
   );
+    
 }

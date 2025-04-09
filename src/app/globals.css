@@ -11,6 +11,11 @@
     --tertiary-color-major: hsl(0 0% 25.9%);
     --tertiary-color-minor: hsl(0 0% 38.8%);
 
+    --correct-color-major : hsl(115, 62%, 33%);
+    --correct-color-minor : hsl(115, 67%, 26%);
+    --error-color-major : hsl(0, 67%, 51%);
+    --error-color-minor : hsl(0, 68%, 34%);
+
     --title-color: hsl(0, 0%, 40%);
     --text-color: hsl(0, 0%, 50%);
     --body-color: hsl(0, 0%, 100%);
