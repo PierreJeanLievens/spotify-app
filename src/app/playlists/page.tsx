@@ -5,36 +5,29 @@ import { useRouter } from "next/navigation";
 import PlaylistList from "@/components/PlaylistList";
 import styles from "@/app/playlist/page.module.css";
 import LogoutButton from "@/components/LogoutButton";
+import { fetchPlaylists } from "@/lib/fetchData";
+import Loading from "@/components/Loading";
 
 const PlaylistPage = () => {
   const [playlists, setPlaylists] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    const fetchPlaylists = async () => {
+    const getPlaylistsFetched = async () => {
       try {
-        const response = await fetch("/api/spotify-fetcher/get-playlists");
-
-        if (!response.ok) {
-          throw new Error("Échec de récupération des playlists");
-        }
-
-        const data = await response.json();
-        setPlaylists(data);
+        const playlistFetched = await fetchPlaylists();
+        setPlaylists(playlistFetched);
       } catch (error) {
         console.error(error);
         // router.push("/");
-      } finally {
-        setLoading(false);
       }
     };
 
-    fetchPlaylists();
+    getPlaylistsFetched();
   }, [router]);
 
-  if (loading) {
-    return <p>Chargement des playlists...</p>;
+  if (!playlists) {
+    <Loading title="Playlists en cours de chargement" text="Veuillez attendre..."/>
   }
 
   return (
