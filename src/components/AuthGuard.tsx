@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import { generateAccessCode } from "@/lib/generateAccessCode";
 
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -10,19 +11,19 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const accessCode = sessionStorage.getItem("access_code");
+    const correctCode = generateAccessCode(); // Récupère le code d'accès
 
-    const generateCode = () => {
-      const today = new Date();
-      const year = today.getFullYear() - 1; // Année actuelle moins 1
-      return `${year}`; // Code dynamique : année - 1
-    };
-
-  const correctCode = generateCode(); 
-
-    if (accessCode!=correctCode && pathname !== "/") {
+    if (accessCode!=correctCode) {
+      // Code incorrect -> redirection vers /
       router.push("/");
     } else {
-      setIsAuthorized(true);
+      if (pathname === "/") {
+        // Code correct et sur page d'accueil -> redirection vers /login
+        router.push("/login");
+      } else {
+        // Code correct on reste sur la meme page
+        setIsAuthorized(true);
+      }
     }
   }, [pathname]);
 

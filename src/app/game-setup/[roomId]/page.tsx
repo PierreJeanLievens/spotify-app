@@ -66,7 +66,7 @@ const GameSetupPage = () => {
 
   return (
     <div className="">
-      <h1>Mes Playlists Spotify</h1>
+      <h1>Game Setup : {roomId}</h1>
       <ButtonLink text="Retour" path="/game-setup"/>
       <LogoutButton />
       <div>

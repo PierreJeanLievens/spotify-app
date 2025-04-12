@@ -53,7 +53,7 @@ const GameSetupPage = () => {
     const fetchData = async () => {
       const playlistId = localStorage.getItem("playlist_choosen_id");
       if (!playlistId) {
-        router.push("/playlist");
+        router.push("/playlists");
         return;
       }
       
@@ -69,7 +69,7 @@ const GameSetupPage = () => {
 
   return (
     <div className="">
-      <h1>Mes Playlists Spotify</h1>
+      <h1>Game Setup</h1>
       <ButtonLink text="Retour" path="/playlists"/>
       <LogoutButton />
       <div>
