@@ -3,7 +3,7 @@
     top: 0;
     left: 0;
     position: fixed;
-    height: 100vh;
+    height: 100dvh;
     width: 100vw; 
     z-index: 100;
     background-color: var(--transparent-color) ;
