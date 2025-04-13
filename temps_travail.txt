@@ -32,4 +32,7 @@ Préparation :
 3h -- Ajout de l'affichage et du calcul du score pour chaque joueur
 2h -- Changement logique pour la fonction de calcul des score, au lieu d'utiliser callback, j'utilise des ref (fonctionne un peu comme des pointeurs), cela me permet de recuperer les valeurs actuelles
 1h -- Debug pour la vérification/retour page d'accueil dans useRoomManager et useWebPlayer, (bug pour les personnes non connectées),
+2h -- Ajout bouton pour le volume du player
+2h -- Refonte design page access code
+3h -- Ajout modalResponse pour afficher la réponse à la fin du timer
  Faire en sorte que lors de la récupération des joueurs, on check l'id pour evite 2 joueurs avec 1 seul client

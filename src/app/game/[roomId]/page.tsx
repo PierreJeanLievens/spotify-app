@@ -9,6 +9,7 @@ import { playTrack } from "@/lib/playTrack";
 import { verifiyInputs } from "@/lib/verifiyResponses/verifyInputs";
 import DisplayScore from "@/components/DisplayScore";
 import VolumeControl from "@/components/VolumeControl";
+import ModalResponse from "@/components/ModalResponse";
 
 
 export default function GameSetupPage() {
@@ -23,11 +24,13 @@ export default function GameSetupPage() {
   const [round, setRound] = useState<number>(0); // Permet de savoir le round en cours
   const [volume, setVolume] = useState<number>(0); // Permet de savoir le round en cours
   const [secondsLeft, setSecondsLeft] = useState<number>(15); // Stocke les secondes restantes
+  const timerRef = useRef<NodeJS.Timeout | null>(null); // Stocke les secondes restantes
   const [inputTrack, setInputTrack] = useState<string>(''); // Stocke l'input du titre
   const [inputArtist, setInputArtist] = useState<string>(''); // Stocke l'input de l'artiste
   const [clientId, setClientId] = useState<string>(''); // Stocke l'id du client
   const [clientName, setClientName] = useState<string>(''); // Stocke le nom du client
   const [displayScore, setDisplayScore] = useState<boolean>(false); // Stocke l'etat de l'affichage des points
+  const [displayResponse, setDisplayResponse] = useState<boolean>(false); // Stocke l'etat de l'affichage des points
   const router = useRouter();
 
 
@@ -60,18 +63,26 @@ export default function GameSetupPage() {
 
 
   const startTimer = () => {
+    // Si un timer est déjà actif, on l’arrête
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+  
     setSecondsLeft(15); // Réinitialise à 15 secondes
     channel.publish("seconds-left", { secondsLeft: 15 }); // Envoie la valeur initiale immédiatement
     channel.publish("accept-response", { acceptResponse: true }); // Réactive les réponses
   
-    const timer = setInterval(() => {
+    timerRef.current = setInterval(() => {
       setSecondsLeft((prev) => {
         const newSecondsLeft = prev - 1;
-        channel.publish("seconds-left", { secondsLeft: newSecondsLeft }); // Publie chaque mise à jour
+        channel.publish("seconds-left", { secondsLeft: newSecondsLeft });
   
         if (newSecondsLeft <= 0) {
-          clearInterval(timer); // Arrête le timer
-          channel.publish("accept-response", { acceptResponse: false, endRound : true}); // Bloque les réponses et termine le round (endRound sert a enclenché la foncton de calcul de points)
+          if (timerRef.current) {
+            clearInterval(timerRef.current);  // Arrête le timer
+            timerRef.current = null;
+          }
+          channel.publish("accept-response", { acceptResponse: false, endRound: true }); // Bloque les réponses et termine le round (endRound sert a enclenché la foncton de calcul de points)
           return 0;
         }
   
@@ -91,11 +102,14 @@ const handleStateResponses = useCallback(async (message: any) => {
   if (message.data.acceptResponse) {
     setAcceptResponse(true);
     setPaused(false);
+    setDisplayResponse(false);
+    setDisplayScore(false);
   } else {
     setAcceptResponse(false);
     setPaused(true);
 
     if (message.data.endRound) {
+      setDisplayResponse(true);
       // Use a ref to track if we've already processed this round
       const currentRound = roundRef.current;
       
@@ -342,7 +356,7 @@ const receiptNewRound = useCallback((message: any) => {
       console.error("❌ Impossible de jouer la nouvelle piste");
     }
   };
-  
+
   return (
     <div>
       <h1>Configuration du jeu</h1>
@@ -362,7 +376,7 @@ const receiptNewRound = useCallback((message: any) => {
           <button className='button' onClick={handleNextTrack}>{firstStart ? "Play" : "NextTrack"}</button>
           {/* <button className='button' onClick={handleVolume}>Volume</button> */}
           <VolumeControl player={webPlayer.player} />
-          <button className='button' onClick={() => {channel.publish("accept-response", {acceptResponse : true});}}>Test publish</button>
+          {/* <button className='button' onClick={() => {channel.publish("accept-response", {acceptResponse : true});}}>Test publish</button> */}
           {webPlayer.deviceId && <p>Device ID: {webPlayer.deviceId}</p>}
           
         </>
@@ -373,21 +387,29 @@ const receiptNewRound = useCallback((message: any) => {
         </>
        )}
 
-       <div>
-          {(acceptResponse) ? (
-            <>Entrez les reponses
-              <input id="track" type="text" placeholder="Titre" onChange={(e) => {setInputTrack(e.target.value)}}/>
-              <input id="artist" type="text" placeholder="Artiste" onChange={(e) => {setInputArtist(e.target.value)}}/>
-            </>
-          ) : (
-            <>Attends le prochain morceau</>
-          )}
-       </div>
-
-       <div>
-        <button className='button' onClick={()=> {setDisplayScore(!displayScore)}}>{displayScore ? "Cacher les scores" : "Afficher les scores"}</button>
+      <div>
+        {(acceptResponse) ? (
+          <>Entrez les reponses
+            <input id="track" type="text" placeholder="Titre" onChange={(e) => {setInputTrack(e.target.value)}}/>
+            <input id="artist" type="text" placeholder="Artiste" onChange={(e) => {setInputArtist(e.target.value)}}/>
+          </>
+        ) : (
+          <>Attends le prochain morceau</>
+        )}
+      </div>
+      <div>
+        {displayResponse && (
+          <ModalResponse
+            currentTrack={track}
+            currentRound={round}
+            onClose={() => setDisplayResponse(false)}
+          />
+        )}
+      </div>
+      <div>
+      <button className='button' onClick={()=> {setDisplayScore(!displayScore)}}>{displayScore ? "Cacher les scores" : "Afficher les scores"}</button>
         {(displayScore) ? (<DisplayScore/>) : (<></>)}
-       </div>
+      </div>
     </div>
   );
 }
