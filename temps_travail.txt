@@ -35,4 +35,6 @@ Préparation :
 2h -- Ajout bouton pour le volume du player
 2h -- Refonte design page access code
 3h -- Ajout modalResponse pour afficher la réponse à la fin du timer
+3h -- Design input text
+1h -- Correction certaines pages (lorsque le token n'est plus disponible) ATTENTION A vérifier pour /playlists si le client n'a aucune playlist
  Faire en sorte que lors de la récupération des joueurs, on check l'id pour evite 2 joueurs avec 1 seul client

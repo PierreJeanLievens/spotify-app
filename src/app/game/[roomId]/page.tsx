@@ -4,12 +4,12 @@ import { fetchNewTrack, fetchNumberTracksPlaylist } from "@/lib/fetchData";
 import { Player, Track } from "@/types/spotify";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { setVolume, setVolumeWithDevice } from "@/lib/setVolume";
 import { playTrack } from "@/lib/playTrack";
 import { verifiyInputs } from "@/lib/verifiyResponses/verifyInputs";
 import DisplayScore from "@/components/DisplayScore";
 import VolumeControl from "@/components/VolumeControl";
 import ModalResponse from "@/components/ModalResponse";
+import styles from "./page.module.css"
 
 
 export default function GameSetupPage() {
@@ -270,12 +270,7 @@ const receiptNewRound = useCallback((message: any) => {
         // if (newTrack) {
         //   setTrack(newTrack);
         // }
-
-        webPlayer.player.getVolume().then((volume: number)  => {
-          let volume_percentage = volume * 100;
-          setVolume(volume_percentage);
-          console.log(`The volume of the player is ${volume_percentage}%`);
-        });
+        
         // On se met en ecoute sur le webPlayer (lorsque son état change (play/pause))
         webPlayer.player.addListener('player_state_changed', ( (state: { paused: any; }) => {
           if (!state) {
@@ -388,10 +383,31 @@ const receiptNewRound = useCallback((message: any) => {
        )}
 
       <div>
-        {(acceptResponse) ? (
+        {(!acceptResponse) ? (
           <>Entrez les reponses
-            <input id="track" type="text" placeholder="Titre" onChange={(e) => {setInputTrack(e.target.value)}}/>
-            <input id="artist" type="text" placeholder="Artiste" onChange={(e) => {setInputArtist(e.target.value)}}/>
+            <div className={styles.inputs__container}>
+              <div className="input-block">
+                <input 
+                  required
+                  id="track"
+                  className="input-text" 
+                  type="text" 
+                  onChange={(e) => {setInputTrack(e.target.value)}}
+                />
+                <label htmlFor="track" data-label="Titre"/>
+              </div>
+              <div className="input-block">
+
+                <input 
+                  required
+                  id="artist" 
+                  className="input-text" 
+                  type="text" 
+                  onChange={(e) => {setInputArtist(e.target.value)}}
+                />
+                <label htmlFor="artist" data-label="Artiste"/>
+              </div>
+            </div>
           </>
         ) : (
           <>Attends le prochain morceau</>

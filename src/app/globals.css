@@ -228,6 +228,102 @@ img {
   line-height: 60px;
 }
 
+.input-block {
+  position: relative;
+  margin-top: 30px;
+}
+.input-text {
+  width: 100%;
+  border: 10px;
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: 2px solid var(--tertiary-color-major);
+  background-color: var(--tertiary-color-minor);
+  transition: all 0.3s ease;
+}
+
+.input-text:focus {
+  border-color: var(--primary-color-major); 
+}
+.input-text:valid {
+  border-color: var(--correct-color-minor); 
+}
+.input-text + label:before {
+  position: absolute;
+  transition: all 0.5s ease;
+}
+.input-text + label[data-label]:before {
+  content: attr(data-label);
+  color: var(--text-color);
+  left: 10px;
+  top: 10px; 
+}
+
+.input-text:focus + label[data-label]:before,
+.input-text:valid + label[data-label]:before {
+  content: attr(data-label);
+  color: var(--text-white);
+  background-color: var(--primary-color-minor);
+  padding: 2px 5px;
+  border-radius: 5px;
+  transform: translateY(-100%);
+}
+
+
+/* 
+.input-text {
+  box-sizing: border-box;
+  width: 100%;
+  height: calc(3em + 2px);
+  margin: 0 0 1em;
+  padding: 1em;
+  border: 1px solid #ccc;
+  border-radius: 1.5em;
+  background: #00bafa;
+  resize: none;
+  outline: none;
+}
+
+.input-text:focus {
+  border-color: #00bafa;
+}
+
+.input-text:focus + label[aria-placeholder]:before {
+  color: #00bafa;
+}
+
+.input-text:focus + label[aria-placeholder]:before,
+.input-text:valid + label[aria-placeholder]:before {
+  transition-duration: 0.2s;
+  transform: translate(0, -1.5em) scale(0.9, 0.9);
+}
+
+.input-text:invalid + label[aria-placeholder][data-alt]:before {
+  content: attr(data-alt);
+}
+
+.input-text + label[aria-placeholder] {
+  display: block;
+  pointer-events: none;
+  line-height: 1.25em;
+  margin-top: calc(-3em - 2px);
+  margin-bottom: calc((3em - 1em) + 2px);
+}
+
+.input-text + label[aria-placeholder]:before {
+  content: attr(aria-placeholder);
+  display: inline-block;
+  margin: 0 calc(1em + 2px);
+  padding: 0 2px;
+  color: #898989;
+  white-space: nowrap;
+  transition: 0.3s ease-in-out;
+  background-image: linear-gradient(to bottom, #fff, #fff);
+  background-size: 100% 5px;
+  background-repeat: no-repeat;
+  background-position: center;
+} */
+
 .separator {
   height: 100%;
   background-color: var(--text-color); /* couleur de la barre */

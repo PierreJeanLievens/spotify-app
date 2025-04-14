@@ -15,11 +15,16 @@ const PlaylistPage = () => {
   useEffect(() => {
     const getPlaylistsFetched = async () => {
       try {
-        const playlistFetched = await fetchPlaylists();
-        setPlaylists(playlistFetched);
+        const playlistsFetched = await fetchPlaylists();
+        if(!playlistsFetched){
+          console.error("Aucune playlist récupérée pour ce client");
+          router.push("/login");
+          return;
+        }
+        setPlaylists(playlistsFetched);
       } catch (error) {
         console.error(error);
-        // router.push("/");
+        router.push("/login");
       }
     };
 

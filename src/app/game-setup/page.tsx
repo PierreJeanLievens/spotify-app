@@ -51,15 +51,29 @@ const GameSetupPage = () => {
   // Permet de récupérer la playlist choisie et de la stocker dans playlist
   useEffect(() => {
     const fetchData = async () => {
-      const playlistId = localStorage.getItem("playlist_choosen_id");
-      if (!playlistId) {
-        router.push("/playlists");
-        return;
+      try {
+        const playlistId = localStorage.getItem("playlist_choosen_id");
+  
+        if (!playlistId) {
+          router.push("/playlists");
+          return;
+        }
+        
+        const data = await fetchPlaylist(playlistId);
+        
+        if (!data) {
+          console.error("Aucune donnée reçue pour la playlist.");
+          router.push("/playlists"); // ou afficher une erreur à l'utilisateur
+          return;
+        }
+
+        setPlaylist(data);
+
+      } catch (error) {
+        console.error("Erreur lors de la récupération de la playlist :", error);
       }
-      
-      const data = await fetchPlaylist(playlistId);
-      setPlaylist(data);
     };
+  
     fetchData();
   }, []);
 
@@ -77,14 +91,20 @@ const GameSetupPage = () => {
           <div className={styles.container}>
             <GameSetupPlaylist playlist={playlist} />
             <div className={styles.separator}></div>
-            <div>
+            <div className={styles.section__2}>
                 {/* Champ pour entrer le nom de l'user */}
-                <input
+                <div className="input-block">
+                  <input
+                  required
+                  id="client-name"
                   type="text"
-                  placeholder="Nom"
                   value={clientName}
                   onChange={(e) => setClientName(e.target.value)}
-                />
+                  className={`input-text ${styles.input__name}`}
+                  />
+                  <label htmlFor="client-name" data-label="Nom"/>
+                </div>
+                
                 <button 
                   className={`${styles.play__button} button`}
                   onClick={() => handleCreateRoom()}
