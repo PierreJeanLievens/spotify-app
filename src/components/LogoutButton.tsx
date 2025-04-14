@@ -8,5 +8,5 @@ export default function LogoutButton() {
     router.push("/");
   };
 
-  return <button onClick={handleLogout}>Déconnexion</button>;
+  return <button className='button' onClick={handleLogout}>Déconnexion</button>;
 }

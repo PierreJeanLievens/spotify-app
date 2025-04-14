@@ -74,9 +74,13 @@ const GameSetupPage = () => {
         <div className={styles.container}>
           <GameSetupPlaylist playlist={playlist} />
           <div className={styles.separator}></div>
-          <h2>Salon</h2>
-          <h4>{roomId}</h4>
-          <GamePlayers />
+          <div className={styles.container__room__players}>
+            <div className={styles.container__room}>
+              <h2>Salon n°</h2>
+              <h2 className={styles.room__id}>{roomId}</h2>
+            </div>
+            <GamePlayers />
+          </div>
         </div>
         <button 
           className={`${styles.play__button} button`}

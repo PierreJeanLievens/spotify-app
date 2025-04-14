@@ -91,7 +91,7 @@ const GameSetupPage = () => {
           <div className={styles.container}>
             <GameSetupPlaylist playlist={playlist} />
             <div className={styles.separator}></div>
-            <div className={styles.section__2}>
+            <div className={styles.section__inputs}>
                 {/* Champ pour entrer le nom de l'user */}
                 <div className="input-block">
                   <input

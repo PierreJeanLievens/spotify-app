@@ -372,7 +372,6 @@ const receiptNewRound = useCallback((message: any) => {
           {/* <button className='button' onClick={handleVolume}>Volume</button> */}
           <VolumeControl player={webPlayer.player} />
           {/* <button className='button' onClick={() => {channel.publish("accept-response", {acceptResponse : true});}}>Test publish</button> */}
-          {webPlayer.deviceId && <p>Device ID: {webPlayer.deviceId}</p>}
           
         </>
        ) : (
@@ -383,8 +382,11 @@ const receiptNewRound = useCallback((message: any) => {
        )}
 
       <div>
-        {(!acceptResponse) ? (
-          <>Entrez les reponses
+        {(acceptResponse) ? (
+          <>
+            <h1>
+              Entrez les reponses
+            </h1>
             <div className={styles.inputs__container}>
               <div className="input-block">
                 <input 

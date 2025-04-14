@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import { useAbly } from "@/lib/ablyContext";
 import { useParams } from "next/navigation";
 import Loading from "./Loading";
+import styles from "./GamePlayers.module.css"
 
 export default function GamePlayers() {
     const { roomId } = useParams() as { roomId: string };
     const [players, setPlayers] = useState<any[]>([]);
+    const [numberPlayers, setNumberPlayers] = useState<number>(0);
     const ably = useAbly();
     
     // On récupère les joueurs dans ce salon
@@ -33,6 +35,7 @@ export default function GamePlayers() {
         
                 const updatedPlayers = Array.from(latestPlayersMap.values());
                 setPlayers(updatedPlayers);
+                setNumberPlayers(updatedPlayers.length);
             } catch (err) {
                 console.error("Erreur lors de la récupération de l'historique :", err);
             }
@@ -55,15 +58,22 @@ export default function GamePlayers() {
 
 
     return (
-        <div>
-            <h2>Joueurs</h2>
-            {players.length === 0 ? (
-                <Loading title="Pas de joueurs dans ce salon" text="Attends que les joueurs chargent... ou retourne au menu"/>
-            ) : (
-                players.map((player, index) => (
-                    <p key={index}>{player.clientName}</p>
-                ))
-            )}
+        <div className={styles.container}>
+
+            <h2 className={styles.title}>
+                <span className={styles.player__number}>{numberPlayers}</span> Joueurs
+            </h2>
+
+            <div className={styles.container__players}>
+                {players.length === 0 ? (
+                    <Loading title="Pas de joueurs dans ce salon" text="Attends que les joueurs chargent... ou retourne au menu"/>
+                ) : (
+                    players.map((player, index) => (
+                        <p className={styles.player} key={index}>{player.clientName}</p>
+                    ))
+                )}
+            </div>
+
         </div>
     );
 }

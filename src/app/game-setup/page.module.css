@@ -8,21 +8,54 @@
 }
 
 .play__button {
+    display: flex;
+    font-size: var(--h2-font-size);
+    margin-top: 20px;
     background-color: var(--primary-color-major);
-    width: 100%;
+    width : 90%;
+    justify-self: center;
+    justify-content: center;
 }
 .separator {
     height: 90%;
     background-color: var(--text-color); /* couleur de la barre */
     width: 3px;
 }
-.section__2 {
+.section__inputs {
     display: flex;
     width: 100%;
     gap: 15px;
     flex-direction: column;
     justify-content: space-around;
     align-items: center;
+}
+.container__room__players {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-items: center;
+    align-items: center;
+    gap: 15px;
+}
+
+.container__room {
+    gap: 10px;
+    display: inline-flex;
+    justify-content: center;
+    width: min-content;
+    min-width: 300px;
+    padding: 5px 10px;
+    border: 2px solid var(--primary-color-minor);
+    border-radius: 15px;
+}
+
+.room__id {
+    color: var(--primary-color-minor);
+}
+.room__id::before,
+.room__id::after {
+    content: ' - ';
+    color: var(--primary-color-major);
 }
 
 @media screen and (max-width : 480px){

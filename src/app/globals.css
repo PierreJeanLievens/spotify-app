@@ -10,6 +10,8 @@
     --secondary-color-minor: hsl(115 64% 27.3%);
     --tertiary-color-major: hsl(0, 0%, 88%);
     --tertiary-color-minor: hsl(0, 0%, 95%);
+    --fourth-color-major: hsl(0 0% 25.9%);
+    --fourth-color-minor: hsl(0 0% 38.8%);
 
     --correct-color-major : hsl(115, 62%, 33%);
     --correct-color-minor : hsl(115, 67%, 26%);
@@ -23,7 +25,7 @@
     --border-color: hsl(0, 0%, 87%);
     --text-white: hsl(0 0% 100%);
     --modal-color: hsla(0 0% 29.4% / 0.63);
-    --background-color: hsl(0 0% 100%);
+    --background-color: hsl(0, 0%, 96%);
     --foreground-color: hsl(0 0% 9.02%);
     --transparent-color: hsl(0, 0%, 100% / 0);
 
@@ -71,6 +73,8 @@
   --foreground-color: #ededed;
   --tertiary-color-major: hsl(0 0% 25.9%);
   --tertiary-color-minor: hsl(0 0% 38.8%);
+  --fourth-color-minor: hsl(0, 0%, 95%);
+  --fourth-color-minor: hsl(0, 0%, 95%);
   }
 }
 
@@ -128,6 +132,7 @@ h1,
 h2,
 h3,
 h4 {
+  text-align: center;
   color: var(--title-color);
   font-family: var(--second-font);
   font-weight: var(--weight-700);
@@ -231,12 +236,14 @@ img {
 .input-block {
   position: relative;
   margin-top: 30px;
+  max-width: 400px;
+  width: 90%;
 }
 .input-text {
   width: 100%;
   border: 10px;
   padding: 10px 20px;
-  border-radius: 10px;
+  border-radius: 15px;
   border: 2px solid var(--tertiary-color-major);
   background-color: var(--tertiary-color-minor);
   transition: all 0.3s ease;
@@ -250,7 +257,7 @@ img {
 }
 .input-text + label:before {
   position: absolute;
-  transition: all 0.5s ease;
+  transition: all 0.3s ease;
 }
 .input-text + label[data-label]:before {
   content: attr(data-label);
