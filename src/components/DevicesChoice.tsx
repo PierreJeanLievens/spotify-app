@@ -70,7 +70,7 @@ export default function DevicesChoice() {
                     </button>
                 ))
             ) : (
-                <Loading title="Aucun appareil trouvé" text="Sur téléphone ou ordinateur : Ouvre l'application Spotify"/>
+                <Loading title="Aucun appareil trouvé" text="Sur téléphone ou ordinateur : Ouvre l'application Spotify" redirection="/login"/>
             )}
         </>
     );

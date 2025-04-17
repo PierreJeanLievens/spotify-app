@@ -61,14 +61,17 @@ const GameSetupPage = () => {
   }, []);
 
   if (!playlist) {
-    return <Loading title="Recherche de ta playlist" text="Attends que ta playlist charge" />;
+    return <Loading title="Recherche de ta playlist" text="Attends que ta playlist charge" redirection="/playlists" />;
   }
 
   return (
     <div className="">
+      <div>
+
       <h1>Game Setup : {roomId}</h1>
       <ButtonLink text="Retour" path="/game-setup"/>
       <LogoutButton />
+      </div>
       <div>
         <h1></h1>
         <div className={styles.container}>

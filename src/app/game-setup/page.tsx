@@ -78,7 +78,7 @@ const GameSetupPage = () => {
   }, []);
 
   if (!playlist) {
-    return <Loading title="Recherche de ta playlist" text="Attends que ta playlist charge"/>;
+    return <Loading title="Recherche de ta playlist" text="Attends que ta playlist charge" redirection="/playlists" />;
   }
 
   return (

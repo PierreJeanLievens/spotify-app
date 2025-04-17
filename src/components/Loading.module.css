@@ -22,7 +22,8 @@
     width: 800px;
     margin: auto;
     padding: 30px;
-    color: var(--text-white);
+    color: var(--title-color);
+    font-weight: var(--weight-600);
     border: 10px solid var(--primary-color-minor);
     border-radius: 30px;
     background-color: var(--tertiary-color-major);

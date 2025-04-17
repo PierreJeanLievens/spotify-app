@@ -82,7 +82,8 @@ export interface PlaylistCardProps {
 
 export interface LoadingProps {
   title: string,
-  text: string
+  text: string,
+  redirection: string
 }
 
 export type Device = {

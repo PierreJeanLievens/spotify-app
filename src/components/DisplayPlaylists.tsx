@@ -36,7 +36,7 @@ export default function PlaylistPage(){
   }, [router]);
 
   if (loading) {
-    return <Loading title="Récupération des playlists" text="En attente de la récupération de vos playlists" />;
+    return <Loading title="Récupération des playlists" text="En attente de la récupération de vos playlists" redirection="/login"/>;
   }
 
   return (

@@ -32,7 +32,7 @@ const PlaylistPage = () => {
   }, [router]);
 
   if (!playlists) {
-    <Loading title="Playlists en cours de chargement" text="Veuillez attendre..."/>
+    <Loading title="Playlists en cours de chargement" text="Veuillez attendre..." redirection="/login"/>
   }
 
   return (

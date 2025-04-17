@@ -66,7 +66,7 @@ export default function GamePlayers() {
 
             <div className={styles.container__players}>
                 {players.length === 0 ? (
-                    <Loading title="Pas de joueurs dans ce salon" text="Attends que les joueurs chargent... ou retourne au menu"/>
+                    <Loading title="Pas de joueurs dans ce salon" text="Attends que les joueurs chargent... ou retourne au menu" redirection="/playlists"/>
                 ) : (
                     players.map((player, index) => (
                         <p className={styles.player} key={index}>{player.clientName}</p>

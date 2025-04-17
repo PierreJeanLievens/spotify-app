@@ -37,4 +37,7 @@ Préparation :
 3h -- Ajout modalResponse pour afficher la réponse à la fin du timer
 3h -- Design input text
 1h -- Correction certaines pages (lorsque le token n'est plus disponible) ATTENTION A vérifier pour /playlists si le client n'a aucune playlist
+1h -- Modification du component Loading
+1h -- Ajout CSS
+
  Faire en sorte que lors de la récupération des joueurs, on check l'id pour evite 2 joueurs avec 1 seul client
