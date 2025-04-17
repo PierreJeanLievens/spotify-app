@@ -62,33 +62,14 @@ export default function GameSetupPage() {
   // }, [secondsLeft])
 
 
-  const startTimer = () => {
+  const startRound = () => {
     // Si un timer est déjà actif, on l’arrête
     if (timerRef.current) {
       clearInterval(timerRef.current);
     }
-  
-    setSecondsLeft(15); // Réinitialise à 15 secondes
+    channel.publish("start-timer", { duration: 15 }); // Envoie la valeur initiale immédiatement
     channel.publish("seconds-left", { secondsLeft: 15 }); // Envoie la valeur initiale immédiatement
     channel.publish("accept-response", { acceptResponse: true }); // Réactive les réponses
-  
-    timerRef.current = setInterval(() => {
-      setSecondsLeft((prev) => {
-        const newSecondsLeft = prev - 1;
-        channel.publish("seconds-left", { secondsLeft: newSecondsLeft });
-  
-        if (newSecondsLeft <= 0) {
-          if (timerRef.current) {
-            clearInterval(timerRef.current);  // Arrête le timer
-            timerRef.current = null;
-          }
-          channel.publish("accept-response", { acceptResponse: false, endRound: true }); // Bloque les réponses et termine le round (endRound sert a enclenché la foncton de calcul de points)
-          return 0;
-        }
-  
-        return newSecondsLeft;
-      });
-    }, 1000);
   };
   
 
@@ -193,6 +174,32 @@ const handleSecondsLeft = useCallback((message: any) => {
 }, [isManager]);
 
 
+
+const handleStartTimer = useCallback((message:any) => {
+  setSecondsLeft(message.data.duration);
+
+  if (timerRef.current) {
+    clearInterval(timerRef.current);
+  }
+
+  timerRef.current = setInterval(() => {
+    setSecondsLeft((prev) => {
+      const newSecondsLeft = prev - 1;
+
+      if (newSecondsLeft <= 0) {
+        clearInterval(timerRef.current!);
+        timerRef.current = null;
+        if(!isManager){
+          channelRef.current.publish("accept-response", { acceptResponse: false });
+        }
+        return 0;
+      }
+
+      return newSecondsLeft;
+    });
+  }, 1000);
+}, [isManager]);
+
 /**
  * Fonction qui gère la gestion d'un nouveau round, recupère le nouveau track et le numéro de round
  * Utilisation du callback pour réactualiser la fonction lorsque les données change
@@ -230,7 +237,8 @@ const receiptNewRound = useCallback((message: any) => {
         }
         // Puis on s'abonne une seule fois
         roomChannel.subscribe("accept-response", handleStateResponses);
-        roomChannel.subscribe("seconds-left", handleSecondsLeft);
+        // roomChannel.subscribe("seconds-left", handleSecondsLeft);
+        roomChannel.subscribe("start-timer", handleStartTimer);
         roomChannel.subscribe("new-round", receiptNewRound);
 
       } catch (error) {
@@ -244,7 +252,8 @@ const receiptNewRound = useCallback((message: any) => {
     // Cleanup pour éviter les abonnements en double
     return () => {
       roomChannel.unsubscribe("accept-response", handleStateResponses);
-      roomChannel.unsubscribe("seconds-left", handleSecondsLeft);
+      // roomChannel.unsubscribe("seconds-left", handleSecondsLeft);
+      roomChannel.unsubscribe("start-timer", handleStartTimer);
       roomChannel.unsubscribe("new-round", receiptNewRound);
     };
   }, [ably, roomId, router, handleStateResponses, handleSecondsLeft, receiptNewRound]);
@@ -319,7 +328,7 @@ const receiptNewRound = useCallback((message: any) => {
         // console.log('First Start!');
         // setFirstStart(false);
         // // Reset le timer
-        // startTimer();
+        // startRound();
       }else{
         webPlayer.player.togglePlay().then(() => {
         console.log('Toggled playback!');
@@ -343,10 +352,10 @@ const receiptNewRound = useCallback((message: any) => {
       await playTrack(newTrack.uri, webPlayer.deviceId);
       setFirstStart(false);
       const newRound: number = round + 1;
-      channel.publish("game-start", {gameStart : true});
+      channel.publish("game-start", {gameStart : true}); // Permet de faire lancer les joueurs en attente dans la waiting-room
       channel.publish("new-round", {currentRound: newRound, currentTrack : newTrack})
-      // Reset le timer
-      startTimer();
+      // launch Round
+      startRound();
     } else {
       console.error("❌ Impossible de jouer la nouvelle piste");
     }
