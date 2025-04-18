@@ -10,6 +10,8 @@ import DisplayScore from "@/components/DisplayScore";
 import VolumeControl from "@/components/VolumeControl";
 import ModalResponse from "@/components/ModalResponse";
 import styles from "./page.module.css"
+import { getScorePlayersFromHistory } from "@/lib/getScorePlayers";
+
 
 
 export default function GameSetupPage() {
@@ -31,6 +33,9 @@ export default function GameSetupPage() {
   const [clientName, setClientName] = useState<string>(''); // Stocke le nom du client
   const [displayScore, setDisplayScore] = useState<boolean>(false); // Stocke l'etat de l'affichage des points
   const [displayResponse, setDisplayResponse] = useState<boolean>(false); // Stocke l'etat de l'affichage des points
+
+  const [playersMap, setPlayersMap] = useState<any[]>([]);
+  const [scoreboard, setScoreboard] = useState<any>();
   const router = useRouter();
 
 
@@ -41,6 +46,8 @@ export default function GameSetupPage() {
   const channelRef = useRef(channel);
   const clientIdRef = useRef(clientId);
   const clientNameRef = useRef(clientName);
+  const playersMapRef = useRef<any[]>([]);
+
 
   // Maintenir les références à jour
   useEffect(() => { trackRef.current = track; }, [track]);
@@ -50,6 +57,7 @@ export default function GameSetupPage() {
   useEffect(() => { channelRef.current = channel; }, [channel]);
   useEffect(() => { clientIdRef.current = clientId; }, [clientId]);
   useEffect(() => { clientNameRef.current = clientName; }, [clientName]);
+  useEffect(() => { playersMapRef.current = playersMap; }, [playersMap]);
 
 
   // Permet d'arreter les reponses si le timer est a 0
@@ -63,13 +71,14 @@ export default function GameSetupPage() {
 
 
   const startRound = () => {
+    console.log("FONCTION START ROUND")
     // Si un timer est déjà actif, on l’arrête
     if (timerRef.current) {
       clearInterval(timerRef.current);
     }
     channel.publish("start-timer", { duration: 15 }); // Envoie la valeur initiale immédiatement
-    channel.publish("seconds-left", { secondsLeft: 15 }); // Envoie la valeur initiale immédiatement
-    channel.publish("accept-response", { acceptResponse: true }); // Réactive les réponses
+    // channel.publish("seconds-left", { secondsLeft: 15 }); // Envoie la valeur initiale immédiatement
+    channel.publish("accept-response", { acceptResponse: true, test: 3}); // Réactive les réponses
   };
   
 
@@ -80,6 +89,7 @@ export default function GameSetupPage() {
  * Avec le callback, on met à jour la fonction avec les nouvelles données lorsque (track et les inputs changent) 
  */
 const handleStateResponses = useCallback(async (message: any) => {
+  console.log("RECEPTION HANDLE STATE RESPOSNES")
   if (message.data.acceptResponse) {
     setAcceptResponse(true);
     setPaused(false);
@@ -108,10 +118,11 @@ const handleStateResponses = useCallback(async (message: any) => {
       // Enregistrer le tableau mis à jour dans sessionStorage
       sessionStorage.setItem("processedRounds", JSON.stringify(processedRounds));
       
-      // Get current track using ref for up-to-date value
+      // On récupère le track actuel avec le pointer
       const currentTrack = trackRef.current;
       if (!currentTrack) return null;
 
+      // Cela calcule les points du round
       const resultsRound = verifiyInputs(
         currentTrack.artists,
         inputArtistRef.current,
@@ -120,8 +131,10 @@ const handleStateResponses = useCallback(async (message: any) => {
       );
       console.log("SCORE", resultsRound);
 
+      // On récupère les scores du client enregistrés dans sessionStorage
       let playerScore: Player | null = JSON.parse(sessionStorage.getItem("playerScore") || "null");
 
+      // Si l'objet est vide (pas encore de score), on crée l'objet nécessaire
       if (!playerScore) {
         playerScore = {
           clientId : clientIdRef.current,
@@ -129,14 +142,8 @@ const handleStateResponses = useCallback(async (message: any) => {
           rounds: [],
         };
       }
-      
-      // Check if this round already exists in player score
-      const roundExists = playerScore.rounds.some((r) => r.number === currentRound);
-      if (roundExists) {
-        console.log(`Round ${currentRound} already exists in player score. No addition.`);
-        return;
-      }
 
+      // On crée le round actuel
       const newRound = {
         number: currentRound,
         artistPoints: resultsRound.artistPoints,
@@ -144,17 +151,11 @@ const handleStateResponses = useCallback(async (message: any) => {
         bonus: resultsRound.bonus,
       };
 
+      // On l'ajoute aux score du joueurs
       playerScore.rounds.push(newRound);
 
+      // On enregistre les scores en local
       sessionStorage.setItem("playerScore", JSON.stringify(playerScore));
-      
-      // Check if channel exists before publishing
-      if (channelRef.current) {
-        await channelRef.current.publish("player-score", { playerScore: playerScore });
-        console.log("SCORE SENT");
-      } else {
-        console.error("Cannot publish score: channel is null");
-      }
     }
   }
 }, []);
@@ -174,7 +175,9 @@ const handleSecondsLeft = useCallback((message: any) => {
 }, [isManager]);
 
 
-
+/**
+ * Fonction pour lancer le timer en local lors de la reception d'un message 'start-timer'
+ */
 const handleStartTimer = useCallback((message:any) => {
   setSecondsLeft(message.data.duration);
 
@@ -189,8 +192,8 @@ const handleStartTimer = useCallback((message:any) => {
       if (newSecondsLeft <= 0) {
         clearInterval(timerRef.current!);
         timerRef.current = null;
-        if(!isManager){
-          channelRef.current.publish("accept-response", { acceptResponse: false });
+        if(isManager){
+          channelRef.current.publish("accept-response", { acceptResponse: false, endRound: true, test: 4  });
         }
         return 0;
       }
@@ -240,6 +243,21 @@ const receiptNewRound = useCallback((message: any) => {
         // roomChannel.subscribe("seconds-left", handleSecondsLeft);
         roomChannel.subscribe("start-timer", handleStartTimer);
         roomChannel.subscribe("new-round", receiptNewRound);
+        roomChannel.subscribe("scoreboard", (message) => {
+          setScoreboard(message.data.scoreboard); // Un state local pour stocker le score
+        });
+        
+        roomChannel.subscribe("display-scoreboard", (message) => {
+          // Si on affiche le score, alors tous les joueurs envoient leurs scores dans le channel
+          if(message.data.display){
+            let playerScore: Player | null = JSON.parse(sessionStorage.getItem("playerScore") || "null");
+            if(playerScore){
+              roomChannel.publish("player-score", {playerScore : playerScore});
+            }
+          }
+          setDisplayScore(message.data.display); // Un state local pour afficher les scores
+        });
+
 
       } catch (error) {
         console.error("Erreur lors de la récupération de l'historique :", error);
@@ -257,6 +275,16 @@ const receiptNewRound = useCallback((message: any) => {
       roomChannel.unsubscribe("new-round", receiptNewRound);
     };
   }, [ably, roomId, router, handleStateResponses, handleSecondsLeft, receiptNewRound]);
+
+
+
+  // Récupère les points dans l'historique et envoie le scoreboard à tous les jouers
+  const handlePlayerScore = ( async (message: any) => {
+    const currentChannel = channelRef.current;
+    const scorePlayers = await getScorePlayersFromHistory(currentChannel);
+    channelRef.current.publish('scoreboard', {scoreboard : scorePlayers});
+  });
+  
 
   // Cela permet de récupérer le webPlayer
   useEffect(() => {
@@ -289,9 +317,11 @@ const receiptNewRound = useCallback((message: any) => {
           setPaused(state.paused);
           // Si le player est pause, on envoie cela a tous les clients, cela permet d'actualiser cet état a tous les clients
           if(state.paused){
-            channel.publish("accept-response", {acceptResponse : false});
+            console.log("toogle")
+            channel.publish("accept-response", {acceptResponse : false, test: 1});
           }else{
-            channel.publish("accept-response", {acceptResponse : true});
+            console.log("toogle")
+            channel.publish("accept-response", {acceptResponse : true, test: 2});
           }
       }));
 
@@ -302,6 +332,7 @@ const receiptNewRound = useCallback((message: any) => {
 
     if (isManager) {
       initGame();
+      // channel.subscribe("player-score", handlePlayerScore); // Se met en ecoute sur ce channel et récupère les scores de tous les joueurs
     }
   }, [isManager, webPlayer.player, channel]);  
 
@@ -344,7 +375,7 @@ const receiptNewRound = useCallback((message: any) => {
       console.error("❌ Aucune playlist sélectionnée");
       return;
     }
-    if(!isManager) return;
+    if(!isManager) return; // Au cas ou un client pourrait lancer la fonction
   
     const newTrack: Track = await fetchNewTrack(playlistId);
     if (newTrack && webPlayer.deviceId) {
@@ -360,6 +391,29 @@ const receiptNewRound = useCallback((message: any) => {
       console.error("❌ Impossible de jouer la nouvelle piste");
     }
   };
+
+  const displayHistory = async () => {
+    // const history = await channel.history();
+    // console.log("HISTORY: ", history)
+  }
+  /**
+   * Cette fonction permet d'afficher le score pour tous le monde
+   * Elle envoie d'abord dans le channel display-scoreboard l'état qu'elle veut.
+   * Si c'est true, donc on veut afficher
+   * Les clients inscrit a display-scoreboard recoivent display :true et envoie chacun leur score stocké en local dans le channel 'player-score'
+   * On fait envoyer les scores juste avant de vouloir le scoreboard car les messages envoyés dans les channel ont une durée de vie de environ 2min
+   * Cela permet de ne pas perdre de score de certains joueurs
+   * Ensuite on recupere l'historique de tous les messages recu dans ce channel via la fonction getScorePlayersFromHistory
+   * Puis on envoie à tous les joueurs le scoreboard dans le channel 'scoreboard', tous les clients sont inscrit a ce channel
+   */
+  const displayScoreboard = async () => {
+    const currentChannel = channelRef.current;
+    channel.publish("display-scoreboard", { display : !displayScore});
+
+    // Attendre 1 sec le temps que tous les client aient envoyé leur score dans le channel 'player-score'
+    const scorePlayers = await getScorePlayersFromHistory(currentChannel);
+    channelRef.current.publish('scoreboard', {scoreboard : scorePlayers});
+  }
 
   return (
     <div>
@@ -378,9 +432,11 @@ const receiptNewRound = useCallback((message: any) => {
             <button className='button' onClick={handlePlayTrack}>{is_paused || firstStart ? "PLAY" : "PAUSE"}</button>
           )}
           <button className='button' onClick={handleNextTrack}>{firstStart ? "Play" : "NextTrack"}</button>
-          {/* <button className='button' onClick={handleVolume}>Volume</button> */}
+
+          <button className='button' onClick={displayScoreboard}>{displayScore ? "Cacher les scores" : "Afficher les scores"}</button>
+         
           <VolumeControl player={webPlayer.player} />
-          {/* <button className='button' onClick={() => {channel.publish("accept-response", {acceptResponse : true});}}>Test publish</button> */}
+          
           
         </>
        ) : (
@@ -434,8 +490,12 @@ const receiptNewRound = useCallback((message: any) => {
         )}
       </div>
       <div>
-      <button className='button' onClick={()=> {setDisplayScore(!displayScore)}}>{displayScore ? "Cacher les scores" : "Afficher les scores"}</button>
-        {(displayScore) ? (<DisplayScore/>) : (<></>)}
+        <button className="button" onClick={displayHistory}>HISTORY</button>
+      </div>
+      <div>
+        { displayScore && 
+          (<DisplayScore scoreboard= {scoreboard}/>)
+        }
       </div>
     </div>
   );

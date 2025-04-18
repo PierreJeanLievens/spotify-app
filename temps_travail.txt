@@ -39,5 +39,6 @@ Préparation :
 1h -- Correction certaines pages (lorsque le token n'est plus disponible) ATTENTION A vérifier pour /playlists si le client n'a aucune playlist
 1h -- Modification du component Loading
 1h -- Ajout CSS
+4h -- Modification de la page game/[roomId] avec les channels, timer local pour chaque client desormais (evite 15 messages par seconde), et modification pour le scoreboard. Seuelemtn le gerant peut afficher le score et chaque client envoie son score lors de l'affichage du scoreboard. Ensuite uniquement le gérent récupère le scoreboard et l'envoie a tous (classement commun)
 
  Faire en sorte que lors de la récupération des joueurs, on check l'id pour evite 2 joueurs avec 1 seul client
