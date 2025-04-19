@@ -3,10 +3,10 @@
 import { getHashedCorrectAccessCode } from "@/lib/manageAccessCode";
 import { useState } from "react";
 
-export default function CopyLinkButton({ page }: { page: string }) {
+export default function CopyJoinRoomButton({ roomId, page }: { roomId: any, page: string }) {
   const [copied, setCopied] = useState(false);
   const correctCode = getHashedCorrectAccessCode(); // On récupère le code correct hashé
-  const link = `${window.location.origin}/${page}?accessCode=${correctCode}`; // On crée le lien que l'on veut partager
+  const link = `${window.location.origin}/${page}/${roomId}?accessCode=${correctCode}`; // On crée le lien que l'on veut partager
 
   const handleCopy = async () => {
     try {

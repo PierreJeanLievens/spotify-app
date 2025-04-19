@@ -2,18 +2,18 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { generateAccessCode } from "@/lib/generateAccessCode";
+import { getHashedCorrectAccessCode, hashCode } from "@/lib/manageAccessCode";
 import styles from "./page.module.css"
 
 export default function HomePage() {
-  const [code, setCode] = useState("");
+  const [inputCode, setInputCode] = useState("");
   const [error, setError] = useState("");
   const [displayError, setDisplayError] = useState(false);
   const [attempts, setAttempts] = useState(0);
   const [canSubmit, setCanSubmit] = useState(true);
   const router = useRouter();
 
-  const correctCode = generateAccessCode(); // Récupère le code d'accès
+  const hashedCorrectCode = getHashedCorrectAccessCode(); // Récupère le code d'accès
 
   useEffect(() => {
     if (attempts >= 3) {
@@ -45,9 +45,9 @@ export default function HomePage() {
       setDisplayError(true);
       return;
     }
-
-    if (code === correctCode) {
-      sessionStorage.setItem("access_code", code); // Stocke le code dans le sessionStorage
+    const hashedCode = hashCode(inputCode);
+    if (hashedCode === hashedCorrectCode) {
+      sessionStorage.setItem("access_code", hashedCode); // Stocke le code dans le sessionStorage
       router.push("/login"); // Redirige vers la page de jeu
     } else {
       setAttempts(attempts + 1); // Incrémente le compteur de tentatives
@@ -63,8 +63,8 @@ export default function HomePage() {
         <form onSubmit={handleSubmit} className={`${styles.access__form}`}>
           <input
             type="text"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
+            value={inputCode}
+            onChange={(e) => setInputCode(e.target.value)}
             className={`${styles.access__input}`}
             placeholder="Entrez le code"
             disabled={!canSubmit}

@@ -10,7 +10,7 @@ import ButtonLink from "@/components/ButtonLink";
 import { useAbly } from "@/lib/ablyContext";
 import GamePlayers from "@/components/GamePlayers";
 import LogoutButton from "@/components/LogoutButton";
-import CopyLinkButton from "@/components/CopyLinkButton";
+import CopyJoinRoomButton from "@/components/CopyJoinRoomButton";
 
 const GameSetupPage = () => {
   const [playlist, setPlaylist] = useState<any>(null);
@@ -95,7 +95,7 @@ const GameSetupPage = () => {
         </button>
       </div>
       <div>
-        <CopyLinkButton roomId={roomId} /> 
+        <CopyJoinRoomButton roomId={roomId} page='join-room'/> 
       </div>
     </div>
   );
