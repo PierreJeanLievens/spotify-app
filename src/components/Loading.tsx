@@ -13,13 +13,17 @@ export default function Loading({title, text, redirection}: LoadingProps) {
         <div className={styles.box}>
           <h1 className={styles.title}>{title}</h1>
           <p>{text}</p>
-          <button onClick={() => {
-            if (redirection) {
-              router.push(redirection)
-            }else {
-              router.push('/login')
-            }
-          }}>Retour</button>
+          <button 
+            className={`button ${styles.back__button}`}
+            onClick={() => {
+              if (redirection) {
+                router.push(redirection)
+              }else {
+                router.push('/login')
+              }
+            }}>
+            Retour
+          </button>
         </div>
     </div>
   );

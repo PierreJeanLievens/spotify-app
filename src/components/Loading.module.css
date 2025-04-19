@@ -34,3 +34,7 @@
     top: 0;
     padding: 20px;
 }
+
+.back__button {
+    background-color: var(--primary-color-major);
+}

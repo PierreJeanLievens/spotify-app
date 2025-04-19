@@ -5,6 +5,7 @@ import Ably from "ably";
 import { useRouter, useParams } from "next/navigation";
 import { useAbly } from "@/lib/ablyContext"; // Importation du contexte Ably
 import styles from './page.module.css'
+import ButtonLink from "@/components/ButtonLink";
 
 export default function GameRoom() {
   const [roomId, setRoomId] = useState("");
@@ -86,6 +87,7 @@ export default function GameRoom() {
   return (
     <div >
       <h1>Blind Test</h1>
+      <ButtonLink text="Retour" path="/login"/>
       <div className={styles.container}>
         <div className={styles.section__inputs}>
             {/* Champ pour entrer l'ID du salon */}

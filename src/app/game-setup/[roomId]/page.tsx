@@ -66,12 +66,12 @@ const GameSetupPage = () => {
   }
 
   return (
-    <div className="">
-      <div>
-
+    <div>
       <h1>Game Setup : {roomId}</h1>
-      <ButtonLink text="Retour" path="/game-setup"/>
-      <LogoutButton />
+      <div>  
+        <ButtonLink text="Retour" path="/game-setup"/>
+        <CopyJoinRoomButton roomId={roomId} page='join-room'/> 
+        <LogoutButton />
       </div>
       <div>
         <div className={styles.container}>
@@ -92,9 +92,6 @@ const GameSetupPage = () => {
         >
           Jouer
         </button>
-      </div>
-      <div>
-        <CopyJoinRoomButton roomId={roomId} page='join-room'/> 
       </div>
     </div>
   );
