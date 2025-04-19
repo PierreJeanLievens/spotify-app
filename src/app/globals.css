@@ -267,7 +267,8 @@ img {
 }
 
 .input-text:focus + label[data-label]:before,
-.input-text:valid + label[data-label]:before {
+.input-text:valid + label[data-label]:before,
+.input-text:disabled+ label[data-label]:before {
   content: attr(data-label);
   color: var(--text-white);
   background-color: var(--primary-color-minor);

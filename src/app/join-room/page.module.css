@@ -1,0 +1,34 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.section__inputs {
+    display: flex;
+    width: 100%;
+    gap: 15px;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.join__button {
+    justify-self: center;
+    width: 90%;
+    color: var(--text-white);
+    font-size: var(--h2-font-size);
+    margin-top: 20px;
+    /* background-color: var(--primary-color-major); */
+    width : 90%;
+    padding: 15px 25px;
+    justify-self: center;
+    justify-content: center;
+}
+
+@media screen and (max-width : 480px){
+    .section__inputs {
+        flex-direction: column;
+    }
+}

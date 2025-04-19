@@ -4,6 +4,7 @@ import { useState } from "react";
 import Ably from "ably";
 import { useRouter, useParams } from "next/navigation";
 import { useAbly } from "@/lib/ablyContext"; // Importation du contexte Ably
+import styles from "@/app/join-room/page.module.css"
 
 export default function GameRoom() {
   const { roomId } = useParams() as { roomId: string };
@@ -85,30 +86,47 @@ export default function GameRoom() {
   return (
     <div >
       <h1>Blind Test</h1>
+      <div className={styles.container}>
+        <div className={styles.section__inputs}>
+            {/* Champ pour entrer l'ID du salon */}
+          <div className="input-block">
+            <input
+            disabled={true}
+            
+            id="room-id"
+            type="text"
+            value={roomId}
+            className={`input-text`}
+            />
+            <label htmlFor="room-id" data-label="Salon"/>
+          </div>
+          
 
-      {/* Champ pour entrer l'ID du salon */}
-      <input
-        disabled={true}
-        type="text"
-        placeholder="ID du salon"
-        value={roomId}
-      />
-
-      {/* Champ pour entrer le nom de l'user */}
-      <input
-        type="text"
-        placeholder="Nom"
-        value={clientName}
-        onChange={(e) => setClientName(e.target.value)}
-      />
-
-      {/* Bouton pour rejoindre un salon */}
-      <button
-        onClick={handleJoinRoom}
-        className="button"
-      >
-        Rejoindre
-      </button>
+          {/* Champ pour entrer le nom de l'user */}
+          <div className="input-block">
+            <input
+              required
+              id="client-name"
+              type="text"
+              value={clientName}
+              onChange={(e) => setClientName(e.target.value)}
+              className={`input-text`}
+            />
+            <label htmlFor="client-name" data-label="Nom"/>
+          </div>
+        </div>
+        
+      
+        
+          {/* Bouton pour rejoindre un salon */}
+          <button
+            onClick={handleJoinRoom}
+            className={`button ${styles.join__button}`}
+          >
+            Rejoindre
+          </button>
+        
+      </div>
     </div>
   );
 }
