@@ -24,7 +24,6 @@ export default function GameSetupPage() {
   const [firstStart, setFirstStart] = useState<boolean>(true);// Si premier start alors on lance avec API, sinon on effectue le toogle avec la fonction du WebPlayer
   const [acceptResponse, setAcceptResponse] = useState<boolean>(false); // Permet de savoir s'il faut afficher les inputs pour répondre
   const [round, setRound] = useState<number>(0); // Permet de savoir le round en cours
-  const [volume, setVolume] = useState<number>(0); // Permet de savoir le round en cours
   const [secondsLeft, setSecondsLeft] = useState<number>(15); // Stocke les secondes restantes
   const timerRef = useRef<NodeJS.Timeout | null>(null); // Stocke les secondes restantes
   const [inputTrack, setInputTrack] = useState<string>(''); // Stocke l'input du titre
@@ -34,8 +33,7 @@ export default function GameSetupPage() {
   const [displayScore, setDisplayScore] = useState<boolean>(false); // Stocke l'etat de l'affichage des points
   const [displayResponse, setDisplayResponse] = useState<boolean>(false); // Stocke l'etat de l'affichage des points
 
-  const [playersMap, setPlayersMap] = useState<any[]>([]);
-  const [scoreboard, setScoreboard] = useState<any>();
+  const [scoreboard, setScoreboard] = useState<any>(); // Stocke le scoreboard reçu dans le channel 'scoreboard' 
   const router = useRouter();
 
 
@@ -46,7 +44,6 @@ export default function GameSetupPage() {
   const channelRef = useRef(channel);
   const clientIdRef = useRef(clientId);
   const clientNameRef = useRef(clientName);
-  const playersMapRef = useRef<any[]>([]);
 
 
   // Maintenir les références à jour
@@ -57,27 +54,14 @@ export default function GameSetupPage() {
   useEffect(() => { channelRef.current = channel; }, [channel]);
   useEffect(() => { clientIdRef.current = clientId; }, [clientId]);
   useEffect(() => { clientNameRef.current = clientName; }, [clientName]);
-  useEffect(() => { playersMapRef.current = playersMap; }, [playersMap]);
 
 
-  // Permet d'arreter les reponses si le timer est a 0
-  // useEffect(() => {
-  //   if(!channel) return;
-  //   // Atendre une seconde puis mettre secondsLeft - 1
-  //   if(secondsLeft === 0 && isManager) {
-  //     channel.publish("accept-response", {acceptResponse : false});
-  //   }
-  // }, [secondsLeft])
-
-
+  /**
+   * Lorsque l'on veut demarrer un round, on envoie un message pour reset le timer et pour accepter les réponses
+   */
   const startRound = () => {
     console.log("FONCTION START ROUND")
-    // Si un timer est déjà actif, on l’arrête
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-    }
     channel.publish("start-timer", { duration: 15 }); // Envoie la valeur initiale immédiatement
-    // channel.publish("seconds-left", { secondsLeft: 15 }); // Envoie la valeur initiale immédiatement
     channel.publish("accept-response", { acceptResponse: true, test: 3}); // Réactive les réponses
   };
   
@@ -129,7 +113,7 @@ const handleStateResponses = useCallback(async (message: any) => {
         currentTrack.name, 
         inputTrackRef.current
       );
-      console.log("SCORE", resultsRound);
+      console.log("SCORE : ", resultsRound);
 
       // On récupère les scores du client enregistrés dans sessionStorage
       let playerScore: Player | null = JSON.parse(sessionStorage.getItem("playerScore") || "null");
@@ -161,22 +145,11 @@ const handleStateResponses = useCallback(async (message: any) => {
 }, []);
 
 
-
 /**
- * Fonction qui ecoute le channel 'seconds-left'
+ * Fonction pour lancer le timer en local lors de la reception d'un message 'start-timer'
  * Utilisation du callback pour réactualiser la fonction lorsque les données change
  * Sans callback, lorsque la fonction est utlisée dans channel.subscribe, les données utilisées sont figées, lors de la première execution track est null
  * Avec le callback, on met à jour la fonction avec les nouvelles données lorsque (track et les inputs changent) 
- */
-const handleSecondsLeft = useCallback((message: any) => {
-  if(!isManager){
-    setSecondsLeft(message.data.secondsLeft);
-  }
-}, [isManager]);
-
-
-/**
- * Fonction pour lancer le timer en local lors de la reception d'un message 'start-timer'
  */
 const handleStartTimer = useCallback((message:any) => {
   setSecondsLeft(message.data.duration);
@@ -195,6 +168,7 @@ const handleStartTimer = useCallback((message:any) => {
         if(isManager){
           channelRef.current.publish("accept-response", { acceptResponse: false, endRound: true, test: 4  });
         }
+
         return 0;
       }
 
@@ -210,10 +184,9 @@ const handleStartTimer = useCallback((message:any) => {
  * Avec le callback, on met à jour la fonction avec les nouvelles données
  */
 const receiptNewRound = useCallback((message: any) => {
-  console.log("Reception new track : " , message.data)
+  console.log("Reception new track : " , message.data.currentTrack)
   const data = message.data;
   // On stocke le nouveau track et le nouveau round
-  console.log(data.currentTrack)
   setTrack(data.currentTrack);
   setRound(data.currentRound);
 
@@ -239,9 +212,8 @@ const receiptNewRound = useCallback((message: any) => {
           return;
         }
         // Puis on s'abonne une seule fois
-        roomChannel.subscribe("accept-response", handleStateResponses);
-        // roomChannel.subscribe("seconds-left", handleSecondsLeft);
-        roomChannel.subscribe("start-timer", handleStartTimer);
+        roomChannel.subscribe("accept-response", handleStateResponses); // Permet de gérer l'affichage (ou non) des inputs reponses 
+        roomChannel.subscribe("start-timer", handleStartTimer); // Permet de recevoir l'information pour démarrer un timer en local
         roomChannel.subscribe("new-round", receiptNewRound);
         roomChannel.subscribe("scoreboard", (message) => {
           setScoreboard(message.data.scoreboard); // Un state local pour stocker le score
@@ -270,11 +242,10 @@ const receiptNewRound = useCallback((message: any) => {
     // Cleanup pour éviter les abonnements en double
     return () => {
       roomChannel.unsubscribe("accept-response", handleStateResponses);
-      // roomChannel.unsubscribe("seconds-left", handleSecondsLeft);
       roomChannel.unsubscribe("start-timer", handleStartTimer);
       roomChannel.unsubscribe("new-round", receiptNewRound);
     };
-  }, [ably, roomId, router, handleStateResponses, handleSecondsLeft, receiptNewRound]);
+  }, [ably, roomId, router, handleStateResponses, handleStartTimer, receiptNewRound]);
 
 
 
@@ -288,7 +259,6 @@ const receiptNewRound = useCallback((message: any) => {
 
   // Cela permet de récupérer le webPlayer
   useEffect(() => {
-    console.log("isManager:", isManager, "webPlayer:", webPlayer);
     if (!isManager || !webPlayer.player || !channel) return;// Attendre que isManager et le webPlayer soientt bien récupérés
 
     const initGame = async () => {
@@ -392,10 +362,16 @@ const receiptNewRound = useCallback((message: any) => {
     }
   };
 
+
+  /**
+   * Affichage de l'historique des messages dans Ably
+   */
   const displayHistory = async () => {
-    // const history = await channel.history();
-    // console.log("HISTORY: ", history)
+    const history = await channel.history();
+    console.log("HISTORY: ", history)
   }
+
+
   /**
    * Cette fonction permet d'afficher le score pour tous le monde
    * Elle envoie d'abord dans le channel display-scoreboard l'état qu'elle veut.
