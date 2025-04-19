@@ -1,0 +1,26 @@
+.container {
+    margin: 15px 0px;
+    display: grid;
+    justify-items: center;
+    gap: 10px;
+}
+
+.container__room {
+    gap: 10px;
+    display: inline-flex;
+    justify-content: center;
+    width: min-content;
+    min-width: 300px;
+    padding: 5px 10px;
+    border: 2px solid var(--primary-color-minor);
+    border-radius: 15px;
+}
+
+.room__id {
+    color: var(--primary-color-minor);
+}
+.room__id::before,
+.room__id::after {
+    content: ' - ';
+    color: var(--primary-color-major);
+}

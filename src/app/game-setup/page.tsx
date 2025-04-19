@@ -87,7 +87,6 @@ const GameSetupPage = () => {
       <ButtonLink text="Retour" path="/playlists"/>
       <LogoutButton />
       <div>
-          <h1></h1>
           <div className={styles.container}>
             <GameSetupPlaylist playlist={playlist} />
             <div className={styles.separator}></div>

@@ -5,6 +5,7 @@ import GamePlayers from "@/components/GamePlayers";
 import { useAbly } from "@/lib/ablyContext";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
+import styles from "./page.module.css"
 
 export default function WaitingRoomPage() {
   const ably = useAbly();
@@ -61,9 +62,13 @@ export default function WaitingRoomPage() {
     <>
       <h1>Salle d'attente</h1>
       <ButtonLink text="Retour" path="/join-room" />
-      <h2>Salon</h2>
-      <h4>{roomId}</h4>
-      <GamePlayers />
+      <div className={styles.container}>
+        <div className={styles.container__room}>
+          <h2>Salon n°</h2>
+          <h2 className={styles.room__id}>{roomId}</h2>
+        </div>
+        <GamePlayers />
+      </div>
     </>
   );
 }
