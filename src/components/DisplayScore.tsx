@@ -1,7 +1,7 @@
 "use client";
 
 import { Player } from "@/types/spotify";
-
+import styles from "@/components/DisplayScore.module.css"
 type DisplayScoreProps = {
   scoreboard?: Player[];
 };
@@ -31,7 +31,7 @@ export default function DisplayScore({ scoreboard = [] }: DisplayScoreProps) {
 
 
   return (
-    <div>
+    <div className={styles.container}>
       <h2>Classement des joueurs</h2>
       {sortedScoreboard.length === 0 ? (
         <p>Pas de joueurs dans ce salon</p>

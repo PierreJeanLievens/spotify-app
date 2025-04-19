@@ -26,17 +26,27 @@
     justify-content: space-between;
 }
 
+.timer {
+    margin: 10px;
+    color: var(--primary-color-minor);
+}
+
 
 .inputs__container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     gap: 30px;
     padding: 10px;
+}
+
+.duration__message {
+    color : var(--error-color-major)
 }
 
 @media screen and (max-width : 480px){
     .inputs__container {
         gap: 10px;
-        grid-template-columns: 1fr;
+        flex-direction: column;
     }
 }
