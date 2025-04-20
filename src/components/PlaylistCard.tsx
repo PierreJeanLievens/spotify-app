@@ -6,7 +6,7 @@ export default function PlaylistCard({ playlist, isSelected, onSelect }: Playlis
   return (
     <li className={`${styles.container} ${isSelected ? styles.selected : ""}`} onClick={onSelect}>
       <h3 className={styles.title}>{playlist.name}</h3>
-      <a className={styles.link} href={playlist.external_urls.spotify} target="_blank" rel="noopener noreferrer">
+      <div className={styles.link} >
         {playlist.images?.length > 0 ? (
           <img className={styles.image} src={playlist.images[0].url} alt={playlist.name} />
         ) : (
@@ -14,7 +14,7 @@ export default function PlaylistCard({ playlist, isSelected, onSelect }: Playlis
             <p>Pas d'image</p>
           </div>
         )}
-      </a>
+      </div>
     </li>
   );
 }

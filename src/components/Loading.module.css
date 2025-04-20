@@ -36,5 +36,6 @@
 }
 
 .back__button {
+    color: var(--text-white);
     background-color: var(--primary-color-major);
 }

@@ -10,7 +10,13 @@
     transition: background-color 0.2s;
     overflow: hidden;
     justify-items: center;
+    transition: all 0.5s ease;
+    background-color: var(--tertiary-color-minor);
   }
+.container:hover {
+  border-color: var(--primary-color-minor);
+  background-color: var(--tertiary-color-major);
+}
   
   .selected {
     background-color: var(--tertiary-color-major);

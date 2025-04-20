@@ -22,10 +22,11 @@
     --text-color: hsl(0, 0%, 50%);
     --body-color: hsl(0, 0%, 100%);
     --container-color: hsl(0, 0%, 93%);
+    --body-color-reverse: hsl(0, 0%, 28%);
     --border-color: hsl(0, 0%, 87%);
     --text-white: hsl(0 0% 100%);
     --modal-color: hsla(0 0% 29.4% / 0.63);
-    --background-color: hsl(0, 0%, 96%);
+    --background-color: hsl(0, 0%, 87%);
     --foreground-color: hsl(0 0% 9.02%);
     --transparent-color: hsl(0, 0%, 100% / 0);
 
@@ -67,6 +68,7 @@
   --title-color: hsl(0, 0%, 100%);
   --text-color: hsl(0, 0%, 80%);
   --body-color: hsl(0, 0%, 7%);
+  --body-color-reverse: hsl(0, 0%, 100%);
   --container-color: hsl(0, 1%, 17%);
   --border-color: hsl(0, 0%, 15%);
   --background-color: #0a0a0a;
@@ -244,6 +246,7 @@ img {
   border: 10px;
   padding: 10px 20px;
   border-radius: 15px;
+  color: var(--body-color-reverse);
   border: 2px solid var(--tertiary-color-major);
   background-color: var(--tertiary-color-minor);
   transition: all 0.3s ease;

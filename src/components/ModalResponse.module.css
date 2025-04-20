@@ -47,6 +47,10 @@
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
   }
 
+.trackName {
+    color: var(--text-white);
+}
+
 .section_2{
     width: 100%;
     padding: 20px 30px;
@@ -58,11 +62,17 @@
     padding: 20px 30px;
 }
 
+.section_2 p, .section_3 p {
+    /* color: var(--text-color); */
+    color: var(--primary-color-minor);
+}
+
 .close_button {
     position: absolute;
     transform: translateY(-100%);
     top: -15px;
     right: 0;
     z-index: 150;
+    color: var(--text-white);
     background-color: var(--primary-color-minor);
 }

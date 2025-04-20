@@ -27,7 +27,7 @@ export default function ModalResponse({
                         className={styles.albumImage}
                 />
                 <div>
-                    <h2>{name}</h2>
+                    <h2 className={styles.trackName}>{name}</h2>
                     <p>-- {artists.map((a) => a.name).join(", ")} --</p>
                 </div> 
             </div>
