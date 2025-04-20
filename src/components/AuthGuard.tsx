@@ -36,7 +36,8 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
         setIsAuthorized(true);
       }
     }
-  }, [pathname, searchParams]);
+  // }, [pathname, searchParams]);
+  }, [pathname]);
 
   if (!isAuthorized && pathname !== "/") {
     return null; // Évite un rendu inutile avant la redirection
