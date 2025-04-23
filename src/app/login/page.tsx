@@ -1,6 +1,6 @@
-import LoginButton from "@/components/LoginButton";
-import ButtonLink from "@/components/ButtonLink";
-import CopyLinkButton from "@/components/CopyLinkButton";
+import LoginButton from "@/components/auth/LoginButton";
+import ButtonLink from "@/components/buttons/ButtonLink";
+import CopyLinkButton from "@/components/buttons/CopyLinkButton";
 
 export default function Home() {
   return (

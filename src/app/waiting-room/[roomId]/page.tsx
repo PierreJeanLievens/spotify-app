@@ -1,7 +1,7 @@
 "use client";
 
-import ButtonLink from "@/components/ButtonLink";
-import GamePlayers from "@/components/GamePlayers";
+import ButtonLink from "@/components/buttons/ButtonLink";
+import GamePlayers from "@/components/game/GamePlayers";
 import { useAbly } from "@/lib/ablyContext";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";

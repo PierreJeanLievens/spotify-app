@@ -2,15 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import GameSetupPlaylist from "@/components/GameSetupPlaylist";
+import GameSetupPlaylist from "@/components/game/GameSetupPlaylist";
 import styles from "@/app/game-setup/page.module.css";
-import Loading from "@/components/Loading";
+import Loading from "@/components/ui/Loading";
 import { fetchPlaylist } from "@/lib/fetchData";
-import ButtonLink from "@/components/ButtonLink";
+import ButtonLink from "@/components/buttons/ButtonLink";
 import { useAbly } from "@/lib/ablyContext";
-import GamePlayers from "@/components/GamePlayers";
-import LogoutButton from "@/components/LogoutButton";
-import CopyJoinRoomButton from "@/components/CopyJoinRoomButton";
+import GamePlayers from "@/components/game/GamePlayers";
+import LogoutButton from "@/components/auth/LogoutButton";
+import CopyJoinRoomButton from "@/components/buttons/CopyJoinRoomButton";
 
 const GameSetupPage = () => {
   const [playlist, setPlaylist] = useState<any>(null);

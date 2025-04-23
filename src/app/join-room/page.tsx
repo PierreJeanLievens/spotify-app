@@ -5,7 +5,7 @@ import Ably from "ably";
 import { useRouter, useParams } from "next/navigation";
 import { useAbly } from "@/lib/ablyContext"; // Importation du contexte Ably
 import styles from './page.module.css'
-import ButtonLink from "@/components/ButtonLink";
+import ButtonLink from "@/components/buttons/ButtonLink";
 
 export default function GameRoom() {
   const [roomId, setRoomId] = useState("");

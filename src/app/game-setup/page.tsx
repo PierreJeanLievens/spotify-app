@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import GameSetupPlaylist from "@/components/GameSetupPlaylist"
+import GameSetupPlaylist from "@/components/game/GameSetupPlaylist"
 import styles from "@/app/game-setup/page.module.css"
-import Loading from "@/components/Loading";
+import Loading from "@/components/ui/Loading";
 import { fetchPlaylist } from "@/lib/fetchData";
-import ButtonLink from "@/components/ButtonLink";
+import ButtonLink from "@/components/buttons/ButtonLink";
 import { useAbly } from "@/lib/ablyContext";
-import LogoutButton from "@/components/LogoutButton";
+import LogoutButton from "@/components/auth/LogoutButton";
 
 const GameSetupPage = () => {
   const [playlist, setPlaylist] = useState<any>(null);

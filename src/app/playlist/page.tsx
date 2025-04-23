@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import PlaylistList from "@/components/PlaylistList";
+import PlaylistList from "@/components/playlist/PlaylistList";
 import styles from "@/app/playlist/page.module.css";
-import LogoutButton from "@/components/LogoutButton";
+import LogoutButton from "@/components/auth/LogoutButton";
 
 const PlaylistPage = () => {
   const [playlists, setPlaylists] = useState<any[]>([]);

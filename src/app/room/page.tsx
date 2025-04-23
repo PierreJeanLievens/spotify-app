@@ -1,7 +1,7 @@
 "use client";
 
-import GameRoom from "@/components/GameRoom";
-import DisplayPlaylists from "@/components/DisplayPlaylists";
+import GameRoom from "@/components/game/GameRoom";
+import DisplayPlaylists from "@/components/playlist/DisplayPlaylists";
 
 export default function RoomPage() {
   return (

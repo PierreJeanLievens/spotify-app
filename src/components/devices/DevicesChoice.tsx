@@ -4,7 +4,7 @@ import { fetchDevices } from "@/lib/fetchData";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import styles from "./DevicesChoice.module.css"
-import Loading from "./Loading";
+import Loading from "./ui/Loading";
 
 export default function DevicesChoice() {
     const router = useRouter();

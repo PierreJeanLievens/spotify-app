@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import PlaylistList from "@/components/PlaylistList";
+import PlaylistList from "@/components/playlist/PlaylistList";
 import styles from "@/app/playlist/page.module.css";
-import Loading from "@/components/Loading";
+import Loading from "@/components/ui/Loading";
 import LogoutButton from "./LogoutButton";
 
 export default function PlaylistPage(){

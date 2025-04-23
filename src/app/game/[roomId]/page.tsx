@@ -6,9 +6,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { playTrack } from "@/lib/managePlayer/playTrack";
 import { verifiyInputs } from "@/lib/verifiyResponses/verifyInputs";
-import DisplayScore from "@/components/DisplayScore";
-import VolumeControl from "@/components/VolumeControl";
-import ModalResponse from "@/components/ModalResponse";
+import DisplayScore from "@/components/score/DisplayScore";
+import VolumeControl from "@/components/playback/VolumeControl";
+import ModalResponse from "@/components/response/ModalResponse";
 import styles from "./page.module.css"
 import { getScorePlayersFromHistory } from "@/lib/getScorePlayers";
 

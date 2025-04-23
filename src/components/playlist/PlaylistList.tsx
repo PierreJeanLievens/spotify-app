@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import PlaylistCard from "@/components/PlaylistCard"; // On importe le composant
+import PlaylistCard from "@/components/playlist/PlaylistCard"; // On importe le composant
 import styles from "@/components/PlaylistList.module.css"
 import { Playlist } from "@/types/spotify"; // Typage de la playlist
 

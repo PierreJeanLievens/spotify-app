@@ -1,8 +1,8 @@
 import { Suspense } from "react";
 import { AblyProvider } from "@/lib/ablyContext";
-import AuthGuard from "@/components/AuthGuard";
+import AuthGuard from "@/components/auth/AuthGuard";
 import "./globals.css";
-import Loading from "@/components/Loading";
+import Loading from "@/components/ui/Loading";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
