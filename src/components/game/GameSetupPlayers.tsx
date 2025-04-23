@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import styles from "@/components/GameSetupPlayers.module.css"
+import styles from "./GameSetupPlayers.module.css"
 import { PlayerOld } from "@/types/spotify"; 
 
 export default function GameSetupPlayers() {

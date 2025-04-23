@@ -1,4 +1,4 @@
-import styles from "@/components/ResponseSection.module.css";
+import styles from "./ResponseSection.module.css";
 import { PlayerOld, Track } from "@/types/spotify";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";

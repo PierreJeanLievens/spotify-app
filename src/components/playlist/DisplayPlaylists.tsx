@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import PlaylistList from "@/components/playlist/PlaylistList";
-import styles from "@/app/playlist/page.module.css";
+import styles from "@/app/page.module.css";
 import Loading from "@/components/ui/Loading";
-import LogoutButton from "./LogoutButton";
+import LogoutButton from "@/components/auth/LogoutButton";
 
 export default function PlaylistPage(){
 

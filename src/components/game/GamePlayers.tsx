@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useAbly } from "@/lib/ablyContext";
 import { useParams } from "next/navigation";
-import Loading from "../ui/Loading";
+import Loading from "@/components/ui/Loading";
 import styles from "./GamePlayers.module.css"
 
 export default function GamePlayers() {

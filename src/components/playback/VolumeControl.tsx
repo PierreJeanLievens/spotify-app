@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react';
-import styles from "@/components/VolumeControl.module.css"
+import styles from "./VolumeControl.module.css"
 
 const VolumeControl = ({ player }: { player: any }) => {
   const [volume, setVolume] = useState(30); // Valeur entre 0 et 100 (initialement 30)

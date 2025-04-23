@@ -1,7 +1,7 @@
 "use client";
 
 import { Player } from "@/types/spotify";
-import styles from "@/components/DisplayScore.module.css"
+import styles from "./DisplayScore.module.css"
 type DisplayScoreProps = {
   scoreboard?: Player[];
 };

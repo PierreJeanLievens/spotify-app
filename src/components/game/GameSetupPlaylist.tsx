@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "@/components/GameSetupPlaylist.module.css"
+import styles from "./GameSetupPlaylist.module.css"
 import { Playlist } from "@/types/spotify";
 
 export default function GameSetupPlaylist({ playlist }: { playlist: Playlist }) {

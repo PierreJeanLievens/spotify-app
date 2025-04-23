@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react";
-import styles from "@/components/Loading.module.css"
+import styles from "./Loading.module.css"
 import { LoadingProps } from "@/types/spotify";
 import { useRouter } from "next/navigation";
 
