@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { fetchDevices } from "@/lib/fetchData"; // Assure-toi que le chemin est correct
-import { playTrack } from "@/lib/playTrack";
-import { pauseTrack } from "@/lib/pauseTrack";
-import { resumeTrack } from "@/lib/resumeTrack";
+import { playTrack } from "@/lib/managePlayer/playTrack";
+import { pauseTrack } from "@/lib/managePlayer/pauseTrack";
+import { resumeTrack } from "@/lib/managePlayer/resumeTrack";
 
 export default function RoomPage() {
   const [devices, setDevices] = useState<any[]>([]); // Pour stocker les appareils

@@ -4,7 +4,7 @@ import { fetchNewTrack, fetchNumberTracksPlaylist } from "@/lib/fetchData";
 import { Player, Track } from "@/types/spotify";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { playTrack } from "@/lib/playTrack";
+import { playTrack } from "@/lib/managePlayer/playTrack";
 import { verifiyInputs } from "@/lib/verifiyResponses/verifyInputs";
 import DisplayScore from "@/components/DisplayScore";
 import VolumeControl from "@/components/VolumeControl";

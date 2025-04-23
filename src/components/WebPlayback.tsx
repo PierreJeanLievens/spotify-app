@@ -1,6 +1,6 @@
 "use client" 
-import { playTrack } from '@/lib/playTrack';
-import { setVolume, setVolumeWithDevice } from '@/lib/setVolume';
+import { playTrack } from '@/lib/managePlayer/playTrack';
+import { setVolume, setVolumeWithDevice } from '@/lib/managePlayer/setVolume';
 import React, { useEffect, useState } from 'react';
 
 const WebPlayback = () => {

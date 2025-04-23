@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { playTrack } from "@/lib/playTrack"; // Assure-toi que le chemin est correct
-import { playAlbum } from "@/lib/playAlbum"; 
+import { playTrack } from "@/lib/managePlayer/playTrack"; // Assure-toi que le chemin est correct
+import { playAlbum } from "@/lib/managePlayer/playAlbum"; 
 
 export default function RoomPage() {
   const [trackUri, setTrackUri] = useState(""); // spotify:track:11dFghVXANMlKmJXsNCbNl //spotify:album:2up3OPMp9Tb4dAKM2erWXQ

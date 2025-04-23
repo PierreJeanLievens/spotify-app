@@ -1,6 +1,6 @@
 "use client";
 import { useWebPlayer } from "@/hooks/useWebPlayer";
-import { playTrack } from "@/lib/playTrack";
+import { playTrack } from "@/lib/managePlayer/playTrack";
 import { useEffect } from "react";
 
 export default function RoomPage() {
