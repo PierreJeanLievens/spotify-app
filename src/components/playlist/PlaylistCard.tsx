@@ -1,6 +1,6 @@
 import React from "react";
 import { Playlist, PlaylistCardProps } from "@/types/spotify";
-import styles from "@/components/PlaylistCard.module.css"
+import styles from "./PlaylistCard.module.css"
 
 export default function PlaylistCard({ playlist, isSelected, onSelect }: PlaylistCardProps) {
   return (
