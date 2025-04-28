@@ -20,6 +20,9 @@ const LoginButton: React.FC = () => {
   return (
     <button onClick={handleLogin} className="button">
       Se connecter avec Spotify
+        <span className="button__icon">
+          <img src="/spotify-logo.png" alt='logo Spotify'/>
+        </span>
     </button>
   );
 };

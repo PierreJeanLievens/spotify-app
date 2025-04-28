@@ -4,7 +4,7 @@ import CopyLinkButton from "@/components/buttons/CopyLinkButton";
 
 export default function Home() {
   return (
-    <div style={{ textAlign: "center", padding: "50px" }}>
+    <div style={{ textAlign: "center"}}>
       <h1>Bienvenue sur Spotify App 🎵</h1>
       <div>
         <LoginButton />

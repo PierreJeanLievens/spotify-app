@@ -1,0 +1,107 @@
+.container {
+    top: 0;
+    left: 0;
+    height: 60px;
+    position: fixed;
+    display: flex;
+    z-index: 200;
+    width: 100%;
+    background-color: var(--tertiary-color-major);
+}
+
+.nav_toggle {
+    position: fixed;
+    cursor: pointer;
+    top: 10px;
+    left: 20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+    background-color: var(--primary-color-major);
+    padding: 12px 10px;
+    z-index: 100;
+}
+
+.nav_toggle span {
+    display: block;
+    width: 20px;
+    height: 2px;
+    border-radius: 2px;
+    background-color: var(--title-color);
+    margin-bottom: 5px;
+}
+
+.animate_toggle span:first-child {
+    transform: rotate(45deg) translate(6px, 4px);
+}
+
+.animate_toggle span:nth-child(2) {
+    display: none;
+}
+
+.animate_toggle span:last-child {
+    transform: rotate(-45deg) translate(1px, 1px);
+}
+
+
+.nav_menu {
+    position: fixed;
+    inset-block: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-color: var(--tertiary-color-major);
+    width: 250px;
+    padding-top: 60px;
+    transition: all 0.5s cubic-bezier(0.77, 0.2, 0.05, 1);
+    z-index: 100;
+    /* border-right: 1px solid var(--primary-color-major); */
+}   
+.show_menu {
+    transform: translateX(0);
+}
+
+.nav_list .nav_item:last-child {
+    border-bottom: 1px solid var(--primary-color-major);
+}
+
+.nav_item {
+    width: 100%;
+    cursor: pointer;
+    transition: all 0.5s ease;
+    /* border-top: 1px solid var(--tertiary-color-minor); */
+    border-top: 1px solid var(--primary-color-major);
+    /* border-right: 1px solid var(--primary-color-major); */
+}
+
+.nav_item:hover .nav_link {
+    background-color: var(--primary-color-major);
+    border-radius: 25px;
+    
+}
+.nav_item:hover {
+    border-top-color:  var(--tertiary-color-major);
+}
+
+.nav_link {
+    transition: all 0.5s ease;
+    display: flex;
+    align-items: center;
+    column-gap: 24px;
+    margin: 14px 8px;
+}
+
+.nav_icon,
+.nav_name {
+    color : var(--title-color);
+    font-size: 24px;
+}
+
+.nav_name {
+    font-weight: var(--weight-500);
+    font-size: var(--h3-font-size);
+}
+
+.nav_icon {
+    width: 50px;
+    height: 50px;
+}

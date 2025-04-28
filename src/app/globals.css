@@ -8,7 +8,7 @@
     --primary-color-minor: hsl(269 42.9% 52%);
     --secondary-color-major: hsl(113 58.3% 14.1%);
     --secondary-color-minor: hsl(115 64% 27.3%);
-    --tertiary-color-major: hsl(0, 0%, 88%);
+    --tertiary-color-major: hsl(0, 0%, 77%);
     --tertiary-color-minor: hsl(0, 0%, 95%);
     --fourth-color-major: hsl(0 0% 25.9%);
     --fourth-color-minor: hsl(0 0% 38.8%);
@@ -73,7 +73,7 @@
   --border-color: hsl(0, 0%, 15%);
   --background-color: #0a0a0a;
   --foreground-color: #ededed;
-  --tertiary-color-major: hsl(0 0% 25.9%);
+  --tertiary-color-major: hsl(0, 0%, 13%);
   --tertiary-color-minor: hsl(0 0% 38.8%);
   --fourth-color-minor: hsl(0, 0%, 95%);
   --fourth-color-minor: hsl(0, 0%, 95%);
@@ -163,6 +163,7 @@ img {
 
  /* #########  BASICS ELEMENTS  #########*/
  .container {
+  padding-top: 60px;
   max-width: 1140px;
   margin-inline: auto;
   padding-inline: 15px;
