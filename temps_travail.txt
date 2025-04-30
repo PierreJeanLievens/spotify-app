@@ -43,4 +43,5 @@ Préparation :
 2h -- Accescode désormais hashé
 2h -- Ajout de lien à copier pour inviter d'autres joueurs avec accesscode en paramètre 
 3h -- Ajout NavBar
+2h -- Fichier navbar, ajout design bouton deconnexion et titres de pages
  Faire en sorte que lors de la récupération des joueurs, on check l'id pour evite 2 joueurs avec 1 seul client

@@ -384,7 +384,7 @@ const receiptNewRound = useCallback((message: any) => {
 
   return (
     <div>
-      <h1>Configuration du jeu</h1>
+      <h1 className="title">Configuration du jeu</h1>
 
       {(isManager) ? (
         <><button className="button" onClick={()=> {router.push("/game-setup");}}>Retour</button></>

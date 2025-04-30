@@ -2,6 +2,7 @@
 import { useState } from "react";
 import styles from "./NavBar.module.css"
 // import "./NavBar.css"
+import navItems, { NavItem } from '@/data/navItems'; 
 
 export default function NavBar() {
     const [showMenu, setShowMenu] =  useState(false); 
@@ -9,40 +10,23 @@ export default function NavBar() {
         <>
         <nav className={styles.container}>
         <div className={`${styles.nav_menu} ${showMenu ? styles.show_menu : ''}`}>
-             <ul className={styles.nav_list}>    
-                <li className={styles.nav_item}>
-                    <a className={styles.nav_link}
+            <ul className={styles.nav_list}>
+                {navItems.map((item: NavItem, index: number) => (
+                    <li key={index} className={styles.nav_item}>
+                    <a
+                        className={styles.nav_link}
+                        href={item.href}
                         onClick={() => setShowMenu(!showMenu)}
                     >
-                        <img className={styles.nav_icon} src="/spotify-logo.png" alt="logo spotify"/>
-                        <h3 className={styles.nav_name}>Mes playlists</h3>
+                        <img
+                        className={styles.nav_icon}
+                        src={item.icon}
+                        alt={`logo ${item.label.toLowerCase()}`}
+                        />
+                        <h3 className={styles.nav_name}>{item.label}</h3>
                     </a>
-                </li>
-                <li className={styles.nav_item}>
-                    <a className={styles.nav_link}
-                        onClick={() => setShowMenu(!showMenu)}
-                    >
-                        <img className={styles.nav_icon} src="/spotify-logo.png" alt="logo spotify"/>
-                        <h3 className={styles.nav_name}>Mes playlists</h3>
-                    </a>
-                </li>
-                <li className={styles.nav_item}>
-                    <a className={styles.nav_link}
-                        onClick={() => setShowMenu(!showMenu)}
-                    >
-                        <img className={styles.nav_icon} src="/spotify-logo.png" alt="logo spotify"/>
-                        <h3 className={styles.nav_name}>Mes playlists</h3>
-                    </a>
-                </li>
-                <li className={styles.nav_item}>
-                    <a className={styles.nav_link}
-                        onClick={() => setShowMenu(!showMenu)}
-                    >
-                        <img className={styles.nav_icon} src="/spotify-logo.png" alt="logo spotify"/>
-                        <h3 className={styles.nav_name}>Mes playlists</h3>
-                    </a>
-                </li>
-                    
+                    </li>
+                ))}
             </ul>
         </div>
         

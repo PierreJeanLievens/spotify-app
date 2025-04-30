@@ -20,7 +20,7 @@ export default function RoomPage() {
 
   return (
     <div>
-      <h1>Test Lecture Spotify</h1>
+      <h1 className="title">Test Lecture Spotify</h1>
       <input
         type="text"
         placeholder="Track URI"

@@ -60,7 +60,7 @@ export default function WaitingRoomPage() {
 
   return (
     <>
-      <h1>Salle d'attente</h1>
+      <h1 className="title">Salle d'attente</h1>
       <ButtonLink text="Retour" path="/join-room" />
       <div className={styles.container}>
         <div className={styles.container__room}>

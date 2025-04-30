@@ -67,7 +67,7 @@ const GameSetupPage = () => {
 
   return (
     <div>
-      <h1>Game Setup : {roomId}</h1>
+      <h1 className="title">Game Setup : {roomId}</h1>
       <div>  
         <ButtonLink text="Retour" path="/game-setup"/>
         <CopyJoinRoomButton roomId={roomId} page='join-room'/> 

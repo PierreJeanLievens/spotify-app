@@ -1,0 +1,12 @@
+.logout_button {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 250;
+    padding: 10px 20px;
+    border: 1px solid var(--error-color-minor);
+}
+
+.logout_button::before {
+    background-color: var(--error-color-minor);
+}

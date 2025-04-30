@@ -1,5 +1,5 @@
 import { useRouter } from "next/navigation";
-
+import styles from './LogoutButton.module.css'
 export default function LogoutButton() {
   const router = useRouter();
 
@@ -8,5 +8,5 @@ export default function LogoutButton() {
     router.push("/");
   };
 
-  return <button className='button' onClick={handleLogout}>Déconnexion</button>;
+  return <button className={`button ${styles.logout_button}`} onClick={handleLogout}>Déconnexion</button>;
 }

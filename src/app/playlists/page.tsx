@@ -37,7 +37,7 @@ const PlaylistPage = () => {
 
   return (
     <div>
-      <h1>Mes Playlists Spotify</h1>
+      <h1 className="title">Mes Playlists Spotify</h1>
       <LogoutButton />
       <div className={`${styles.container} playlists`}>
         <div>

@@ -83,7 +83,7 @@ const GameSetupPage = () => {
 
   return (
     <div className="">
-      <h1>Game Setup</h1>
+      <h1 className="title">Game Setup</h1>
       <ButtonLink text="Retour" path="/playlists"/>
       <LogoutButton />
       <div>

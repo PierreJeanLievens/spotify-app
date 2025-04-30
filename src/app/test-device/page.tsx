@@ -52,7 +52,7 @@ export default function RoomPage() {
 
   return (
     <div>
-      <h1>Test Devices Spotify</h1>
+      <h1 className="title">Test Devices Spotify</h1>
       {devices.length === 0 ? (
         <p>Aucun appareil trouvé.</p>
       ) : (

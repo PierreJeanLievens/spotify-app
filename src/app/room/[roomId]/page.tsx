@@ -79,7 +79,7 @@ export default function RoomPage() {
 
   return (
     <div>
-      <h1>Salon {roomId} {isManager ? "(Gérant)" : "(Joueur)"}</h1>
+      <h1 className="title">Salon {roomId} {isManager ? "(Gérant)" : "(Joueur)"}</h1>
       
       {track ? (
         <div>

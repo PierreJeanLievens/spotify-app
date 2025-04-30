@@ -85,7 +85,7 @@ export default function GameRoom() {
 
   return (
     <div >
-      <h1>Blind Test</h1>
+      <h1 className="title">Blind Test</h1>
       <div className={styles.container}>
         <div className={styles.section__inputs}>
             {/* Champ pour entrer l'ID du salon */}
