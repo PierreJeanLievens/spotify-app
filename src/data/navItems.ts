@@ -27,6 +27,11 @@ export interface NavItem {
       href: '/favoris',
       icon: '/spotify-logo.png',
     },
+    {
+      label: 'Rechercher playlist',
+      href: '/search-playlists',
+      icon: '/spotify-logo.png',
+    },
   ];
   
   export default navItems;

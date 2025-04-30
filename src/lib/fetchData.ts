@@ -1,7 +1,24 @@
 /**
- * Cette fonction permet d'appeler la requete API pour récupérer la playlist choisie,
- * @param playlistId permet de recuperer l'id
- * @returns 
+ * Cette fonction permet d'appeler la requete API pour récupérer les playlists publiques avec une recherche,
+ * @returns la liste des playlists
+ */
+export const fetchSearchPlaylists = async (inputSearch: string) => {
+  try {
+    const response = await fetch(`/api/spotify-fetcher/get-search-playlists/${inputSearch}`);
+    if (!response.ok) {
+      throw new Error("Échec de récupération de la playlist");
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Erreur lors de la récupération des playlists :", error);
+    return null;
+  }
+};
+
+
+/**
+ * Cette fonction permet d'appeler la requete API pour récupérer les playlists du user connecté,
+ * @returns la liste des playlists
  */
 export const fetchPlaylists = async () => {
   try {

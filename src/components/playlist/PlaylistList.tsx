@@ -27,23 +27,23 @@ export default function PlaylistList({ playlists }: { playlists: Playlist[] }) {
 
   return (
     <>
-        <ul className={styles.body}>
-        {playlists.map((playlist) => (
-            <PlaylistCard
-            key={playlist.id}
-            playlist={playlist}
-            isSelected={playlist.id === playlistChoosenId}
-            onSelect={() => {
-                // Change la sélection (désélectionne si déjà sélectionnée)
-                setPlaylistChoosenId((prevId) =>
-                  prevId === playlist.id ? null : playlist.id
-                );
-                router.push(`/game-setup`);
-              }}
+        <ul className={styles.container}>
+          {playlists.map((playlist) => (
+              <PlaylistCard
+              key={playlist.id}
+              playlist={playlist}
+              isSelected={playlist.id === playlistChoosenId}
+              onSelect={() => {
+                  // Change la sélection (désélectionne si déjà sélectionnée)
+                  setPlaylistChoosenId((prevId) =>
+                    prevId === playlist.id ? null : playlist.id
+                  );
+                  router.push(`/game-setup`);
+                }}
 
-            />
-        ))}
-        </ul>
+              />
+          ))}
+          </ul>
     </>
   );
 }

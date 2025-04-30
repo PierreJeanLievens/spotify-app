@@ -1,7 +1,8 @@
 .container {
     width: 100%;
     padding: 10px;
-    border: 2px solid var(--fourth-color-minor);
+    /* border: 2px solid var(--tertiary-color-minor); */
+    background-color: var(--tertiary-color-major);
     border-radius: 20px;
 }
 .title {
