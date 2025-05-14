@@ -88,6 +88,66 @@ export const fetchNumberSavedTracks = async (): Promise<number | null> => {
   }
 };
 
+/**
+ * Récupère un nouvel index d'un morceau sauvegardé qui n'est pas dans `tracksPast`
+ * et met à jour `localStorage`.
+ * @returns Un index de track non utilisé, ou `null` en cas d'erreur
+ */
+const getNewSavedTrackIndex = async (): Promise<number | null> => {
+  try {
+    const total: number | null = await fetchNumberSavedTracks();
+
+    if (!total) return null;
+    let tracksPast: number[] = JSON.parse(localStorage.getItem("list_track_past") || "[]");
+
+    // Si `tracksPast` n'existe pas ou est un tableau vide, ou s'il a déjà utilisé tous les titres
+    if (!Array.isArray(tracksPast) || tracksPast.length >= total) {
+      tracksPast = []; // Réinitialisation
+    }
+
+    // Obtenir un nouvel index unique
+    let newIndex: number;
+    do {
+      newIndex = Math.floor(Math.random() * total);
+    } while (tracksPast.includes(newIndex));
+
+    // Mettre à jour `localStorage`
+    tracksPast.push(newIndex);
+    localStorage.setItem("list_track_past", JSON.stringify(tracksPast));
+
+    return newIndex;
+  } catch (error) {
+    console.error("Erreur dans getNewSavedTrackIndex :", error);
+    return null;
+  }
+};
+
+/**
+ * Récupère un nouveau morceau dans les morceaux 
+ * @returns Données du morceau avec l'index utilisé ou `null`
+ */
+export const fetchNewSavedTrack = async () => {
+  try {
+    // ⚠️ Correction : Ajout de `await` pour attendre l'index
+    const offset : number | null = await getNewSavedTrackIndex();
+    if (offset === null) {
+      return null;
+    }
+
+    const response = await fetch(`/api/spotify-fetcher/get-new-saved-track/${offset}`);
+
+    if (!response.ok) {
+      throw new Error("Échec de récupération du morceau sauvegardés");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Erreur dans fetchNewSavedTrack:", error);
+    return null;
+  }
+};
+
+
 
 /**
  * Cette fonction permet de récupérer le nombre de titres de la playlist choisie,
@@ -148,7 +208,6 @@ const getNewTrackIndex = async (playlistId: string): Promise<number | null> => {
 /**
  * Récupère un nouveau morceau de la playlist choisie.
  * @param playlistId L'ID de la playlist
- * @param tracksPast Liste des indices déjà utilisés
  * @returns Données du morceau avec l'index utilisé ou `null`
  */
 export const fetchNewTrack = async (playlistId: string) => {

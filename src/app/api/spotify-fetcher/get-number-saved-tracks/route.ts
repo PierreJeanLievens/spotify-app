@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-// TEST 
+/**
+ * API Route pour récupérer le nombre de titres d'une playlist Spotify
+ * @returns Le nombre de titres sauvegardés 
+ */
 export async function GET() {
   try {
     // Récupération du token depuis les cookies sécurisés
@@ -10,13 +13,13 @@ export async function GET() {
       return NextResponse.json({ error: "Utilisateur non authentifié" }, { status: 401 });
     }
 
-    // Requête vers l’API Spotify l'id du premier device
+    // Requête vers l’API Spotify 
     const response = await fetch("https://api.spotify.com/v1/me/tracks?fields=total", {
       headers: { Authorization: `Bearer ${token}` },
     });
 
     if (!response.ok) {
-      throw new Error("Échec de récupération des playlists");
+      throw new Error("Échec de récupération du nombre de titres sauvegardés");
     }
 
     const data = await response.json();

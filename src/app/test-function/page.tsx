@@ -1,10 +1,10 @@
 "use client"
-import { fetchNumberSavedTracks } from "@/lib/fetchData"
+import { fetchNewSavedTrack } from "@/lib/fetchData"
 
 export default function Page() {
     
     const handleTest = async () => {
-        const response = await fetchNumberSavedTracks();
+        const response = await fetchNewSavedTrack();
         console.log("Test reponse ", response)
     }
 

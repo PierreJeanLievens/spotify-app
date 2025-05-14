@@ -1,6 +1,6 @@
 "use client";
 import { useRoomManager } from "@/hooks/useRoomManager";
-import { fetchNewTrack, fetchNumberTracksPlaylist } from "@/lib/fetchData";
+import { fetchNewSavedTrack, fetchNewTrack, fetchNumberTracksPlaylist } from "@/lib/fetchData";
 import { Player, Track } from "@/types/spotify";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -332,13 +332,20 @@ const receiptNewRound = useCallback((message: any) => {
   
   // Fonction pour gérer le changement de track
   const handleNextTrack = async () => {
-    if (!playlistId) {
-      console.error("❌ Aucune playlist sélectionnée");
+    if(!isManager) return; // Au cas ou un client pourrait lancer la fonction
+    
+    let newTrack: Track | null = null;
+
+    if (playlistId === "liked-tracks") {
+      newTrack = await fetchNewSavedTrack();
+    } else if (playlistId) {
+      newTrack = await fetchNewTrack(playlistId);
+    } else {
+      console.error("❌ Aucune source sélectionnée");
       return;
     }
-    if(!isManager) return; // Au cas ou un client pourrait lancer la fonction
-  
-    const newTrack: Track = await fetchNewTrack(playlistId);
+    console.log("LANCEMENT")
+
     if (newTrack && webPlayer.deviceId) {
       setTrack(newTrack);
       await playTrack(newTrack.uri, webPlayer.deviceId);

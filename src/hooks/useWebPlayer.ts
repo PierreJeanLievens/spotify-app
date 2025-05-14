@@ -77,6 +77,19 @@ export function useWebPlayer(checkToken = true) { // Add parameter to control to
           console.log("Spotify Player Ready - Device ID:", device_id);
           setDeviceId(device_id);
         });
+        newPlayer.addListener('initialization_error', ({message} : { message: any }) => {
+          console.error('Initialization Error:', message);
+        });
+        newPlayer.addListener('authentication_error', ({message} : { message: any }) => {
+          console.error('Authentication Error:', message);
+          setIsTokenValid(false); // Force la déconnexion
+        });
+        newPlayer.addListener('account_error', ({message} : { message: any }) => {
+          console.error('Account Error:', message);
+        });
+        newPlayer.addListener('playback_error', ({message} : { message: any }) => {
+          console.error('Playback Error:', message);
+        });
 
         newPlayer.connect();
         setPlayer(newPlayer);
