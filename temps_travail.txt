@@ -46,3 +46,4 @@ Préparation :
 2h -- Fichier navbar, ajout design bouton deconnexion et titres de pages
 3h -- Ajout recherche pour playlists publiques et recherche dans playlists privées. Resolution desgin affichage de PlaylistsList
  Faire en sorte que lors de la récupération des joueurs, on check l'id pour evite 2 joueurs avec 1 seul client
+1h -- Ajout gestion d'user connecté

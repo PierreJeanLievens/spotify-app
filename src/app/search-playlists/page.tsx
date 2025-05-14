@@ -13,6 +13,19 @@ const SearchPlaylistPage = () => {
   const [inputQuery, setInputQuery] =useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    fetch("/api/me")
+      .then(res => res.json())
+      .then(data => setIsAuthenticated(data.isAuthenticated));
+  }, []);
+
+  useEffect(() =>  {
+    if(isAuthenticated===false){
+      router.push("/");
+    }
+  }, [isAuthenticated])
 
 
 
