@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import styles from "./NavBar.module.css";
 import navItems, { NavItem } from '@/data/navItems'; 
+import LogoutButton from "@/components/auth/LogoutButton" ;
 
 export default function NavBar() {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -24,6 +25,9 @@ export default function NavBar() {
 
     return (
         <nav className={styles.container}>
+            {isAuthenticated && (
+                <LogoutButton onLogout={() => setIsAuthenticated(false)} />
+            )}
             <div className={`${styles.nav_menu} ${showMenu ? styles.show_menu : ''}`}>
                 <ul className={styles.nav_list}>
                 {filteredNavItems.map((item, index) => (

@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import PlaylistList from "@/components/playlist/PlaylistList";
 import styles from "@/app/playlist/page.module.css";
-import LogoutButton from "@/components/auth/LogoutButton";
 
 const PlaylistPage = () => {
   const [playlists, setPlaylists] = useState<any[]>([]);
@@ -40,7 +39,7 @@ const PlaylistPage = () => {
   return (
     <div>
       <h1 className="title">Mes Playlists Spotify old</h1>
-      <LogoutButton />
+      
       <div className={`${styles.container} playlists`}>
         <div>
           <h1>Mes playlists</h1>

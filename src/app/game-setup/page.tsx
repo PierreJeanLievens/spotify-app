@@ -8,7 +8,6 @@ import Loading from "@/components/ui/Loading";
 import { fetchPlaylist } from "@/lib/fetchData";
 import ButtonLink from "@/components/buttons/ButtonLink";
 import { useAbly } from "@/lib/ablyContext";
-import LogoutButton from "@/components/auth/LogoutButton";
 
 const GameSetupPage = () => {
   const [playlist, setPlaylist] = useState<any>(null);
@@ -85,7 +84,7 @@ const GameSetupPage = () => {
     <div className="">
       <h1 className="title">Game Setup</h1>
       <ButtonLink text="Retour" path="/playlists"/>
-      <LogoutButton />
+      
       <div>
           <div className={styles.container}>
             <GameSetupPlaylist playlist={playlist} />

@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import PlaylistList from "@/components/playlist/PlaylistList";
 import styles from "@/app/page.module.css";
 import Loading from "@/components/ui/Loading";
-import LogoutButton from "@/components/auth/LogoutButton";
 
 export default function PlaylistPage(){
 
@@ -42,7 +41,7 @@ export default function PlaylistPage(){
   return (
     <div>
       <h1 className="title">Mes Playlists Spotify</h1>
-      <LogoutButton />
+      
       <div className={`${styles.container} playlists`}>
         <div>
           <h1>Mes playlists</h1>

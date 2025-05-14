@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import PlaylistList from "@/components/playlist/PlaylistList";
 import styles from "./page.module.css";
-import LogoutButton from "@/components/auth/LogoutButton";
 import { fetchPlaylists } from "@/lib/fetchData";
 import Loading from "@/components/ui/Loading";
 
@@ -65,7 +64,7 @@ const PlaylistPage = () => {
   return (
     <div>
       <h1 className="title">Mes Playlists Spotify</h1>
-      <LogoutButton />
+      
       <div className={styles.search_block}>
         <div className="input-block">
           <input

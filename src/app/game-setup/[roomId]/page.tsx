@@ -9,7 +9,6 @@ import { fetchPlaylist } from "@/lib/fetchData";
 import ButtonLink from "@/components/buttons/ButtonLink";
 import { useAbly } from "@/lib/ablyContext";
 import GamePlayers from "@/components/game/GamePlayers";
-import LogoutButton from "@/components/auth/LogoutButton";
 import CopyJoinRoomButton from "@/components/buttons/CopyJoinRoomButton";
 
 const GameSetupPage = () => {
@@ -71,7 +70,7 @@ const GameSetupPage = () => {
       <div>  
         <ButtonLink text="Retour" path="/game-setup"/>
         <CopyJoinRoomButton roomId={roomId} page='join-room'/> 
-        <LogoutButton />
+        
       </div>
       <div>
         <div className={styles.container}>
