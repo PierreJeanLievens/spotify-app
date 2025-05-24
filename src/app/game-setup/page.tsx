@@ -6,7 +6,7 @@ import GameSetupPlaylist from "@/components/game/GameSetupPlaylist"
 import styles from "@/app/game-setup/page.module.css"
 import Loading from "@/components/ui/Loading";
 import { fetchPlaylist } from "@/lib/fetchData";
-import ButtonLink from "@/components/buttons/ButtonLink";
+import BackButton from "@/components/buttons/BackButton";
 import { useAbly } from "@/lib/ablyContext";
 
 const GameSetupPage = () => {
@@ -83,7 +83,7 @@ const GameSetupPage = () => {
   return (
     <div className="">
       <h1 className="title">Game Setup</h1>
-      <ButtonLink text="Retour" path="/playlists"/>
+      <BackButton text="Retour" path="/playlists"/>
       
       <div>
           <div className={styles.container}>

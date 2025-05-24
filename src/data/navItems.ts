@@ -26,7 +26,7 @@ export interface NavItem {
       label: 'Mes albums',
       href: '/albums',
       icon: '/spotify-logo.png',
-      login : false,
+      login : true,
     },
     {
       label: 'Mes artistes',
@@ -45,6 +45,12 @@ export interface NavItem {
       href: '/search-playlists',
       icon: '/spotify-logo.png',
       login: true,
+    },
+    {
+      label: 'Rejoindre un salon',
+      href: '/join-room',
+      icon: '/spotify-logo.png',
+      login: false,
     },
   ];
   

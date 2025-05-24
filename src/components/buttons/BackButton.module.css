@@ -1,0 +1,7 @@
+.button {
+    left: 0;
+    bottom: 0;
+    position: fixed;
+    margin: 10px;
+    z-index: 100;
+}

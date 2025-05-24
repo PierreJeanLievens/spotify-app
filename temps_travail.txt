@@ -49,3 +49,4 @@ Préparation :
 1h -- Ajout gestion d'user connecté
 1h -- Modification du LogoutButton, il est désormais intégré à la NavBar et s'affiche automatiquement si l'user est connecté
 2h -- Ajout Saved Tracks mais WebPlayer ne fonctionne plus, cela provient surement d'avant
+2h -- Changement ButtonLink -> BackButton, ajout Footer et changements de quelques design 

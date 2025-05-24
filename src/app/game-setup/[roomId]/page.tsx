@@ -6,7 +6,7 @@ import GameSetupPlaylist from "@/components/game/GameSetupPlaylist";
 import styles from "@/app/game-setup/page.module.css";
 import Loading from "@/components/ui/Loading";
 import { fetchPlaylist } from "@/lib/fetchData";
-import ButtonLink from "@/components/buttons/ButtonLink";
+import BackButton from "@/components/buttons/BackButton";
 import { useAbly } from "@/lib/ablyContext";
 import GamePlayers from "@/components/game/GamePlayers";
 import CopyJoinRoomButton from "@/components/buttons/CopyJoinRoomButton";
@@ -68,7 +68,7 @@ const GameSetupPage = () => {
     <div>
       <h1 className="title">Game Setup : {roomId}</h1>
       <div>  
-        <ButtonLink text="Retour" path="/game-setup"/>
+        <BackButton text="Retour" path="/game-setup"/>
         <CopyJoinRoomButton roomId={roomId} page='join-room'/> 
         
       </div>

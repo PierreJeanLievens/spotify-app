@@ -1,6 +1,6 @@
 "use client";
 
-import ButtonLink from "@/components/buttons/ButtonLink";
+import BackButton from "@/components/buttons/BackButton";
 import GamePlayers from "@/components/game/GamePlayers";
 import { useAbly } from "@/lib/ablyContext";
 import { useParams, useRouter } from "next/navigation";
@@ -61,7 +61,7 @@ export default function WaitingRoomPage() {
   return (
     <>
       <h1 className="title">Salle d'attente</h1>
-      <ButtonLink text="Retour" path="/join-room" />
+      <BackButton text="Retour" path="/join-room" />
       <div className={styles.container}>
         <div className={styles.container__room}>
           <h2>Salon n°</h2>

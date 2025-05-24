@@ -1,10 +1,12 @@
 "use client"
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import styles from "./NavBar.module.css";
 import navItems, { NavItem } from '@/data/navItems'; 
 import LogoutButton from "@/components/auth/LogoutButton" ;
 
 export default function NavBar() {
+    const pathname = usePathname();
     const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
     const [showMenu, setShowMenu] = useState(false); 
 
@@ -13,6 +15,10 @@ export default function NavBar() {
         .then(res => res.json())
         .then(data => setIsAuthenticated(data.isAuthenticated));
     }, []);
+
+    useEffect(() => {
+        setShowMenu(false);
+      }, [pathname]);
 
     // Attendre que isAuthenticated ne soit plus null
     if (isAuthenticated === null) return null;

@@ -4,6 +4,7 @@ import AuthGuard from "@/components/auth/AuthGuard";
 import "./globals.css";
 import Loading from "@/components/ui/Loading";
 import NavBar from "@/components/ui/NavBar";
+import Footer from "@/components/ui/Footer";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -15,6 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <AuthGuard>{children}</AuthGuard>
           </Suspense>
         </AblyProvider>
+        <Footer/>
       </body>
     </html>
   );
