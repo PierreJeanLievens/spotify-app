@@ -36,7 +36,7 @@ export interface NavItem {
     },
     {
       label: 'Mes coups de cœur',
-      href: '/favoris',
+      href: '/saved-tracks',
       icon: '/spotify-logo.png',
       login: true,
     },

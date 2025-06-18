@@ -336,9 +336,10 @@ const receiptNewRound = useCallback((message: any) => {
     if(!isManager) return; // Au cas ou un client pourrait lancer la fonction
     
     let newTrack: Track | null = null;
-
-    if (playlistId === "liked-tracks") {
+    // Si le manager a choisi d'utiliser ses tracks sauvegardés
+    if (playlistId === "saved-tracks") {
       newTrack = await fetchNewSavedTrack();
+    // Si le manager a choisi d'utiliser une playlist
     } else if (playlistId) {
       newTrack = await fetchNewTrack(playlistId);
     } else {

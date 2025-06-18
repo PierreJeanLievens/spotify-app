@@ -57,16 +57,45 @@ const GameSetupPage = () => {
           router.push("/playlists");
           return;
         }
+        if (playlistId === "saved-tracks") {
+          console.log("SAVE TRACKS");
+          // Object simulé dans le cas SaveTracks
+          const playlist = {
+            id: "saved-tracks",
+            name: "Titres Likés",
+            description: "Tes titres enregistrés sur Spotify",
+            images: [
+              {
+                url: "/liked-songs-cover.png", // Remplace par une image custom ou une icône de cœur
+                height: 300,
+                width: 300
+              }
+            ],
+            owner: {
+              display_name: "Moi",
+            },
+            tracks: {
+              href: "https://api.spotify.com/v1/me/tracks",
+              total: 0, // tu peux mettre à jour après le fetch réel
+              items: [] // à remplir si tu veux charger les titres likés
+            },
+            type: "playlist",
+            isSavedTracks: true, // pour t'aider à différencier plus tard si besoin
+          };
         
-        const data = await fetchPlaylist(playlistId);
+          setPlaylist(playlist);
         
-        if (!data) {
-          console.error("Aucune donnée reçue pour la playlist.");
-          router.push("/playlists"); // ou afficher une erreur à l'utilisateur
-          return;
-        }
+        } else {
+          const data = await fetchPlaylist(playlistId);
+          console.log(data)
+          if (!data) {
+            console.error("Aucune donnée reçue pour la playlist.");
+            router.push("/playlists"); // ou afficher une erreur à l'utilisateur
+            return;
+          }
 
-        setPlaylist(data);
+          setPlaylist(data);
+        }
 
       } catch (error) {
         console.error("Erreur lors de la récupération de la playlist :", error);
