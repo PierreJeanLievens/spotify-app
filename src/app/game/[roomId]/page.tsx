@@ -11,6 +11,7 @@ import VolumeControl from "@/components/playback/VolumeControl";
 import ModalResponse from "@/components/response/ModalResponse";
 import styles from "./page.module.css"
 import { getScorePlayersFromHistory } from "@/lib/getScorePlayers";
+import BackButton from "@/components/buttons/BackButton";
 
 
 
@@ -394,9 +395,9 @@ const receiptNewRound = useCallback((message: any) => {
       <h1 className="title">Configuration du jeu</h1>
 
       {(isManager) ? (
-        <><button className="button" onClick={()=> {router.push("/game-setup");}}>Retour</button></>
+         <BackButton text="Retour" path="/game-setup" />
       ) : (
-        <><button className="button" onClick={()=> {router.push("/login");}}>Retour</button></>
+        <BackButton text="Retour" path="/login" />
       )}
       {(isManager) && (
         <>

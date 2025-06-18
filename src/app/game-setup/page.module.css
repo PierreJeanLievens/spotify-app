@@ -12,7 +12,7 @@
     display: flex;
     color: var(--text-white);
     font-size: var(--h2-font-size);
-    margin-top: 20px;
+    margin: 20px;
     background-color: var(--primary-color-major);
     width : 90%;
     padding: 15px 25px;
